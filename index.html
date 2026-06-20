@@ -4,94 +4,150 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Capsule Skills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0f1115; --surface:#171a21; --border:#262b36; --text:#e6e8ec; --muted:#7a8190;
-    --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6;
-    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --ink:#0e0f12; --panel:#15171c; --panel2:#0b0c10; --line:#23262e; --line2:#2e333d;
+    --text:#eceef2; --muted:#8b909b; --faint:#5b616d; --red:#e11d33; --redink:#b90021;
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--ink);color:var(--text);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   a{color:inherit}
-  .page{max-width:900px;margin:0 auto;padding:56px 32px 96px}
-  header{display:flex;align-items:flex-start;gap:18px;border-bottom:1px solid var(--border);padding-bottom:30px;margin-bottom:34px}
-  .brand{width:50px;height:50px;flex-shrink:0;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:9px}
-  .brand img{width:100%;height:100%;display:block}
-  .head-txt{flex-grow:1}
-  header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
-  header p{color:var(--muted);font-size:14px;margin-top:5px}
-  .official{display:inline-block;margin-top:9px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:3px 10px}
-  .install{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:34px}
-  .install h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
-  .install ol{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:9px}
-  .install li{counter-increment:s;font-size:13.5px;color:var(--muted);line-height:1.5;padding-left:30px;position:relative}
-  .install li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;background:rgba(91,156,246,.15);color:var(--blue);border:1px solid rgba(91,156,246,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
-  .install strong{color:var(--text)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(390px,1fr));gap:18px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 20px 18px;display:flex;flex-direction:column}
-  .card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
-  .mono{width:42px;height:42px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;letter-spacing:-.5px}
-  .card-head{flex-grow:1;min-width:0}
-  .card h2{font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
-  .meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
-  .ver{font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:1px 8px}
-  .upd{font-size:11px;color:var(--muted)}
-  .tag{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:14px}
-  .row{font-size:12.5px;line-height:1.55;margin-bottom:12px;color:var(--muted)}
-  .lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#5b6270;margin-bottom:3px}
-  .needs{border-left:2px solid var(--border);padding-left:11px}
-  .cmd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-  .cmd code{font:12.5px/1 var(--mono);background:#0a0c10;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:#c9d1d9;flex-grow:1}
-  .copy{flex-shrink:0;font:11px/1 var(--sans);font-weight:600;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:7px 11px;cursor:pointer;transition:color .12s,border-color .12s}
-  .copy:hover{color:var(--text);border-color:#3a4150}
-  .copy.done{color:var(--green);border-color:rgba(95,208,138,.4)}
-  .say{border-left:2px solid var(--border);padding-left:11px;margin-bottom:16px}
-  .say em{color:var(--text);font-style:italic;font-size:13px}
-  .actions{display:flex;gap:10px;align-items:center;margin-top:auto}
-  .btn{display:inline-flex;align-items:center;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;padding:9px 15px;border:1px solid transparent;cursor:pointer;transition:filter .12s}
+  .page{max-width:920px;margin:0 auto;padding:64px 32px 110px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+
+  /* Masthead */
+  .masthead{display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:start;padding-bottom:26px;border-bottom:1px solid var(--line);margin-bottom:8px;position:relative}
+  .masthead::after{content:"";position:absolute;left:0;bottom:-1px;width:96px;height:3px;background:var(--redink)}
+  .mark{width:60px;height:60px;flex-shrink:0;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:11px}
+  .mark img{width:100%;height:100%;display:block}
+  .mh-txt{padding-top:2px}
+  .mh-txt .eyebrow{margin-bottom:10px}
+  h1{font-family:var(--display);font-optical-sizing:auto;font-weight:500;font-size:clamp(34px,6vw,52px);line-height:.98;letter-spacing:-.02em}
+  .lede{color:var(--muted);font-size:15.5px;line-height:1.6;margin-top:14px;max-width:46ch}
+  .mh-meta{align-self:end;text-align:right;color:var(--faint);font-size:12px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+
+  /* Installing strip */
+  .howto{margin-top:40px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+  .howto .eyebrow{color:var(--muted)}
+  .howto h2{margin-bottom:16px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .step{position:relative;padding-left:30px;font-size:13.5px;line-height:1.5;color:var(--muted)}
+  .step b{display:block;color:var(--text);font-weight:600;font-size:13.5px;margin-bottom:2px}
+  .step .n{position:absolute;left:0;top:1px;font-family:var(--display);font-size:18px;font-weight:500;color:var(--red);line-height:1}
+  .step code{font:12px/1 var(--mono);background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#cdd3dc}
+
+  /* Section heading */
+  .list-head{display:flex;align-items:baseline;justify-content:space-between;margin:54px 0 8px}
+  .list-head h2{font-family:var(--display);font-weight:500;font-size:22px;letter-spacing:-.01em}
+  .list-head .count{color:var(--faint);font-size:12px;font-weight:600;letter-spacing:.04em}
+
+  /* Skill rows */
+  .skills{display:flex;flex-direction:column}
+  .skill{display:grid;grid-template-columns:60px 1fr 232px;gap:0 26px;padding:30px 0;border-top:1px solid var(--line)}
+  .skill:last-child{border-bottom:1px solid var(--line)}
+  .chip{width:60px;height:60px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:19px;color:#fff;letter-spacing:-.5px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+  .s-main{min-width:0}
+  .s-head{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+  .s-head h3{font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
+  .ver{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:2px 9px}
+  .upd{font-size:12px;color:var(--faint)}
+  .s-tag{color:var(--muted);font-size:15px;line-height:1.55;margin-top:9px;max-width:54ch}
+  .facts{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+  .fact{display:grid;grid-template-columns:74px 1fr;gap:12px;align-items:baseline}
+  .fact dt{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);padding-top:2px}
+  .fact dd{font-size:13.5px;line-height:1.5;color:var(--muted)}
+  .fact dd.say{color:var(--text);font-family:var(--display);font-style:italic;font-size:15px;font-weight:400}
+
+  /* Actions column */
+  .s-act{display:flex;flex-direction:column;gap:10px;align-self:start}
+  .cmd{display:flex;align-items:stretch;border:1px solid var(--line2);border-radius:9px;overflow:hidden;background:var(--panel2)}
+  .cmd code{flex:1;min-width:0;font:12.5px/1 var(--mono);color:#cdd3dc;padding:9px 11px;display:flex;align-items:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .copy{flex-shrink:0;font:11px/1 var(--sans);font-weight:600;color:var(--muted);background:rgba(255,255,255,.03);border:0;border-left:1px solid var(--line2);padding:0 12px;cursor:pointer;transition:color .12s,background .12s}
+  .copy:hover{color:var(--text);background:rgba(255,255,255,.06)}
+  .copy.done{color:#5fd08a}
+  .btn{display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:600;text-decoration:none;border-radius:9px;padding:11px 16px;border:1px solid transparent;cursor:pointer;transition:filter .12s,background .12s,border-color .12s}
   .btn-dl{color:#fff}
-  .btn-dl:hover{filter:brightness(1.08)}
-  .btn-guide{background:transparent;border-color:var(--border);color:var(--text)}
+  .btn-dl:hover{filter:brightness(1.09)}
+  .btn-guide{background:transparent;border-color:var(--line2);color:var(--text)}
   .btn-guide:hover{background:rgba(255,255,255,.04)}
-  .err{color:var(--amber);font-size:13.5px}
-  footer{margin-top:48px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-  footer a{color:var(--muted);text-decoration:underline}
+
+  .err{color:#e8b84b;font-size:14px;padding:30px 0}
+
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--muted)}
+  footer a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--redink);padding-bottom:1px}
+  footer a:hover{border-color:var(--red)}
+  footer .fb strong{color:var(--text);font-weight:600}
+
+  a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:6px}
+
+  @media (max-width:680px){
+    .page{padding:44px 20px 80px}
+    .masthead{grid-template-columns:auto 1fr;gap:16px}
+    .mh-meta{display:none}
+    .steps{grid-template-columns:1fr;gap:14px}
+    .skill{grid-template-columns:48px 1fr;gap:0 16px}
+    .chip{width:48px;height:48px;font-size:16px;border-radius:11px}
+    .s-act{grid-column:1 / -1;margin-top:18px}
+    .fact{grid-template-columns:70px 1fr}
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .skill{opacity:0;transform:translateY(10px);animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+    .skill:nth-child(1){animation-delay:.04s}
+    .skill:nth-child(2){animation-delay:.12s}
+    .skill:nth-child(3){animation-delay:.2s}
+    .skill:nth-child(4){animation-delay:.28s}
+    .skill:nth-child(n+5){animation-delay:.34s}
+    @keyframes rise{to{opacity:1;transform:none}}
+  }
 </style>
 </head>
 <body>
 <div class="page">
 
-  <header>
-    <div class="brand"><img src="assets/capsule-c.svg" alt="Capsule"></div>
-    <div class="head-txt">
+  <header class="masthead">
+    <div class="mark"><img src="assets/capsule-c.svg" alt="Capsule"></div>
+    <div class="mh-txt">
+      <div class="eyebrow">Capsule &middot; Internal</div>
       <h1>Capsule Skills</h1>
-      <p>Internal Claude skills for the Capsule team. Download one, add it to the Claude app, then just talk to it.</p>
-      <span class="official">Official Capsule tools, maintained internally</span>
+      <p class="lede">Internal tools that teach Claude how Capsule works. Grab one, add it to the Claude app, then just talk to it.</p>
     </div>
-    <span class="ver" id="count" style="align-self:center">&nbsp;</span>
+    <div class="mh-meta">Official Capsule tools<br>maintained internally</div>
   </header>
 
-  <div class="install">
-    <h3>How to install any skill</h3>
-    <ol>
-      <li><strong>Download</strong> the skill below (a <code>.skill</code> file).</li>
-      <li>Open the <strong>Claude</strong> app and go to <strong>Settings &rarr; Claude Cowork &rarr; Upload skill</strong>.</li>
-      <li>Pick the file you just downloaded. The skill shows up in your list, and you use it by saying what you want or typing its slash command.</li>
-    </ol>
+  <section class="howto">
+    <h2 class="eyebrow">Installing</h2>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><b>Download</b>Pick a skill below and download its <code>.skill</code> file.</div>
+      <div class="step"><span class="n">2</span><b>Open the Claude app</b>Go to Settings, then Claude Cowork, then Upload skill.</div>
+      <div class="step"><span class="n">3</span><b>Use it</b>Select the file. Then just say what you want, or type its slash command.</div>
+    </div>
+  </section>
+
+  <div class="list-head">
+    <h2>The tools</h2>
+    <span class="count" id="count">&nbsp;</span>
   </div>
 
-  <div class="grid" id="grid"></div>
+  <main class="skills" id="list"></main>
 
   <footer>
-    <span>Something not working, or want a new skill? Ask Brian or post in <strong>#design</strong> on Slack.</span>
-    <span><a href="https://github.com/capsule-brand/skills">capsule-brand/skills</a></span>
+    <span class="fb">Something not working, or want a new skill? Ask <strong>Brian</strong> or post in <strong>#design</strong> on Slack.</span>
+    <a href="https://github.com/capsule-brand/skills">capsule-brand/skills</a>
   </footer>
 
-</div><!-- /page -->
+</div>
 
 <script>
   (function () {
-    var grid = document.getElementById('grid');
+    var list = document.getElementById('list');
     var count = document.getElementById('count');
     function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function fmtDate(d){ try { return new Date(d + 'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
@@ -99,31 +155,32 @@
     fetch('skills.json', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('manifest ' + r.status); return r.json(); })
       .then(function (skills) {
-        count.textContent = skills.length + (skills.length === 1 ? ' skill' : ' skills');
-        grid.innerHTML = skills.map(function (s) {
-          var fileName = s.file.split('/').pop();
-          var cmd = s.invoke ? esc(s.invoke) : '';
+        count.textContent = skills.length + (skills.length === 1 ? ' tool' : ' tools');
+        list.innerHTML = skills.map(function (s) {
+          var file = esc(s.file), fileName = s.file.split('/').pop(), cmd = s.invoke ? esc(s.invoke) : '';
           return '' +
-            '<div class="card">' +
-              '<div class="card-top">' +
-                '<div class="mono" style="background:' + esc(s.accent) + '">' + esc(s.mono) + '</div>' +
-                '<div class="card-head"><h2>' + esc(s.name) + '</h2>' +
-                  '<div class="meta"><span class="ver">v' + esc(s.version) + '</span>' +
-                  (s.updated ? '<span class="upd">Updated ' + esc(fmtDate(s.updated)) + '</span>' : '') + '</div>' +
-                '</div>' +
+          '<article class="skill" style="--a:' + esc(s.accent) + '">' +
+            '<div class="chip" style="background:' + esc(s.accent) + '">' + esc(s.mono) + '</div>' +
+            '<div class="s-main">' +
+              '<div class="s-head"><h3>' + esc(s.name) + '</h3>' +
+                '<span class="ver">v' + esc(s.version) + '</span>' +
+                (s.updated ? '<span class="upd">Updated ' + esc(fmtDate(s.updated)) + '</span>' : '') +
               '</div>' +
-              '<p class="tag">' + esc(s.tagline) + '</p>' +
-              (s.needs ? '<div class="row needs"><span class="lbl">Needs</span>' + esc(s.needs) + '</div>' : '') +
-              (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '">Copy</button></div>' : '') +
-              (s.say ? '<div class="row say"><span class="lbl">Once installed, just say</span><em>&ldquo;' + esc(s.say) + '&rdquo;</em></div>' : '') +
-              '<div class="actions">' +
-                '<a class="btn btn-dl" style="background:' + esc(s.accent) + '" href="' + esc(s.file) + '" download="' + esc(fileName) + '">Download skill</a>' +
-                '<a class="btn btn-guide" href="' + esc(s.guide) + '" target="_blank" rel="noopener">Install guide</a>' +
-              '</div>' +
-            '</div>';
+              '<p class="s-tag">' + esc(s.tagline) + '</p>' +
+              '<dl class="facts">' +
+                (s.needs ? '<div class="fact"><dt>Needs</dt><dd>' + esc(s.needs) + '</dd></div>' : '') +
+                (s.say ? '<div class="fact"><dt>Just say</dt><dd class="say">&ldquo;' + esc(s.say) + '&rdquo;</dd></div>' : '') +
+              '</dl>' +
+            '</div>' +
+            '<div class="s-act">' +
+              (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '" aria-label="Copy command">Copy</button></div>' : '') +
+              '<a class="btn btn-dl" style="background:' + esc(s.accent) + '" href="' + file + '" download="' + esc(fileName) + '">Download skill</a>' +
+              '<a class="btn btn-guide" href="' + esc(s.guide) + '" target="_blank" rel="noopener">Install guide</a>' +
+            '</div>' +
+          '</article>';
         }).join('');
 
-        grid.addEventListener('click', function (e) {
+        list.addEventListener('click', function (e) {
           var b = e.target.closest ? e.target.closest('.copy') : null;
           if (!b) return;
           var text = b.getAttribute('data-cmd');
@@ -132,14 +189,13 @@
             navigator.clipboard.writeText(text).then(done).catch(function(){ done(); });
           } else {
             var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
-            try { document.execCommand('copy'); } catch(e){}
-            document.body.removeChild(t); done();
+            try { document.execCommand('copy'); } catch(e){} document.body.removeChild(t); done();
           }
         });
       })
       .catch(function (e) {
         count.textContent = '';
-        grid.innerHTML = '<p class="err">Could not load the skills list (' + esc(e.message) + '). Refresh in a moment.</p>';
+        list.innerHTML = '<p class="err">Could not load the skills list (' + esc(e.message) + '). Refresh in a moment.</p>';
       });
   })();
 </script>
