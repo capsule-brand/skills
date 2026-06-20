@@ -7,39 +7,54 @@
 <style>
   :root{
     --bg:#0f1115; --surface:#171a21; --border:#262b36; --text:#e6e8ec; --muted:#7a8190;
-    --accent:#e6e8ec; --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6;
+    --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6;
     --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
   a{color:inherit}
-  .page{max-width:880px;margin:0 auto;padding:56px 32px 96px}
-  header{display:flex;align-items:flex-start;gap:20px;border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:36px}
-  .brand{width:48px;height:48px;flex-shrink:0;background:var(--text);color:#0f1115;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;letter-spacing:-1px}
+  .page{max-width:900px;margin:0 auto;padding:56px 32px 96px}
+  header{display:flex;align-items:flex-start;gap:18px;border-bottom:1px solid var(--border);padding-bottom:30px;margin-bottom:34px}
+  .brand{width:50px;height:50px;flex-shrink:0;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:9px}
+  .brand img{width:100%;height:100%;display:block}
+  .head-txt{flex-grow:1}
   header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
   header p{color:var(--muted);font-size:14px;margin-top:5px}
-  .count-badge{margin-left:auto;flex-shrink:0;background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid var(--border);white-space:nowrap;align-self:center}
-  .install{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:36px}
+  .official{display:inline-block;margin-top:9px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:3px 10px}
+  .install{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:34px}
   .install h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
   .install ol{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:9px}
   .install li{counter-increment:s;font-size:13.5px;color:var(--muted);line-height:1.5;padding-left:30px;position:relative}
   .install li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;background:rgba(91,156,246,.15);color:var(--blue);border:1px solid rgba(91,156,246,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
   .install strong{color:var(--text)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(390px,1fr));gap:18px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 20px 18px;display:flex;flex-direction:column}
   .card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
   .mono{width:42px;height:42px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;letter-spacing:-.5px}
+  .card-head{flex-grow:1;min-width:0}
   .card h2{font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
-  .ver{display:inline-block;margin-top:4px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:1px 8px}
-  .card p{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:16px;flex-grow:1}
-  .actions{display:flex;gap:10px;align-items:center}
-  .btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;padding:9px 15px;border:1px solid transparent;cursor:pointer;transition:filter .12s}
-  .btn:hover{filter:brightness(1.08)}
+  .meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+  .ver{font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:1px 8px}
+  .upd{font-size:11px;color:var(--muted)}
+  .tag{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:14px}
+  .row{font-size:12.5px;line-height:1.55;margin-bottom:12px;color:var(--muted)}
+  .lbl{display:block;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#5b6270;margin-bottom:3px}
+  .needs{border-left:2px solid var(--border);padding-left:11px}
+  .cmd{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .cmd code{font:12.5px/1 var(--mono);background:#0a0c10;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:#c9d1d9;flex-grow:1}
+  .copy{flex-shrink:0;font:11px/1 var(--sans);font-weight:600;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:6px;padding:7px 11px;cursor:pointer;transition:color .12s,border-color .12s}
+  .copy:hover{color:var(--text);border-color:#3a4150}
+  .copy.done{color:var(--green);border-color:rgba(95,208,138,.4)}
+  .say{border-left:2px solid var(--border);padding-left:11px;margin-bottom:16px}
+  .say em{color:var(--text);font-style:italic;font-size:13px}
+  .actions{display:flex;gap:10px;align-items:center;margin-top:auto}
+  .btn{display:inline-flex;align-items:center;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;padding:9px 15px;border:1px solid transparent;cursor:pointer;transition:filter .12s}
   .btn-dl{color:#fff}
+  .btn-dl:hover{filter:brightness(1.08)}
   .btn-guide{background:transparent;border-color:var(--border);color:var(--text)}
-  .btn-guide:hover{background:rgba(255,255,255,.04);filter:none}
+  .btn-guide:hover{background:rgba(255,255,255,.04)}
   .err{color:var(--amber);font-size:13.5px}
-  footer{margin-top:56px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  footer{margin-top:48px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
   footer a{color:var(--muted);text-decoration:underline}
 </style>
 </head>
@@ -47,12 +62,13 @@
 <div class="page">
 
   <header>
-    <div class="brand">C</div>
-    <div>
+    <div class="brand"><img src="assets/capsule-c.svg" alt="Capsule"></div>
+    <div class="head-txt">
       <h1>Capsule Skills</h1>
       <p>Internal Claude skills for the Capsule team. Download one, add it to the Claude app, then just talk to it.</p>
+      <span class="official">Official Capsule tools, maintained internally</span>
     </div>
-    <span class="count-badge" id="count">&nbsp;</span>
+    <span class="ver" id="count" style="align-self:center">&nbsp;</span>
   </header>
 
   <div class="install">
@@ -60,14 +76,14 @@
     <ol>
       <li><strong>Download</strong> the skill below (a <code>.skill</code> file).</li>
       <li>Open the <strong>Claude</strong> app and go to <strong>Settings &rarr; Claude Cowork &rarr; Upload skill</strong>.</li>
-      <li>Pick the file you just downloaded. The skill now shows up in your skills list, and you use it by describing what you want or typing its slash command.</li>
+      <li>Pick the file you just downloaded. The skill shows up in your list, and you use it by saying what you want or typing its slash command.</li>
     </ol>
   </div>
 
   <div class="grid" id="grid"></div>
 
   <footer>
-    <span>Capsule internal &mdash; Claude skills. Questions? Ask your team lead or ask Claude.</span>
+    <span>Something not working, or want a new skill? Ask Brian or post in <strong>#design</strong> on Slack.</span>
     <span><a href="https://github.com/capsule-brand/skills">capsule-brand/skills</a></span>
   </footer>
 
@@ -77,27 +93,49 @@
   (function () {
     var grid = document.getElementById('grid');
     var count = document.getElementById('count');
-    function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function fmtDate(d){ try { return new Date(d + 'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
+
     fetch('skills.json', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('manifest ' + r.status); return r.json(); })
       .then(function (skills) {
         count.textContent = skills.length + (skills.length === 1 ? ' skill' : ' skills');
         grid.innerHTML = skills.map(function (s) {
-          var file = esc(s.file);
-          var name = (s.file.split('/').pop());
+          var fileName = s.file.split('/').pop();
+          var cmd = s.invoke ? esc(s.invoke) : '';
           return '' +
             '<div class="card">' +
               '<div class="card-top">' +
                 '<div class="mono" style="background:' + esc(s.accent) + '">' + esc(s.mono) + '</div>' +
-                '<div><h2>' + esc(s.name) + '</h2><span class="ver">v' + esc(s.version) + '</span></div>' +
+                '<div class="card-head"><h2>' + esc(s.name) + '</h2>' +
+                  '<div class="meta"><span class="ver">v' + esc(s.version) + '</span>' +
+                  (s.updated ? '<span class="upd">Updated ' + esc(fmtDate(s.updated)) + '</span>' : '') + '</div>' +
+                '</div>' +
               '</div>' +
-              '<p>' + esc(s.tagline) + '</p>' +
+              '<p class="tag">' + esc(s.tagline) + '</p>' +
+              (s.needs ? '<div class="row needs"><span class="lbl">Needs</span>' + esc(s.needs) + '</div>' : '') +
+              (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '">Copy</button></div>' : '') +
+              (s.say ? '<div class="row say"><span class="lbl">Once installed, just say</span><em>&ldquo;' + esc(s.say) + '&rdquo;</em></div>' : '') +
               '<div class="actions">' +
-                '<a class="btn btn-dl" style="background:' + esc(s.accent) + '" href="' + file + '" download="' + esc(name) + '">Download skill</a>' +
+                '<a class="btn btn-dl" style="background:' + esc(s.accent) + '" href="' + esc(s.file) + '" download="' + esc(fileName) + '">Download skill</a>' +
                 '<a class="btn btn-guide" href="' + esc(s.guide) + '" target="_blank" rel="noopener">Install guide</a>' +
               '</div>' +
             '</div>';
         }).join('');
+
+        grid.addEventListener('click', function (e) {
+          var b = e.target.closest ? e.target.closest('.copy') : null;
+          if (!b) return;
+          var text = b.getAttribute('data-cmd');
+          var done = function () { b.textContent = 'Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1300); };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(function(){ done(); });
+          } else {
+            var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
+            try { document.execCommand('copy'); } catch(e){}
+            document.body.removeChild(t); done();
+          }
+        });
       })
       .catch(function (e) {
         count.textContent = '';
