@@ -96,6 +96,40 @@
     header{flex-wrap:wrap}
     .version-badge{margin-left:0;order:3;width:100%}
   }
+
+  /* file viewer */
+  .viewer-sec{margin-top:60px;border-top:1px solid var(--line);padding-top:38px}
+  .viewer-sec h2{font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:-.01em;margin-bottom:6px;color:var(--ink)}
+  .viewer-sec .vsub{color:var(--muted);font-size:14px;margin-bottom:18px}
+  .viewer{display:grid;grid-template-columns:220px 1fr;border:1px solid var(--line2);border-radius:14px;overflow:hidden;background:var(--card)}
+  .vw-side{border-right:1px solid var(--line);background:var(--paper2);padding:14px 12px;max-height:560px;overflow:auto}
+  .vw-side .lbl{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding:2px 8px 12px}
+  .vw-file{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:8px 9px;font:12.5px/1.3 var(--sans);color:var(--muted);cursor:pointer}
+  .vw-file svg{width:14px;height:14px;flex-shrink:0;color:var(--faint)}
+  .vw-file span{word-break:break-all}
+  .vw-file:hover{background:rgba(0,0,0,.04);color:var(--ink)}
+  .vw-file.active{background:var(--card);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1px var(--line2)}
+  .vw-file.active svg{color:var(--accent)}
+  .vw-pane{display:flex;flex-direction:column;min-width:0}
+  .vw-bar{padding:11px 18px;border-bottom:1px solid var(--line);font:12px/1 var(--mono);color:var(--faint)}
+  .vw-body{padding:20px 22px;max-height:560px;overflow:auto;font-size:14px;line-height:1.65;color:var(--ink)}
+  .vw-body pre{background:var(--paper2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font:12.5px/1.6 var(--mono);color:#42433f;overflow-x:auto;margin:0}
+  .vw-body pre code{background:none;border:0;padding:0;font:inherit;color:inherit}
+  .vw-body.prose h1{font-size:23px;font-weight:700;letter-spacing:-.01em;margin:0 0 14px;color:var(--ink)}
+  .vw-body.prose h2{font-size:17px;font-weight:700;margin:24px 0 10px;color:var(--ink)}
+  .vw-body.prose h3{font-size:14.5px;font-weight:700;margin:18px 0 8px;color:var(--ink)}
+  .vw-body.prose p{color:var(--muted);margin:0 0 12px}
+  .vw-body.prose ul,.vw-body.prose ol{color:var(--muted);margin:0 0 12px;padding-left:22px}
+  .vw-body.prose li{margin:5px 0}
+  .vw-body.prose li::marker{color:var(--faint)}
+  .vw-body.prose code{font:12.5px/1 var(--mono);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:1.5px 5px;color:#55504a}
+  .vw-body.prose pre code{font-size:12.5px}
+  .vw-body.prose a{color:var(--red)}
+  .vw-body.prose strong{color:var(--ink)}
+  .vw-body.prose hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+  .vw-body.prose blockquote{border-left:3px solid var(--line2);margin:0 0 12px;padding-left:14px;color:var(--muted)}
+  @media (max-width:640px){.viewer{grid-template-columns:1fr}.vw-side{border-right:0;border-bottom:1px solid var(--line);max-height:none}.vw-body{max-height:none}}
+
 </style>
 </head>
 <body>
@@ -233,11 +267,46 @@
     </div>
   </div><!-- /troubleshooting -->
 
+
+  <section class="viewer-sec">
+    <h2>What's inside</h2>
+    <p class="vsub">The actual files in this skill, exactly what's in the download.</p>
+    <div class="viewer">
+      <div class="vw-side"><div class="lbl">Files</div><div id="vw-files"></div></div>
+      <div class="vw-pane"><div class="vw-bar" id="vw-name">SKILL.md</div><div class="vw-body" id="vw-main"></div></div>
+    </div>
+  </section>
+
   <footer>
     <span>eBillity Timesheet v1.0.0 &mdash; Capsule internal tool</span>
     <span>Questions? Ask your team lead or open a session and ask Claude.</span>
   </footer>
 
 </div><!-- /page -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script>
+(function(){
+  var ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/></svg>';
+  var side=document.getElementById('vw-files'), main=document.getElementById('vw-main'), bar=document.getElementById('vw-name');
+  if(!side||!main) return;
+  var FILES=[];
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function strip(t){return t.replace(/^---\n[\s\S]*?\n---\n?/,'');}
+  function show(i){
+    var f=FILES[i]; if(!f) return;
+    var kids=side.children; for(var k=0;k<kids.length;k++){ kids[k].classList.toggle('active',k===i); }
+    bar.textContent=f.name;
+    if(f.lang==='md' && window.marked && marked.parse){ main.className='vw-body prose'; main.innerHTML=marked.parse(strip(f.content)); }
+    else { main.className='vw-body'; main.innerHTML='<pre><code>'+esc(f.content)+'</code></pre>'; }
+  }
+  fetch('files.json',{cache:'no-store'}).then(function(r){return r.json();}).then(function(list){
+    FILES=list; side.innerHTML='';
+    list.forEach(function(f,i){ var b=document.createElement('button'); b.type='button'; b.className='vw-file'; b.innerHTML=ICON+'<span>'+esc(f.name)+'</span>'; b.addEventListener('click',function(){show(i);}); side.appendChild(b); });
+    if(list.length) show(0);
+  }).catch(function(){ main.innerHTML='<p style="color:var(--muted)">Could not load the skill files.</p>'; });
+})();
+</script>
+
 </body>
 </html>
