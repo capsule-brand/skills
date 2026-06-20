@@ -54,5 +54,19 @@
     "say": "Proof these panels against this spec sheet.",
     "file": "skills/panelproof/panelproof.skill",
     "guide": "skills/panelproof/install-guide.html"
+  },
+  {
+    "name": "Reskin Kit",
+    "slug": "reskin-kit",
+    "version": "1.0.0",
+    "updated": "2026-06-14",
+    "mono": "RK",
+    "accent": "#7c5cff",
+    "tagline": "Restyle a project to match a reference's look and feel, animation included.",
+    "invoke": "/reskin",
+    "needs": "Claude connected to Chrome, plus the project you want to restyle (it works on a git branch).",
+    "say": "Reskin this page to match the look and feel of stripe.com.",
+    "file": "skills/reskin-kit/reskin.skill",
+    "guide": "skills/reskin-kit/install-guide.html"
   }
 ]

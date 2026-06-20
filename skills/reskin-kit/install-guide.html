@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reskin Kit — Install Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');
+  :root{
+    --paper:#f5f1e8; --paper2:#efe8d9; --card:#fffdf8; --ink:#1b1d22; --ink2:#22252c;
+    --muted:#6c6f77; --faint:#9c9789; --line:#e5ddcd; --line2:#d8cfbc; --red:#b90021;
+    --accent:#7c5cff;
+    --amberbg:#f4ead0; --amberbd:#e6d3a2; --greenbg:#e5efe3; --greenbd:#c4ddc2;
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--paper);color:var(--ink);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .page{max-width:800px;margin:0 auto;padding:30px 32px 96px}
+
+  .backbar{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--muted);font-size:14px;font-weight:600;margin-bottom:26px}
+  .backbar .bk-mk{width:30px;height:30px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:6px}
+  .backbar .bk-mk img{width:100%;height:100%;display:block;filter:brightness(0) invert(1)}
+  .backbar:hover{color:var(--ink)}
+  .backbar:hover .lbl{border-bottom:1px solid var(--red);padding-bottom:1px}
+
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+
+  header{display:flex;align-items:center;gap:18px;border-top:1px solid var(--line);padding-top:30px;margin-bottom:36px}
+  .logo{width:52px;height:52px;flex-shrink:0;background:var(--accent);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;letter-spacing:-.5px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+  header h1{font-family:var(--display);font-optical-sizing:auto;font-weight:500;font-size:30px;letter-spacing:-.02em;line-height:1.08;margin-top:8px}
+  header p{color:var(--muted);font-size:14.5px;margin-top:7px;max-width:54ch}
+  .version-badge{margin-left:auto;flex-shrink:0;align-self:flex-start;background:var(--card);color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:4px 11px;border-radius:999px;border:1px solid var(--line2);white-space:nowrap}
+
+  .intro{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:26px;font-size:14.5px;color:var(--muted);line-height:1.7}
+  .intro strong{color:var(--ink)}
+  .intro code{font-size:12.5px}
+
+  .readonly{background:var(--greenbg);border:1px solid var(--greenbd);border-radius:12px;padding:15px 20px;margin-bottom:24px;font-size:13.5px;color:#1c6a3c;line-height:1.6}
+  .readonly strong{color:#155030}
+
+  .verdicts{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:28px}
+  .verdicts h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--ink)}
+  .vrow{display:flex;gap:11px;align-items:flex-start;margin-bottom:9px;font-size:13.5px;color:var(--muted);line-height:1.5}
+  .vrow:last-child{margin-bottom:0}
+  .vp{flex-shrink:0;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;min-width:64px;text-align:center}
+  .vp.pass{background:#e4efe2;color:#1f7a45;border:1px solid #c2dcc0}
+  .vp.present{background:#e2edf4;color:#2a6f97;border:1px solid #c0d6e4}
+  .vp.review{background:#f3ead2;color:#8a6712;border:1px solid #e4d2a0}
+  .vp.fail{background:#f4e2e2;color:#a23030;border:1px solid #e4c0c0}
+
+  .say{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:12px;padding:18px 22px;margin-bottom:46px}
+  .say h3{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin-bottom:13px}
+  .say ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .say li{font-family:var(--display);font-style:italic;font-size:15.5px;color:var(--ink);line-height:1.45;padding-left:20px;position:relative}
+  .say li::before{content:'\201C';position:absolute;left:0;color:var(--red);font-weight:600;font-style:normal}
+
+  .steps{display:flex;flex-direction:column;gap:34px}
+  .step{display:grid;grid-template-columns:44px 1fr;gap:0 20px}
+  .step-num{font-family:var(--display);font-weight:600;font-size:28px;line-height:1;color:var(--red);padding-top:2px}
+  .step-body{padding-top:3px}
+  .step-title{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px;color:var(--ink)}
+  .step-body p{color:var(--muted);font-size:14.5px;line-height:1.7;margin-bottom:10px}
+  .step-body p:last-child{margin-bottom:0}
+  .step-body p strong{color:var(--ink)}
+
+  pre{background:var(--paper2);border:1px solid var(--line2);border-radius:9px;padding:15px 17px;font:13px/1.6 var(--mono);color:#42433f;overflow-x:auto;margin:12px 0}
+  code{font:12.5px/1 var(--mono);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#55504a}
+  pre code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
+
+  .step-connector{grid-column:1;display:flex;justify-content:center;padding:4px 0}
+  .step-connector::after{content:'';display:block;width:1px;height:100%;background:var(--line2)}
+
+  .note{background:var(--amberbg);border:1px solid var(--amberbd);border-radius:9px;padding:12px 16px;font-size:13px;color:#7a5810;margin:12px 0;line-height:1.6}
+  .note strong{color:#5e4408}
+  .tip{background:var(--greenbg);border:1px solid var(--greenbd);border-radius:9px;padding:12px 16px;font-size:13px;color:#1c6a3c;margin:12px 0;line-height:1.6}
+  .tip strong{color:#155030}
+
+  .trouble-section{margin-top:60px;border-top:1px solid var(--line);padding-top:38px}
+  .trouble-section h2{font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:-.01em;margin-bottom:20px;color:var(--ink)}
+  .trouble-list{display:flex;flex-direction:column;gap:12px}
+  .trouble-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .trouble-q{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
+  .trouble-a{font-size:13.5px;color:var(--muted);line-height:1.6}
+  .trouble-a code{font-size:11.5px}
+
+  footer{margin-top:60px;border-top:1px solid var(--line);padding-top:22px;font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+
+  a:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:6px}
+
+  @media (max-width:560px){
+    .page{padding:24px 20px 72px}
+    header{flex-wrap:wrap}
+    .version-badge{margin-left:0;order:3;width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <a class="backbar" href="../../"><span class="bk-mk"><img src="../../assets/capsule-c.svg" alt=""></span><span class="lbl">Capsule Skills</span></a>
+
+  <header>
+    <div class="logo">RK</div>
+    <div>
+      <div class="eyebrow">Install guide</div>
+      <h1>Reskin Kit</h1>
+      <p>Restyle a project to match a reference's look and feel, animation included, without touching app logic</p>
+    </div>
+    <span class="version-badge">v1.0.0</span>
+  </header>
+
+  <div class="intro">
+    <strong>What this does.</strong> Reskin Kit restyles your current project to match a reference site, template, or screenshot, capturing both the <strong>look</strong> (color, type, spacing, components) and the <strong>feel</strong> (motion, easing, scroll behavior). It writes a <code>DESIGN.md</code> and a <code>MOTION.md</code>, detects the reference's animation stack, then ports the styling and motion into your presentation layer while leaving your routes, auth, data, and business logic untouched. Give it a live URL when you can, since only a running page reveals motion.
+    <br><br>
+    This is a one-time setup. After it, you just describe the reskin in plain language.
+  </div>
+
+  <div class="say">
+    <h3>How you actually use it (just describe the job)</h3>
+    <ul>
+      <li>Reskin this landing page to match the look and feel of stripe.com.</li>
+      <li>Make this app feel like that reference, including the scroll animation.</li>
+      <li>Capture the design and motion spec from this URL so I can reuse it later.</li>
+      <li>Layout from site A, color from site B, motion from site C.</li>
+      <li>Restyle just the hero section to match this screenshot.</li>
+    </ul>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Get the skill file</div>
+        <p>You need <code>reskin.skill</code>. Download it from the catalog and save it somewhere easy to find (Downloads is fine).</p>
+        <div class="note"><strong>Note:</strong> If your file picker won't accept a <code>.skill</code> file, rename it to <code>reskin.skill.zip</code> for the upload, then rename it back if needed.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Turn on Code Execution in Claude</div>
+        <p>Reskin writes spec files and edits your project, so it needs Claude's code feature on. In Claude: <strong>Settings &rarr; Feature Preview &rarr; turn on "Code execution &amp; file creation."</strong> Once only.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Upload the skill to Claude</div>
+        <p>Go to <strong>Settings &rarr; Claude Cowork &rarr; Upload skill</strong> and choose <code>reskin.skill</code>. You'll then see <strong>Reskin</strong> in your skills list.</p>
+        <div class="tip">Invoke it just by describing the reskin ("make this match the feel of that site"). If you use Claude Code, the same kit ships as the <strong>/reskin</strong> and <strong>/capture-design</strong> slash commands.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Connect Claude to your Chrome</div>
+        <p>To match a reference's <strong>motion</strong>, Reskin inspects the live page in a browser: computed styles plus the running animation stack (GSAP, Framer Motion, Lenis, Lottie, Three.js). So connect <strong>Claude in Chrome</strong>: install the Claude browser extension and connect the Chrome you'll point it at.</p>
+        <div class="note"><strong>Note:</strong> A screenshot captures the look only. To port the feel (easing, timing, scroll behavior), give it a live URL.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Point Cowork at your project folder</div>
+        <p>In a Cowork session, share the project you want to restyle: <strong>Add folder &rarr; choose your project &rarr; Allow Access.</strong> That lets Claude read your stack (<code>package.json</code>, config) and edit the presentation layer.</p>
+        <p>It works on a <strong>new git branch</strong> and only touches styling, components, and animation. Routes, auth, env, and data calls stay exactly as they were.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Try it</div>
+        <p>With Chrome connected and your project shared, say:</p>
+        <pre>"Reskin this page to match the look and feel of stripe.com."</pre>
+        <p>Claude detects your stack, writes <code>DESIGN.md</code> and <code>MOTION.md</code>, ports the styling and motion onto a branch, wires <code>prefers-reduced-motion</code>, then reports what matched, what needs a manual pass, and the branch to review.</p>
+        <div class="tip"><strong>You're set.</strong> From here just describe the reference and the scope: a single component, one page, or the whole app.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="trouble-section">
+    <h2>Troubleshooting</h2>
+    <div class="trouble-list">
+
+      <div class="trouble-item">
+        <div class="trouble-q">Will it change my app logic or break a route?</div>
+        <div class="trouble-a">No. It works on a new git branch and only touches the presentation layer &mdash; styling, components, animation. Routes, auth, env, and data calls (e.g. Supabase) stay untouched. Review the branch diff before you merge.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">The motion didn't come across</div>
+        <div class="trouble-a">Motion can only be read from a live URL through Chrome. A screenshot gives look only. Hand it the running page's URL so it can capture easing, durations, triggers, and scroll behavior into <code>MOTION.md</code>.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">An effect feels heavy or janky after the reskin</div>
+        <div class="trouble-a">Some effects don't reskin cleanly &mdash; bespoke GSAP timelines, Three.js/WebGL, canvas. The skill flags those as "needs a manual pass" before it implements, so check that list and budget time for them.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">It used a font I'm not licensed for</div>
+        <div class="trouble-a">It shouldn't. Reskin flags commercial or licensed fonts and suggests a license-clean equivalent instead of silently hotlinking one. Pick the substitute, or drop in your licensed font files.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">What about reduced motion and contrast?</div>
+        <div class="trouble-a">Every ported animation gets a <code>prefers-reduced-motion</code> fallback, and it won't push text contrast below WCAG AA to match a look &mdash; it flags the conflict instead of shipping it.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Can it capture a reference without changing my project?</div>
+        <div class="trouble-a">Yes. In Claude Code that's the read-only <code>/capture-design</code> command: it writes <code>DESIGN.md</code>, <code>MOTION.md</code>, and assets into a folder and changes nothing, so you can build a reference library to feed a later reskin.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Which animation library will it use?</div>
+        <div class="trouble-a">It detects your stack (React/Vue/Svelte, Vite/Next, Tailwind, and so on) and reuses your existing animation lib, or installs the matching one &mdash; Framer Motion for component motion, GSAP for scroll timelines, Lenis for smooth scroll. Any bundle cost is noted in the report.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>Reskin Kit v1.0.0 &mdash; Capsule internal tool</span>
+    <span>Also ships as Claude Code's /reskin and /capture-design. Questions? Ask Brian or ask Claude.</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
