@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PanelProof — Install Guide</title>
+<style>
+  :root{
+    --bg:#0f1115; --surface:#171a21; --border:#262b36; --text:#e6e8ec; --muted:#7a8190;
+    --accent:#3aa76d; --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6; --present:#6fb6e0;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  .page{max-width:780px;margin:0 auto;padding:56px 32px 96px}
+  header{display:flex;align-items:flex-start;gap:20px;border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:40px}
+  .logo{width:48px;height:48px;flex-shrink:0;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;letter-spacing:-1px}
+  header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+  header p{color:var(--muted);font-size:14px;margin-top:5px}
+  .version-badge{margin-left:auto;flex-shrink:0;background:rgba(58,167,109,.15);color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid rgba(58,167,109,.3);white-space:nowrap;align-self:center}
+  .intro{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:24px;font-size:14px;color:var(--muted);line-height:1.7}
+  .intro strong{color:var(--text)}
+  .readonly{background:rgba(58,167,109,.08);border:1px solid rgba(58,167,109,.25);border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:13.5px;color:var(--green);line-height:1.6}
+  .readonly strong{color:#7fe0a6}
+  .verdicts{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:28px}
+  .verdicts h3{font-size:14px;font-weight:700;margin-bottom:12px}
+  .vrow{display:flex;gap:10px;align-items:flex-start;margin-bottom:9px;font-size:13.5px;color:var(--muted);line-height:1.5}
+  .vrow:last-child{margin-bottom:0}
+  .vp{flex-shrink:0;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;min-width:64px;text-align:center}
+  .vp.pass{background:#10331f;color:#5fd38a;border:1px solid #1d5e39}
+  .vp.present{background:#102a3a;color:#6fb6e0;border:1px solid #1d4a6b}
+  .vp.review{background:#33270f;color:#e7c15f;border:1px solid #6b551d}
+  .vp.fail{background:#3a1414;color:#f08a8a;border:1px solid #6b1d1d}
+  .say{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:10px;padding:18px 22px;margin-bottom:48px}
+  .say h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text)}
+  .say ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .say li{font-size:13.5px;color:var(--muted);line-height:1.5;padding-left:18px;position:relative}
+  .say li::before{content:'\201C';position:absolute;left:0;color:var(--green);font-weight:700}
+  .steps{display:flex;flex-direction:column;gap:36px}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:0 20px}
+  .step-num{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent)}
+  .step-body{padding-top:8px}
+  .step-title{font-size:17px;font-weight:700;letter-spacing:-.2px;margin-bottom:8px}
+  .step-body p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:10px}
+  .step-body p:last-child{margin-bottom:0}
+  .step-body p strong{color:var(--text)}
+  pre{background:#0a0c10;border:1px solid var(--border);border-radius:8px;padding:16px 18px;font:13px/1.6 var(--mono);color:#c9d1d9;overflow-x:auto;margin:12px 0}
+  code{font:12.5px/1 var(--mono);background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:#c9d1d9}
+  pre code{background:none;border:none;padding:0;font-size:inherit}
+  .note{background:rgba(232,184,75,.07);border:1px solid rgba(232,184,75,.25);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--amber);margin:12px 0;line-height:1.6}
+  .note strong{color:#f0ca6a}
+  .tip{background:rgba(95,208,138,.07);border:1px solid rgba(95,208,138,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--green);margin:12px 0;line-height:1.6}
+  .trouble-section{margin-top:64px;border-top:1px solid var(--border);padding-top:40px}
+  .trouble-section h2{font-size:18px;font-weight:700;margin-bottom:20px}
+  .trouble-list{display:flex;flex-direction:column;gap:14px}
+  .trouble-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+  .trouble-a{font-size:13px;color:var(--muted);line-height:1.6}
+  .trouble-a code{font-size:11.5px}
+  footer{margin-top:64px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo">PP</div>
+    <div>
+      <h1>PanelProof</h1>
+      <p>Check finished artwork against the source of truth &mdash; the proofing companion to Data Merge</p>
+    </div>
+    <span class="version-badge">v1.0.0</span>
+  </header>
+
+  <div class="intro">
+    <strong>What this does.</strong> PanelProof opens your finished Illustrator files and checks them, field by field, against what they're <em>supposed</em> to say &mdash; the spec sheet, the price list, the approved data. It reads the live text out of <code>.ai</code> files and live-text PDFs and compares every value exactly. And it <strong>renders every file and looks at it</strong>, so it can also verify outlined or rasterized PDFs that have no readable text, and catch a substituted font or text running past its box. Where Data Merge builds the files, PanelProof proves them.
+  </div>
+
+  <div class="readonly">
+    <strong>It never changes your files.</strong> PanelProof is read-only by design. It opens, checks, and closes without saving. If it finds something wrong, it reports it &mdash; fixing is Data Merge's job. A tool that both judges and edits is one you can't fully trust, so this one only judges.
+  </div>
+
+  <div class="verdicts">
+    <h3>What the results mean</h3>
+    <div class="vrow"><span class="vp pass">pass</span><span>The value matches the spec exactly. This is what you want.</span></div>
+    <div class="vrow"><span class="vp present">present</span><span>The value is in the file, but not where the template expected it (common with PDFs). Glance at the render to confirm it's in the right spot.</span></div>
+    <div class="vrow"><span class="vp review">review</span><span>Can't be read as text &mdash; usually an outlined or rasterized PDF. PanelProof renders it and reads the picture instead; you confirm against the render.</span></div>
+    <div class="vrow"><span class="vp fail">fail</span><span>The spec value isn't in the artwork at all. Shown with expected-vs-found so the fix is obvious.</span></div>
+  </div>
+
+  <div class="say">
+    <h3>How you actually use it (just describe the job)</h3>
+    <ul>
+      <li>Proof these panels against the spec sheets before they go to the printer.</li>
+      <li>Did the labels come out right? Check them against this data.</li>
+      <li>QC this folder of artwork for me.</li>
+      <li>Verify these final PDFs say what they're supposed to.</li>
+      <li>Second set of eyes on these &mdash; do the numbers match?</li>
+    </ul>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Get the skill file from your team lead</div>
+        <p>You need <code>panelproof.skill</code>. Save it somewhere you can find it.</p>
+        <div class="note"><strong>Note:</strong> If your file picker won't accept a <code>.skill</code> file, rename it to <code>panelproof.skill.zip</code> for the upload.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Turn on Code Execution in Claude</div>
+        <p>In Claude: <strong>Settings → Feature Preview → turn on "Code execution &amp; file creation."</strong> Once only. (If you already use ColorProof or Data Merge, it's on.)</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Upload the skill to Claude</div>
+        <p>Go to <strong>Settings → Capabilities → Skills → Upload skill</strong> and choose <code>panelproof.skill</code>. You'll then see <strong>PanelProof</strong> in your skills list.</p>
+        <div class="tip">Invoke it as <strong>/panelproof</strong> or just by describing the job ("proof these against the spec").</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Deploy the engine to your Mac</div>
+        <p>Open <strong>Terminal</strong> and paste:</p>
+        <pre>mkdir -p ~/.panelproof/dist
+cp scripts/panelproof.jsx scripts/run.sh scripts/proofreport.js ~/.panelproof/
+chmod +x ~/.panelproof/run.sh</pre>
+        <p><strong>Where are these scripts?</strong> Inside the <code>.skill</code> file, which is a zip. Rename <code>panelproof.skill</code> to <code>panelproof.skill.zip</code>, double-click to unzip, and run the commands from inside the unzipped <code>panelproof</code> folder.</p>
+        <div class="note"><strong>Note:</strong> There's no backup step like other tools have &mdash; PanelProof never edits your files, so there's nothing to back up.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Make sure Adobe Illustrator is open</div>
+        <p>PanelProof drives the real Illustrator to read and render your files, so <strong>Illustrator must be running.</strong> The first run asks macOS for permission to control Illustrator &mdash; click <strong>OK</strong> (or re-enable later under System Settings → Privacy &amp; Security → Automation).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Point Cowork at your folders</div>
+        <p>Share the <strong>artwork</strong> folder and wherever your <strong>source data</strong> lives (spec sheets, spreadsheet). <strong>Add folder → choose it → Allow Access.</strong></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <div class="step-title">Try it</div>
+        <p>With Illustrator open and a folder shared, say:</p>
+        <pre>"Proof this folder against these spec sheets and show me the report."</pre>
+        <p>Claude reads each file, renders it, scores every field, and opens a report with pass/fail and a proof image of each file. Anything it couldn't read as text, it will have looked at on the render and told you what it saw.</p>
+        <div class="tip"><strong>You're set.</strong> Hand over the artwork and the source of truth, and read the report it gives back.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="trouble-section">
+    <h2>Troubleshooting</h2>
+    <div class="trouble-list">
+
+      <div class="trouble-item">
+        <div class="trouble-q">Everything came back "review"</div>
+        <div class="trouble-a">The files have no live text &mdash; they're outlined or rasterized PDFs. That's expected: PanelProof renders them and verifies off the picture. Read the renders in the report; that's the proof for those files.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A value shows "present" instead of "pass"</div>
+        <div class="trouble-a">The value is in the file but not in the frame the template expected (common when a PDF reflows text). It's almost certainly fine &mdash; glance at the render to confirm it's sitting in the right place.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Something failed that looks correct to me</div>
+        <div class="trouble-a">Check the expected-vs-found in the report. Usually it's a real but tiny difference (a missing space, a different unit, a stray character), or the spec value you gave it was off. PanelProof compares to the spec you provided, so confirm the spec first.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">It "failed" a missing period (or similar) that's actually right</div>
+        <div class="trouble-a">It shouldn't &mdash; PanelProof respects the source. If the spec has no period, artwork with no period passes. If you see this, the spec value handed in probably had the period; fix the spec, not the art.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">No report appeared</div>
+        <div class="trouble-a">Bring Illustrator to the front and dismiss any open dialog, then re-run. For a big folder, tell Claude to "run it backgrounded."</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A font looks wrong on the render</div>
+        <div class="trouble-a">That's the visual layer doing its job &mdash; the file's font isn't installed on your Mac, so Illustrator substituted it. Install the correct font and re-run. (This is exactly the kind of thing a text-only check would miss.)</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Where are the proof images?</div>
+        <div class="trouble-a">In a <code>_proof_previews</code> folder next to the artwork. It's scratch &mdash; delete it when you're done.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>PanelProof v1.0.0 — Capsule internal tool</span>
+    <span>Pairs with Illustrator Data Merge. Questions? Ask your team lead or ask Claude.</span>
+  </footer>
+
+</div>
+</body>
+</html>

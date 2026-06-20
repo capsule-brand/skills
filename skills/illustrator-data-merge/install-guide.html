@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Illustrator Data Merge — Install Guide</title>
+<style>
+  :root{
+    --bg:#0f1115; --surface:#171a21; --border:#262b36; --text:#e6e8ec; --muted:#7a8190;
+    --accent:#3b74f0; --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  .page{max-width:780px;margin:0 auto;padding:56px 32px 96px}
+  header{display:flex;align-items:flex-start;gap:20px;border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:40px}
+  .logo{width:48px;height:48px;flex-shrink:0;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;letter-spacing:-1px}
+  header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+  header p{color:var(--muted);font-size:14px;margin-top:5px}
+  .version-badge{margin-left:auto;flex-shrink:0;background:rgba(59,116,240,.15);color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid rgba(59,116,240,.3);white-space:nowrap;align-self:center}
+  .intro{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:28px;font-size:14px;color:var(--muted);line-height:1.7}
+  .intro strong{color:var(--text)}
+  .say{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:10px;padding:18px 22px;margin-bottom:48px}
+  .say h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text)}
+  .say ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .say li{font-size:13.5px;color:var(--muted);line-height:1.5;padding-left:18px;position:relative}
+  .say li::before{content:'\201C';position:absolute;left:0;color:var(--green);font-weight:700}
+  .steps{display:flex;flex-direction:column;gap:36px}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:0 20px}
+  .step-num{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0}
+  .step-body{padding-top:8px}
+  .step-title{font-size:17px;font-weight:700;letter-spacing:-.2px;margin-bottom:8px}
+  .step-body p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:10px}
+  .step-body p:last-child{margin-bottom:0}
+  .step-body p strong{color:var(--text)}
+  pre{background:#0a0c10;border:1px solid var(--border);border-radius:8px;padding:16px 18px;font:13px/1.6 var(--mono);color:#c9d1d9;overflow-x:auto;margin:12px 0}
+  code{font:12.5px/1 var(--mono);background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:#c9d1d9}
+  pre code{background:none;border:none;padding:0;font-size:inherit}
+  .note{background:rgba(232,184,75,.07);border:1px solid rgba(232,184,75,.25);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--amber);margin:12px 0;line-height:1.6}
+  .note strong{color:#f0ca6a}
+  .tip{background:rgba(95,208,138,.07);border:1px solid rgba(95,208,138,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--green);margin:12px 0;line-height:1.6}
+  .trouble-section{margin-top:64px;border-top:1px solid var(--border);padding-top:40px}
+  .trouble-section h2{font-size:18px;font-weight:700;margin-bottom:20px}
+  .trouble-list{display:flex;flex-direction:column;gap:14px}
+  .trouble-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+  .trouble-a{font-size:13px;color:var(--muted);line-height:1.6}
+  .trouble-a code{font-size:11.5px}
+  footer{margin-top:64px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo">DM</div>
+    <div>
+      <h1>Illustrator Data Merge</h1>
+      <p>One template, a list of records, one finished file per record</p>
+    </div>
+    <span class="version-badge">v1.0.0</span>
+  </header>
+
+  <div class="intro">
+    <strong>What this does.</strong> You know Data Merge in InDesign — one layout, a spreadsheet, and it spits out a version per row. This brings the same idea to <strong>Adobe Illustrator</strong>. Give Claude one template <code>.ai</code> file and a list (a spreadsheet, spec sheets, or just typed values), and it builds <strong>one finished <code>.ai</code> per record</strong>, swapping the text, numbers, and even linked photos you choose — while leaving your fonts, colors, and layout exactly as designed. Back labels per flavor, shelf tags per SKU, name badges with headshots, certificates, multilingual versions, Nutrition Facts panels: same layout, many versions, done in one pass.
+    <br><br>
+    This is a one-time setup per Mac. After that, you just talk to Claude — no commands to memorize.
+  </div>
+
+  <div class="say">
+    <h3>How you actually use it (just describe the job)</h3>
+    <ul>
+      <li>Build a back label for each of these wines — same layout, change the varietal, vintage, and ABV.</li>
+      <li>Here's a spreadsheet of 200 attendees — make a name badge for each with their headshot.</li>
+      <li>Generate a shelf tag per SKU from this price list.</li>
+      <li>Populate this Nutrition Facts panel for every flavor from these spec sheets.</li>
+      <li>Make a version of this poster for each city with its own date and venue.</li>
+    </ul>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Get the skill file from your team lead</div>
+        <p>You need a file called <code>datamerge.skill</code>. Ask whoever set this up for the latest version. Save it somewhere you can find it (Downloads is fine).</p>
+        <div class="note"><strong>Note:</strong> If your file picker won't accept a <code>.skill</code> file, rename it to <code>datamerge.skill.zip</code> for the upload, then rename it back if needed.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Turn on Code Execution in Claude</div>
+        <p>Data Merge needs Claude's code feature on. In Claude: <strong>Settings → Feature Preview → turn on "Code execution &amp; file creation."</strong> You only do this once.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Upload the skill to Claude</div>
+        <p>In Claude, go to <strong>Settings → Capabilities → Skills → Upload skill</strong> and pick your <code>datamerge.skill</code> file. Once uploaded, you'll see <strong>Illustrator Data Merge</strong> in your skills list, available in any Cowork session.</p>
+        <div class="tip">You can invoke it as <strong>/datamerge</strong> or just by describing the job ("make a label for each of these"). No version numbers to type.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Deploy the engine to your Mac</div>
+        <p>The skill includes a small engine that runs inside Illustrator. Copy it to a folder on your Mac once. Open <strong>Terminal</strong> and paste:</p>
+        <pre>mkdir -p ~/.datamerge/profiles ~/.datamerge/dist
+cp scripts/datamerge.jsx scripts/run.sh scripts/snapshot.sh scripts/report.js ~/.datamerge/
+chmod +x ~/.datamerge/run.sh ~/.datamerge/snapshot.sh</pre>
+        <p><strong>Where are these scripts?</strong> Inside the <code>.skill</code> file, which is really a zip. Rename <code>datamerge.skill</code> to <code>datamerge.skill.zip</code>, double-click to unzip, and you'll find a <code>scripts/</code> folder. Run the commands from inside the unzipped <code>datamerge</code> folder.</p>
+        <div class="note"><strong>Note:</strong> <code>~/.datamerge/</code> is hidden in Finder on purpose — the engine lives there quietly and you never need to open it.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Make sure Adobe Illustrator is installed and open</div>
+        <p>Data Merge drives the real Illustrator app. There's no background mode — <strong>Illustrator must be running</strong> when you use it. Any recent CC version is fine.</p>
+        <p>The first time it runs, macOS asks if Claude can control Adobe Illustrator. Click <strong>OK</strong>. If you declined by accident, re-enable it under <strong>System Settings → Privacy &amp; Security → Automation</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Point Cowork at your folders</div>
+        <p>In a Cowork session, give Claude access to the folders for the job: your <strong>template</strong>, the <strong>output</strong> folder, your <strong>data</strong> (spreadsheet or spec sheets), and any <strong>image</strong> folder (headshots, product shots). <strong>Add folder → choose it → Allow Access.</strong></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <div class="step-title">Try it</div>
+        <p>With Illustrator open and a folder shared, tell Claude:</p>
+        <pre>"Show me the fields in this template, then build one test record so I can see it."</pre>
+        <p>Claude opens a report in your browser showing the template's fields, and a proof image of the first result. If you see that, you're set.</p>
+        <div class="tip"><strong>You're done.</strong> From here just describe the job and hand over the template plus the list. Claude profiles the template once, builds a file per record, and shows you proofs before you ship.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="trouble-section">
+    <h2>Troubleshooting</h2>
+    <div class="trouble-list">
+
+      <div class="trouble-item">
+        <div class="trouble-q">No report appeared after a run</div>
+        <div class="trouble-a">Two causes: (1) a dialog is blocking Illustrator — bring it to the front and dismiss any alert; (2) a big batch timed out — tell Claude to "run it backgrounded" and it uses a longer-timeout method.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Claude says it can't control Adobe Illustrator</div>
+        <div class="trouble-a">Go to <strong>System Settings → Privacy &amp; Security → Automation</strong> and allow the Claude/Cowork entry to control Adobe Illustrator. Toggle it off and on if it looks enabled but isn't working.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A field didn't change (Claude says "NOTFOUND")</div>
+        <div class="trouble-a">The placeholder text the template profile expected wasn't in the file — usually the template was edited. Ask Claude to re-profile the template, or tell it the exact text that's there now.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A photo didn't swap (Claude says "NOIMG")</div>
+        <div class="trouble-a">The image in the template must be a <strong>linked</strong> placed image with a <strong>name</strong> in the Layers panel (e.g. "headshot"). Select it, double-click its Layers row, give it a name, and make sure it's linked (not embedded). Then re-run.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Text runs past its box on one record</div>
+        <div class="trouble-a">A long value overflowed a fixed-size frame. That's a template/layout decision, not a merge error — Claude flags it on the proof. Either shorten the text, or widen/auto-size that frame in the template and re-run.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">How do I undo a batch?</div>
+        <div class="trouble-a">Before any run that overwrites files, the whole output folder is backed up to <code>~/Desktop/Data Merge Backups/</code> with a timestamp. Copy that back over the originals. Nothing is permanently overwritten.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Where do my finished files go?</div>
+        <div class="trouble-a">Into the output folder you chose, one <code>.ai</code> per record. A <code>_previews</code> subfolder holds the proof images — it's scratch, delete it before handing off the deliverables.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Fonts look wrong in a result</div>
+        <div class="trouble-a">The fonts used in the template must be installed on your Mac, or Illustrator substitutes them. Install the template's fonts and re-run.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>Illustrator Data Merge v1.0.0 — Capsule internal tool</span>
+    <span>Questions? Ask your team lead, or open a Cowork session and ask Claude.</span>
+  </footer>
+
+</div>
+</body>
+</html>

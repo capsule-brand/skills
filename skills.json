@@ -1,0 +1,42 @@
+[
+  {
+    "name": "eBillity Timesheet",
+    "slug": "ebillity-timesheet",
+    "version": "1.0.0",
+    "mono": "ET",
+    "accent": "#14b8a6",
+    "tagline": "Log and manage your TimeTracker hours by just talking to Claude.",
+    "file": "skills/ebillity-timesheet/ebillity-timesheet.skill",
+    "guide": "skills/ebillity-timesheet/install-guide.html"
+  },
+  {
+    "name": "ColorProof",
+    "slug": "colorproof",
+    "version": "2.1.0",
+    "mono": "CP",
+    "accent": "#c93837",
+    "tagline": "Brand color preflight and auto-corrector for Adobe Illustrator.",
+    "file": "skills/colorproof/colorproof.skill",
+    "guide": "skills/colorproof/install-guide.html"
+  },
+  {
+    "name": "Illustrator Data Merge",
+    "slug": "illustrator-data-merge",
+    "version": "1.0.0",
+    "mono": "DM",
+    "accent": "#3b74f0",
+    "tagline": "One template, a list of records, one finished file per record.",
+    "file": "skills/illustrator-data-merge/datamerge.skill",
+    "guide": "skills/illustrator-data-merge/install-guide.html"
+  },
+  {
+    "name": "PanelProof",
+    "slug": "panelproof",
+    "version": "1.0.0",
+    "mono": "PP",
+    "accent": "#3aa76d",
+    "tagline": "Read-only content and visual proofer for Illustrator artwork. Pairs with Data Merge.",
+    "file": "skills/panelproof/panelproof.skill",
+    "guide": "skills/panelproof/install-guide.html"
+  }
+]

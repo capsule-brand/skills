@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ColorProof — Install Guide</title>
+<style>
+  /* ── Tokens ── */
+  :root {
+    --bg:       #0f1115;
+    --surface:  #171a21;
+    --border:   #262b36;
+    --text:     #e6e8ec;
+    --muted:    #7a8190;
+    --accent:   #c93837;
+    --green:    #5fd08a;
+    --amber:    #e8b84b;
+    --blue:     #5b9cf6;
+    --mono:     ui-monospace, "SFMono-Regular", Menlo, monospace;
+    --sans:     -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.65 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 780px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  .logo {
+    width: 48px; height: 48px; flex-shrink: 0;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: #fff;
+    letter-spacing: -1px;
+  }
+  header h1 { font-size: 26px; font-weight: 700; letter-spacing: -.3px; line-height: 1.2; }
+  header p  { color: var(--muted); font-size: 14px; margin-top: 5px; }
+  .version-badge {
+    margin-left: auto; flex-shrink: 0;
+    background: rgba(201,56,55,.15);
+    color: var(--accent);
+    font-size: 12px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 999px;
+    border: 1px solid rgba(201,56,55,.3);
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  /* ── Intro callout ── */
+  .intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 48px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .intro strong { color: var(--text); }
+
+  /* ── Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 36px; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 0 20px;
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .step-body { padding-top: 8px; }
+  .step-title {
+    font-size: 17px; font-weight: 700;
+    letter-spacing: -.2px;
+    margin-bottom: 8px;
+  }
+  .step-body p { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 10px; }
+  .step-body p:last-child { margin-bottom: 0; }
+  .step-body p strong { color: var(--text); }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font: 13px/1.6 var(--mono);
+    color: #c9d1d9;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  code {
+    font: 12.5px/1 var(--mono);
+    background: rgba(255,255,255,.07);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: #c9d1d9;
+  }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; }
+
+  /* ── Connector line between steps ── */
+  .step-connector {
+    grid-column: 1;
+    display: flex; justify-content: center;
+    padding: 4px 0;
+  }
+  .step-connector::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 100%;
+    background: var(--border);
+  }
+
+  /* ── Warning / note ── */
+  .note {
+    background: rgba(232,184,75,.07);
+    border: 1px solid rgba(232,184,75,.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--amber);
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+  .note strong { color: #f0ca6a; }
+
+  .tip {
+    background: rgba(95,208,138,.07);
+    border: 1px solid rgba(95,208,138,.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--green);
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+
+  /* ── Troubleshooting ── */
+  .trouble-section {
+    margin-top: 64px;
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+  }
+  .trouble-section h2 {
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .trouble-list { display: flex; flex-direction: column; gap: 14px; }
+  .trouble-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .trouble-q {
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .trouble-a { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .trouble-a code { font-size: 11.5px; }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 64px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo">CP</div>
+    <div>
+      <h1>ColorProof</h1>
+      <p>Brand color preflight &amp; auto-corrector for Adobe Illustrator</p>
+    </div>
+    <span class="version-badge">v2.1.0</span>
+  </header>
+
+  <div class="intro">
+    <strong>What this does.</strong> ColorProof lets you ask Claude to check every color in a logo package against exact brand values — Pantone, CMYK, or hex — and fix anything that's off, across <strong>.ai, .pdf, .svg, .jpg, and .png</strong> files at once. Think of it as a spellchecker for brand color. You proof first, see a clear report of what's right and what's wrong, then approve the fix. Nothing changes without a backup taken first.
+    <br><br>
+    This is a one-time setup per Mac. After it's done, you just talk to Claude — no commands to memorize.
+  </div>
+
+  <div class="steps">
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Get the skill file from your team lead</div>
+        <p>You need a file called <code>colorproof.skill</code>. Ask whoever set this up for the latest version — it should be named <code>colorproof-v2.1.0.skill</code> or similar. Save it somewhere you can find it (Downloads is fine).</p>
+        <div class="note"><strong>Note:</strong> If your file picker doesn't accept <code>.skill</code> files, rename it to <code>colorproof.skill.zip</code> before uploading. Rename it back if needed after.</div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Enable Code Execution in Claude</div>
+        <p>ColorProof needs Claude's code execution feature turned on. In Claude.ai:</p>
+        <p><strong>Settings → Feature Preview → turn on "Code execution &amp; file creation"</strong></p>
+        <p>You only need to do this once.</p>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Upload the skill to Claude</div>
+        <p>In Claude.ai, go to <strong>Settings → Claude Cowork → Upload skill</strong>, then pick your <code>colorproof.skill</code> file.</p>
+        <p>Once uploaded, you'll see <strong>ColorProof</strong> listed under your skills. That's it — the skill is now available in any Cowork session.</p>
+        <div class="tip">The skill is invoked as <strong>/colorproof</strong> or just by describing what you want ("proof this package against our brand colors"). You don't need to type a version number.</div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Deploy the engine to your Mac</div>
+        <p>The skill includes an engine that runs inside Adobe Illustrator. You need to copy it to a folder on your Mac before ColorProof can use it. Open Terminal and run:</p>
+        <pre>mkdir -p ~/.colorproof
+cp scripts/colorproof.jsx scripts/run.sh scripts/report.js scripts/snapshot.sh scripts/acb_lab.py ~/.colorproof/
+chmod +x ~/.colorproof/run.sh ~/.colorproof/snapshot.sh</pre>
+        <p><strong>Where are these scripts?</strong> They're inside the <code>.skill</code> file (which is a zip). If you haven't extracted them already, rename <code>colorproof.skill</code> to <code>colorproof.skill.zip</code>, double-click to unzip, and you'll find a <code>scripts/</code> folder inside.</p>
+        <div class="note"><strong>Note:</strong> The <code>~/.colorproof/</code> folder is hidden by default in Finder. That's intentional — the engine lives there quietly and you never need to open it.</div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Make sure Adobe Illustrator is installed and open</div>
+        <p>ColorProof drives the real Illustrator app to read and write artwork. There's no headless mode — <strong>Illustrator must be running</strong> whenever you use ColorProof. Any recent CC version is fine.</p>
+        <p>The first time ColorProof runs, macOS will ask if Claude can control Adobe Illustrator. Click <strong>OK</strong>. If you accidentally declined, go to <strong>System Settings → Privacy &amp; Security → Automation</strong> and re-enable it.</p>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="step-title">Point Cowork at your artwork folder</div>
+        <p>In a Cowork session, give Claude access to the folder that contains your logo package (or its parent folder). This is how Claude can read your files and write backups.</p>
+        <p>In Claude Cowork: <strong>Add folder → navigate to your artwork directory → Allow Access</strong></p>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <div class="step-title">Run a smoke test</div>
+        <p>With Illustrator open and a folder pointed at, tell Claude:</p>
+        <pre>"Proof this package against Orange = CMYK 0/62/100/0."</pre>
+        <p>Claude should open a report in your browser showing the color inventory and pass/fail status. If you see that, setup is complete.</p>
+        <div class="tip"><strong>You're done.</strong> From here, just describe what you want: "Check these files against our brand colors," "Make the purple Pantone 7683 C everywhere," "Proof this logo package." ColorProof handles the rest.</div>
+      </div>
+    </div>
+
+  </div><!-- /steps -->
+
+  <!-- ── Troubleshooting ── -->
+  <div class="trouble-section">
+    <h2>Troubleshooting</h2>
+    <div class="trouble-list">
+
+      <div class="trouble-item">
+        <div class="trouble-q">No report appeared after running a job</div>
+        <div class="trouble-a">
+          Two causes: (1) A dialog box is blocking Illustrator — bring Illustrator to the front and dismiss any open alerts. (2) A large package timed out — tell Claude to "run it backgrounded" and it will use a longer-timeout method automatically.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A Pantone color came out as a muddy placeholder</div>
+        <div class="trouble-a">
+          The Pantone book on your machine needs to be found. Make sure <strong>LogoPackageExpress</strong> is installed in Illustrator (it ships the Pantone library ColorProof reads). If a specific Pantone number is very new, tell Claude the CMYK build or hex value instead and it will use that.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Claude says it can't control Adobe Illustrator</div>
+        <div class="trouble-a">
+          Go to <strong>System Settings → Privacy &amp; Security → Automation</strong> and make sure the Claude/Cowork entry is allowed to control Adobe Illustrator. Toggle it off and back on if it looks enabled but isn't working.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A raster file (.jpg or .png) didn't update</div>
+        <div class="trouble-a">
+          The file's name needs to match its source <code>.ai</code> or <code>.svg</code> by base name, and include a pixel size token like <code>_1200px</code> or <code>_2160px</code> in the filename. Rename to match that pattern and re-run.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">How do I revert a fix if something went wrong?</div>
+        <div class="trouble-a">
+          Every fix takes a whole-folder snapshot to <code>~/Desktop/ColorProof Backups/</code> before touching anything. Find the folder with the timestamp from before your run, and copy those files back over the originals. Nothing is ever permanently overwritten.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">A spot color readback shows CMYK values instead of its Pantone name</div>
+        <div class="trouble-a">
+          This is normal and expected. When a Pantone spot lives in a CMYK document, Illustrator stores its preview color in CMYK. The separation plate name (what actually prints) is still correct — ColorProof uses the plate name, not the preview color.
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /troubleshooting -->
+
+  <footer>
+    <span>ColorProof v2.1.0 — Capsule internal tool</span>
+    <span>Questions? Ask your team lead or open a Cowork session and ask Claude.</span>
+  </footer>
+
+</div><!-- /page -->
+</body>
+</html>

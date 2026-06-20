@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>eBillity Timesheet — Install Guide</title>
+<style>
+  :root{
+    --bg:#0f1115; --surface:#171a21; --border:#262b36; --text:#e6e8ec; --muted:#7a8190;
+    --accent:#14b8a6; --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  .page{max-width:780px;margin:0 auto;padding:56px 32px 96px}
+  header{display:flex;align-items:flex-start;gap:20px;border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:40px}
+  .logo{width:48px;height:48px;flex-shrink:0;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;letter-spacing:-1px}
+  header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+  header p{color:var(--muted);font-size:14px;margin-top:5px}
+  .version-badge{margin-left:auto;flex-shrink:0;background:rgba(20,184,166,.15);color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid rgba(20,184,166,.3);white-space:nowrap;align-self:center}
+  .intro{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:28px;font-size:14px;color:var(--muted);line-height:1.7}
+  .intro strong{color:var(--text)}
+  .say{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:10px;padding:18px 22px;margin-bottom:48px}
+  .say h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text)}
+  .say ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .say li{font-size:13.5px;color:var(--muted);line-height:1.5;padding-left:18px;position:relative}
+  .say li::before{content:'\201C';position:absolute;left:0;color:var(--green);font-weight:700}
+  .steps{display:flex;flex-direction:column;gap:36px}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:0 20px}
+  .step-num{width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0}
+  .step-body{padding-top:8px}
+  .step-title{font-size:17px;font-weight:700;letter-spacing:-.2px;margin-bottom:8px}
+  .step-body p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:10px}
+  .step-body p:last-child{margin-bottom:0}
+  .step-body p strong{color:var(--text)}
+  pre{background:#0a0c10;border:1px solid var(--border);border-radius:8px;padding:16px 18px;font:13px/1.6 var(--mono);color:#c9d1d9;overflow-x:auto;margin:12px 0}
+  code{font:12.5px/1 var(--mono);background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:4px;padding:2px 6px;color:#c9d1d9}
+  pre code{background:none;border:none;padding:0;font-size:inherit}
+  .note{background:rgba(232,184,75,.07);border:1px solid rgba(232,184,75,.25);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--amber);margin:12px 0;line-height:1.6}
+  .note strong{color:#f0ca6a}
+  .tip{background:rgba(95,208,138,.07);border:1px solid rgba(95,208,138,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--green);margin:12px 0;line-height:1.6}
+  .trouble-section{margin-top:64px;border-top:1px solid var(--border);padding-top:40px}
+  .trouble-section h2{font-size:18px;font-weight:700;margin-bottom:20px}
+  .trouble-list{display:flex;flex-direction:column;gap:14px}
+  .trouble-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+  .trouble-a{font-size:13px;color:var(--muted);line-height:1.6}
+  .trouble-a code{font-size:11.5px}
+  footer{margin-top:64px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo">ET</div>
+    <div>
+      <h1>eBillity Timesheet</h1>
+      <p>Log and manage your TimeTracker hours by just talking to Claude</p>
+    </div>
+    <span class="version-badge">v1.0.0</span>
+  </header>
+
+  <div class="intro">
+    <strong>What this does.</strong> This skill fills out your eBillity (TimeTracker) weekly timesheet for you. Tell Claude what you worked on in plain language &mdash; <em>"I had a meeting with ampi for an hour yesterday"</em> &mdash; and it finds the job, picks the service item, and enters the hours, leaving everything in <strong>Pending</strong> so nothing is committed until you say so. It can also answer questions about your time, check whether your week is ready, and fix entries a manager sent back.
+    <br><br>
+    Two things it will never do: <strong>type your eBillity password</strong> (you sign in, it takes over after) and <strong>submit or approve time on its own</strong>. This is a one-time setup. After it, you just talk to Claude.
+  </div>
+
+  <div class="say">
+    <h3>How you actually use it (just describe the work)</h3>
+    <ul>
+      <li>Log 4 hours on AMP-048 for yesterday.</li>
+      <li>I had a meeting with ampi this morning for an hour &mdash; put it on the cheddar label job.</li>
+      <li>Add two more hours to AMP-049 on Tuesday.</li>
+      <li>How many hours do I have on AMP-034 this week?</li>
+      <li>Is my week ready to submit?</li>
+      <li>Submit my timesheet. (It shows you a summary and confirms first.)</li>
+    </ul>
+  </div>
+
+  <div class="steps">
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Get the skill file</div>
+        <p>You need a file called <code>ebillity-timesheet.skill</code>. Grab the latest from whoever set this up, and save it somewhere easy to find (Downloads is fine).</p>
+        <div class="note"><strong>Note:</strong> If your file picker won't accept a <code>.skill</code> file, rename it to <code>ebillity-timesheet.skill.zip</code> to upload, then rename it back afterward if needed.</div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Upload the skill to Claude</div>
+        <p>In Claude, go to <strong>Settings &rarr; Claude Cowork &rarr; Upload skill</strong> and pick your <code>ebillity-timesheet.skill</code> file. You'll then see <strong>eBillity Timesheet</strong> in your skills list.</p>
+        <div class="tip">Invoke it with <strong>/ebillity-timesheet</strong> or just by describing what you want ("log 3 hours on AMP-048 today"). No version number needed.</div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Connect Claude to your Chrome</div>
+        <p>This skill works by <strong>driving your web browser</strong> &mdash; it opens the eBillity timesheet and fills it the way you would. It doesn't run code or install anything on your Mac.</p>
+        <p>So you need <strong>Claude in Chrome</strong> connected: install the Claude browser extension and connect the Chrome you use for eBillity. When the skill runs, Claude uses that browser.</p>
+        <div class="note"><strong>Note:</strong> If more than one Chrome is connected, the skill asks which to use. Pick the one signed into eBillity.</div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Sign into eBillity yourself</div>
+        <p>In that Chrome, log into eBillity (TimeTracker) as you normally would. <strong>The skill never types your password</strong> &mdash; if it hits a login screen it pauses and hands it to you, then continues once you're in.</p>
+        <p>Stay signed in while you work. If your session times out mid-task, the skill notices, won't pretend it saved, and asks you to sign back in before redoing the step.</p>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Try it &mdash; read first, then log</div>
+        <p>Start with a question, which changes nothing:</p>
+        <pre>"What's pending on my timesheet this week?"</pre>
+        <p>Then log a real entry:</p>
+        <pre>"Log 2 hours on AMP-048 for yesterday."</pre>
+        <p>Claude finds the job, sets the service item, enters the hours, and you'll see eBillity's green <strong>"Saved successfully"</strong> confirmation. It stays <strong>Pending</strong> &mdash; nothing is submitted.</p>
+        <div class="tip"><strong>You're set.</strong> From here just describe your time: "add an hour to the dinner bell job Thursday," "how many hours this week," "is my week ready," "submit my timesheet." The skill handles the rest.</div>
+      </div>
+    </div>
+
+  </div><!-- /steps -->
+
+  <!-- Troubleshooting -->
+  <div class="trouble-section">
+    <h2>Troubleshooting</h2>
+    <div class="trouble-list">
+
+      <div class="trouble-item">
+        <div class="trouble-q">It stopped at a login screen, or says I'm not signed in</div>
+        <div class="trouble-a">By design &mdash; the skill never enters your eBillity password. Sign in yourself in the connected Chrome, then tell Claude to continue. If a session dropped mid-task, it catches that and won't report a false save; just sign back in and it picks up.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">It logged time to the wrong project</div>
+        <div class="trouble-a">A client name like "ampi" can match several jobs (<code>AMP-048</code>, <code>AMP-049</code>, and more). Give the job number, or pick from the list it shows. Everything is Pending, so fixing or clearing it takes a second.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">It picked the wrong service item</div>
+        <div class="trouble-a">Just name it &mdash; Design, Account Management, Copywriting, Art Buy, and so on. The skill matches against your real eBillity menu and won't invent one. You can also say "set the service item to Design" after the fact.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">I don't want it to submit or approve anything</div>
+        <div class="trouble-a">It won't. Logging only ever leaves time <strong>Pending</strong>. It submits or approves only when you explicitly say "submit my timesheet" or "approve all," and it shows a summary and asks first.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">It didn't seem to save</div>
+        <div class="trouble-a">eBillity autosaves and flashes a green "Saved successfully" banner; the skill checks for that before reporting success. If nothing saved (usually a dropped session), sign back in and ask it to redo the entry.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">How do I undo what it just entered?</div>
+        <div class="trouble-a">Right after, say "scratch that" or "make it 3 instead" and it corrects the last action. Otherwise the entry is Pending, so you can have it clear the cell anytime before you submit.</div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">Can it do expenses, or approve my team's time?</div>
+        <div class="trouble-a">No &mdash; on purpose. This is a personal <strong>time</strong> tool only. It doesn't touch expenses or notes, and it won't approve other people's time or lock time periods. Those stay out of this skill.</div>
+      </div>
+
+    </div>
+  </div><!-- /troubleshooting -->
+
+  <footer>
+    <span>eBillity Timesheet v1.0.0 &mdash; Capsule internal tool</span>
+    <span>Questions? Ask your team lead or open a session and ask Claude.</span>
+  </footer>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capsule Skills</title>
+<style>
+  :root{
+    --bg:#0f1115; --surface:#171a21; --border:#262b36; --text:#e6e8ec; --muted:#7a8190;
+    --accent:#e6e8ec; --green:#5fd08a; --amber:#e8b84b; --blue:#5b9cf6;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font:15px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .page{max-width:880px;margin:0 auto;padding:56px 32px 96px}
+  header{display:flex;align-items:flex-start;gap:20px;border-bottom:1px solid var(--border);padding-bottom:32px;margin-bottom:36px}
+  .brand{width:48px;height:48px;flex-shrink:0;background:var(--text);color:#0f1115;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;letter-spacing:-1px}
+  header h1{font-size:26px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+  header p{color:var(--muted);font-size:14px;margin-top:5px}
+  .count-badge{margin-left:auto;flex-shrink:0;background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid var(--border);white-space:nowrap;align-self:center}
+  .install{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:10px;padding:18px 22px;margin-bottom:36px}
+  .install h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text)}
+  .install ol{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:9px}
+  .install li{counter-increment:s;font-size:13.5px;color:var(--muted);line-height:1.5;padding-left:30px;position:relative}
+  .install li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;background:rgba(91,156,246,.15);color:var(--blue);border:1px solid rgba(91,156,246,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .install strong{color:var(--text)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:18px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:0}
+  .card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+  .mono{width:42px;height:42px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;letter-spacing:-.5px}
+  .card h2{font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
+  .ver{display:inline-block;margin-top:4px;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:1px 8px}
+  .card p{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:16px;flex-grow:1}
+  .actions{display:flex;gap:10px;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;text-decoration:none;border-radius:8px;padding:9px 15px;border:1px solid transparent;cursor:pointer;transition:filter .12s}
+  .btn:hover{filter:brightness(1.08)}
+  .btn-dl{color:#fff}
+  .btn-guide{background:transparent;border-color:var(--border);color:var(--text)}
+  .btn-guide:hover{background:rgba(255,255,255,.04);filter:none}
+  .err{color:var(--amber);font-size:13.5px}
+  footer{margin-top:56px;border-top:1px solid var(--border);padding-top:20px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  footer a{color:var(--muted);text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="brand">C</div>
+    <div>
+      <h1>Capsule Skills</h1>
+      <p>Internal Claude skills for the Capsule team. Download one, add it to the Claude app, then just talk to it.</p>
+    </div>
+    <span class="count-badge" id="count">&nbsp;</span>
+  </header>
+
+  <div class="install">
+    <h3>How to install any skill</h3>
+    <ol>
+      <li><strong>Download</strong> the skill below (a <code>.skill</code> file).</li>
+      <li>Open the <strong>Claude</strong> app and go to <strong>Settings &rarr; Claude Cowork &rarr; Upload skill</strong>.</li>
+      <li>Pick the file you just downloaded. The skill now shows up in your skills list, and you use it by describing what you want or typing its slash command.</li>
+    </ol>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <span>Capsule internal &mdash; Claude skills. Questions? Ask your team lead or ask Claude.</span>
+    <span><a href="https://github.com/capsule-brand/skills">capsule-brand/skills</a></span>
+  </footer>
+
+</div><!-- /page -->
+
+<script>
+  (function () {
+    var grid = document.getElementById('grid');
+    var count = document.getElementById('count');
+    function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    fetch('skills.json', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('manifest ' + r.status); return r.json(); })
+      .then(function (skills) {
+        count.textContent = skills.length + (skills.length === 1 ? ' skill' : ' skills');
+        grid.innerHTML = skills.map(function (s) {
+          var file = esc(s.file);
+          var name = (s.file.split('/').pop());
+          return '' +
+            '<div class="card">' +
+              '<div class="card-top">' +
+                '<div class="mono" style="background:' + esc(s.accent) + '">' + esc(s.mono) + '</div>' +
+                '<div><h2>' + esc(s.name) + '</h2><span class="ver">v' + esc(s.version) + '</span></div>' +
+              '</div>' +
+              '<p>' + esc(s.tagline) + '</p>' +
+              '<div class="actions">' +
+                '<a class="btn btn-dl" style="background:' + esc(s.accent) + '" href="' + file + '" download="' + esc(name) + '">Download skill</a>' +
+                '<a class="btn btn-guide" href="' + esc(s.guide) + '" target="_blank" rel="noopener">Install guide</a>' +
+              '</div>' +
+            '</div>';
+        }).join('');
+      })
+      .catch(function (e) {
+        count.textContent = '';
+        grid.innerHTML = '<p class="err">Could not load the skills list (' + esc(e.message) + '). Refresh in a moment.</p>';
+      });
+  })();
+</script>
+
+</body>
+</html>
