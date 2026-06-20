@@ -73,8 +73,8 @@
   .copy:hover{color:var(--text);background:rgba(255,255,255,.06)}
   .copy.done{color:#5fd08a}
   .btn{display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:600;text-decoration:none;border-radius:9px;padding:11px 16px;border:1px solid transparent;cursor:pointer;transition:filter .12s,background .12s,border-color .12s}
-  .btn-dl{color:#fff}
-  .btn-dl:hover{filter:brightness(1.09)}
+  .btn-dl{background:var(--text);color:#11131a}
+  .btn-dl:hover{filter:brightness(.93)}
   .btn-guide{background:transparent;border-color:var(--line2);color:var(--text)}
   .btn-guide:hover{background:rgba(255,255,255,.04)}
 
@@ -174,7 +174,7 @@
             '</div>' +
             '<div class="s-act">' +
               (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '" aria-label="Copy command">Copy</button></div>' : '') +
-              '<a class="btn btn-dl" style="background:' + esc(s.accent) + '" href="' + file + '" download="' + esc(fileName) + '">Download skill</a>' +
+              '<a class="btn btn-dl" href="' + file + '" download="' + esc(fileName) + '">Download skill</a>' +
               '<a class="btn btn-guide" href="' + esc(s.guide) + '" target="_blank" rel="noopener">Install guide</a>' +
             '</div>' +
           '</article>';
