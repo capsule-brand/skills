@@ -94,7 +94,7 @@
 
   /* Card tags — quiet inline copy, not pills */
   .tlabels{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
-  .tlabel{appearance:none;border:0;background:none;padding:0;font:12px/1.4 var(--sans);font-weight:600;color:var(--faint);cursor:pointer;transition:color .12s}
+  .tlabel{appearance:none;border:0;background:none;padding:0;font:12px/1.4 var(--sans);font-weight:600;color:var(--muted);cursor:pointer;transition:color .12s}
   .tlabel:not(:first-child)::before{content:"·";color:var(--line2);margin-right:6px;font-weight:700}
   .tlabel:hover,.tlabel.on{color:var(--red)}
 
@@ -262,8 +262,8 @@
             '<p class="tag">' + esc(s.tagline) + '</p>' +
             pills +
             '<dl class="facts">' +
-              (s.needs ? '<div class="fact"><dt>Needs</dt><dd>' + esc(s.needs) + '</dd></div>' : '') +
               (s.say ? '<div class="fact"><dt>Just say</dt><dd class="say">&ldquo;' + esc(s.say) + '&rdquo;</dd></div>' : '') +
+              (s.needs ? '<div class="fact"><dt>Needs</dt><dd>' + esc(s.needs) + '</dd></div>' : '') +
             '</dl>' +
             (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '" aria-label="Copy command">Copy</button></div>' : '') +
             '<div class="actions">' +
