@@ -298,12 +298,16 @@
         var counts = {};
         skills.forEach(function (s) { (s.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; }); });
         var tagList = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
+        var validTags = {};
+        tagList.forEach(function (t) { validTags[t.toLowerCase()] = true; });
+        // Only tags shared by 2+ skills earn a chip; singletons still filter via card copy.
+        var chipTags = tagList.filter(function (t) { return counts[t] >= 2; });
         var cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
         var chipBtns = [];
 
-        if (tagList.length > 1) {
+        if (chipTags.length) {
           var chips = ['<button class="filt" type="button" aria-pressed="true" data-tag="" tabindex="0">All <span class="c">' + skills.length + '</span></button>'];
-          tagList.forEach(function (t) {
+          chipTags.forEach(function (t) {
             chips.push('<button class="filt" type="button" aria-pressed="false" data-tag="' + esc(t) + '" tabindex="-1">' + esc(t) + ' <span class="c">' + counts[t] + '</span></button>');
           });
           filters.innerHTML = chips.join('');
@@ -378,7 +382,7 @@
         function tagFromHash() {
           var m = /[#&]tag=([^&]+)/.exec(location.hash);
           var t = m ? decodeURIComponent(m[1]) : '';
-          return (t && chipFor(t)) ? t : '';
+          return (t && validTags[t.toLowerCase()]) ? t : '';
         }
         apply(tagFromHash(), false);
         window.addEventListener('hashchange', function () {
