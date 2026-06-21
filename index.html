@@ -74,10 +74,32 @@
   .step code{font:12px/1 var(--mono);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#55504a}
 
   /* Tools */
-  .list-head{display:flex;align-items:baseline;justify-content:space-between;margin:62px 0 22px}
+  .list-head{display:flex;align-items:baseline;justify-content:space-between;margin:62px 0 18px}
   .list-head h2{font-family:var(--display);font-weight:600;font-size:27px;letter-spacing:-.015em}
-  .list-head .count{color:var(--faint);font-size:12.5px;font-weight:600;letter-spacing:.04em}
+  .list-head .count{color:var(--faint);font-size:12.5px;font-weight:600;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+
+  /* Tag filter */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px;align-items:center}
+  .filters[hidden]{display:none}
+  .filt{appearance:none;display:inline-flex;align-items:center;gap:7px;font:13px/1 var(--sans);font-weight:600;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;transition:background .14s,border-color .14s,color .14s,transform .12s}
+  .filt:hover{border-color:var(--ink);background:var(--card)}
+  .filt:active{transform:translateY(1px)}
+  .filt .c{font-size:11px;font-weight:700;color:var(--faint);font-variant-numeric:tabular-nums;transition:color .14s}
+  .filt[aria-pressed="true"]{background:var(--ink2);border-color:var(--ink2);color:var(--paper)}
+  .filt[aria-pressed="true"]:hover{filter:brightness(1.18)}
+  .filt[aria-pressed="true"] .c{color:rgba(245,241,232,.62)}
+
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .card[hidden]{display:none}
+
+  /* Card tag pills */
+  .tlabels{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .tlabel{appearance:none;font:11px/1 var(--sans);font-weight:600;letter-spacing:.01em;color:var(--muted);background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:5px 10px;cursor:pointer;transition:color .12s,border-color .12s,background .12s}
+  .tlabel:hover{color:var(--ink);border-color:var(--line2);background:var(--card)}
+  .tlabel.on{color:var(--red);border-color:var(--red)}
+
+  .empty{grid-column:1/-1;color:var(--muted);font-size:14.5px;padding:18px 0;text-align:center}
+  .empty button{font:inherit;font-weight:600;color:var(--red);background:none;border:0;border-bottom:1px solid var(--red);padding:0 0 1px;cursor:pointer}
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 24px 22px;display:flex;flex-direction:column;transition:transform .14s,box-shadow .14s,border-color .14s}
   .card:hover{transform:translateY(-2px);box-shadow:0 18px 40px -26px rgba(60,40,20,.32);border-color:var(--line2)}
@@ -136,6 +158,8 @@
     .card:nth-child(3){animation-delay:.16s}
     .card:nth-child(n+4){animation-delay:.22s}
     @keyframes rise{to{opacity:1;transform:none}}
+    .card.refilter{animation:settle .34s cubic-bezier(.2,.7,.2,1)}
+    @keyframes settle{from{opacity:.5;transform:translateY(7px) scale(.992)}to{opacity:1;transform:none}}
   }
 </style>
 </head>
@@ -195,6 +219,7 @@
       <h2>The tools</h2>
       <span class="count" id="count">&nbsp;</span>
     </div>
+    <div class="filters" id="filters" role="group" aria-label="Filter skills by tag" hidden></div>
     <main class="grid" id="grid"></main>
   </section>
 
@@ -209,6 +234,8 @@
   (function () {
     var grid = document.getElementById('grid');
     var count = document.getElementById('count');
+    var filters = document.getElementById('filters');
+    var active = '';
     function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function fmtDate(d){ try { return new Date(d + 'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
 
@@ -218,8 +245,13 @@
         count.textContent = skills.length + (skills.length === 1 ? ' tool' : ' tools');
         grid.innerHTML = skills.map(function (s) {
           var file = esc(s.file), fileName = s.file.split('/').pop(), cmd = s.invoke ? esc(s.invoke) : '';
+          var tags = Array.isArray(s.tags) ? s.tags : [];
+          var dataTags = tags.map(function(t){ return t.toLowerCase(); }).join('|');
+          var pills = tags.length ? '<div class="tlabels">' + tags.map(function(t){
+            return '<button class="tlabel" type="button" data-tag="' + esc(t) + '">' + esc(t) + '</button>';
+          }).join('') + '</div>' : '';
           return '' +
-          '<article class="card" style="--a:' + esc(s.accent) + '">' +
+          '<article class="card" data-tags="' + esc(dataTags) + '" style="--a:' + esc(s.accent) + '">' +
             '<div class="card-top">' +
               '<div class="chip" style="background:' + esc(s.accent) + '">' + (s.icon ? '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">' + s.icon + '</svg>' : esc(s.mono)) + '</div>' +
               '<div class="card-id"><h3>' + esc(s.name) + '</h3>' +
@@ -228,6 +260,7 @@
               '</div>' +
             '</div>' +
             '<p class="tag">' + esc(s.tagline) + '</p>' +
+            pills +
             '<dl class="facts">' +
               (s.needs ? '<div class="fact"><dt>Needs</dt><dd>' + esc(s.needs) + '</dd></div>' : '') +
               (s.say ? '<div class="fact"><dt>Just say</dt><dd class="say">&ldquo;' + esc(s.say) + '&rdquo;</dd></div>' : '') +
@@ -241,7 +274,15 @@
         }).join('');
 
         grid.addEventListener('click', function (e) {
-          var b = e.target.closest ? e.target.closest('.copy') : null;
+          if (!e.target.closest) return;
+          if (e.target.closest('[data-reset]')) { apply('', true); focusActiveChip(); return; }
+          var lbl = e.target.closest('.tlabel');
+          if (lbl) {
+            var t = lbl.getAttribute('data-tag');
+            apply(active.toLowerCase() === t.toLowerCase() ? '' : t, true);
+            return;
+          }
+          var b = e.target.closest('.copy');
           if (!b) return;
           var text = b.getAttribute('data-cmd');
           var done = function () { b.textContent = 'Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1300); };
@@ -251,6 +292,98 @@
             var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
             try { document.execCommand('copy'); } catch(e){} document.body.removeChild(t); done();
           }
+        });
+
+        // ---- Tag filter ----
+        var counts = {};
+        skills.forEach(function (s) { (s.tags || []).forEach(function (t) { counts[t] = (counts[t] || 0) + 1; }); });
+        var tagList = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+        var chipBtns = [];
+
+        if (tagList.length > 1) {
+          var chips = ['<button class="filt" type="button" aria-pressed="true" data-tag="" tabindex="0">All <span class="c">' + skills.length + '</span></button>'];
+          tagList.forEach(function (t) {
+            chips.push('<button class="filt" type="button" aria-pressed="false" data-tag="' + esc(t) + '" tabindex="-1">' + esc(t) + ' <span class="c">' + counts[t] + '</span></button>');
+          });
+          filters.innerHTML = chips.join('');
+          filters.hidden = false;
+          chipBtns = Array.prototype.slice.call(filters.querySelectorAll('.filt'));
+        }
+
+        function chipFor(tag) {
+          var key = tag.toLowerCase();
+          for (var i = 0; i < chipBtns.length; i++) {
+            if ((chipBtns[i].getAttribute('data-tag') || '').toLowerCase() === key) return chipBtns[i];
+          }
+          return null;
+        }
+        function focusActiveChip() { var c = chipFor(active); if (c) c.focus(); }
+
+        window.apply = function (tag, animate) {
+          active = tag || '';
+          var key = active.toLowerCase();
+          var shown = 0;
+          cards.forEach(function (card) {
+            var match = !key || (card.getAttribute('data-tags') || '').split('|').indexOf(key) !== -1;
+            card.hidden = !match;
+            if (match) {
+              shown++;
+              if (animate) { card.classList.remove('refilter'); void card.offsetWidth; card.classList.add('refilter'); }
+            }
+            var pills = card.querySelectorAll('.tlabel');
+            for (var i = 0; i < pills.length; i++) {
+              pills[i].classList.toggle('on', !!key && pills[i].getAttribute('data-tag').toLowerCase() === key);
+            }
+          });
+          chipBtns.forEach(function (b) {
+            var on = (b.getAttribute('data-tag') || '').toLowerCase() === key;
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            b.tabIndex = on ? 0 : -1;
+          });
+          count.textContent = shown + (shown === 1 ? ' tool' : ' tools') + (active ? ' · ' + active : '');
+          var ex = grid.querySelector('.empty'); if (ex) ex.remove();
+          if (!shown) {
+            var p = document.createElement('p'); p.className = 'empty';
+            p.innerHTML = 'Nothing tagged “' + esc(active) + '” yet. <button type="button" data-reset="1">Show all</button>';
+            grid.appendChild(p);
+          }
+          try {
+            if (key) history.replaceState(null, '', '#tag=' + encodeURIComponent(active));
+            else history.replaceState(null, '', location.pathname + location.search);
+          } catch (e) {}
+        };
+
+        // chip clicks + roving keyboard nav (toolbar pattern)
+        if (chipBtns.length) {
+          filters.addEventListener('click', function (e) {
+            var b = e.target.closest('.filt'); if (!b) return;
+            apply(b.getAttribute('data-tag'));
+          });
+          filters.addEventListener('keydown', function (e) {
+            var i = chipBtns.indexOf(document.activeElement);
+            if (i === -1) return;
+            var n = null;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') n = (i + 1) % chipBtns.length;
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') n = (i - 1 + chipBtns.length) % chipBtns.length;
+            else if (e.key === 'Home') n = 0;
+            else if (e.key === 'End') n = chipBtns.length - 1;
+            if (n === null) return;
+            e.preventDefault();
+            chipBtns[i].tabIndex = -1; chipBtns[n].tabIndex = 0; chipBtns[n].focus();
+          });
+        }
+
+        // honor #tag= deep link, and respond to later hash navigation
+        function tagFromHash() {
+          var m = /[#&]tag=([^&]+)/.exec(location.hash);
+          var t = m ? decodeURIComponent(m[1]) : '';
+          return (t && chipFor(t)) ? t : '';
+        }
+        apply(tagFromHash(), false);
+        window.addEventListener('hashchange', function () {
+          var t = tagFromHash();
+          if (t.toLowerCase() !== active.toLowerCase()) apply(t, true);
         });
       })
       .catch(function (e) {
