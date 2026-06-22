@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submit a skill · Capsule Skills</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f5f1e8; --paper2:#efe8d9; --card:#fffdf8;
+    --ink:#1b1d22; --ink2:#22252c; --muted:#6c6f77; --faint:#9c9789;
+    --line:#e5ddcd; --line2:#d8cfbc; --red:#b90021; --redhi:#d11030;
+    --display:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:inherit}
+  .wrap{max-width:760px;margin:0 auto;padding:30px 32px 110px}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+
+  .backbar{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mk{width:38px;height:38px;background:var(--red);border-radius:9px;display:flex;align-items:center;justify-content:center;padding:8px}
+  .brand .mk img{width:100%;height:100%;display:block;filter:brightness(0) invert(1)}
+  .brand b{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-.01em}
+  .back{font-size:13px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line2);padding-bottom:1px}
+  .back:hover{color:var(--ink);border-color:var(--red)}
+
+  h1{font-family:var(--display);font-optical-sizing:auto;font-weight:500;font-size:clamp(32px,5vw,46px);line-height:1.05;letter-spacing:-.025em;margin-top:34px}
+  h1 em{font-style:italic;font-weight:600;color:var(--red)}
+  .sub{color:var(--muted);font-size:16px;margin-top:14px;max-width:54ch}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-top:28px}
+  .panel h2{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:-.01em;margin-bottom:4px}
+  .panel .ph{color:var(--muted);font-size:13.5px;margin-bottom:18px}
+
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+  .field .hint{font-size:12px;color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0}
+  input[type=text],input[type=email],textarea{width:100%;font:14.5px/1.5 var(--sans);color:var(--ink);background:var(--paper2);border:1px solid var(--line2);border-radius:10px;padding:11px 12px;transition:border-color .12s,background .12s}
+  input[type=text]:focus,input[type=email]:focus,textarea:focus{outline:none;border-color:var(--ink);background:var(--card)}
+  textarea{resize:vertical;min-height:62px}
+  .field.bad input,.field.bad textarea{border-color:var(--red);background:#fdf3f0}
+  .field .msg{font-size:12px;color:var(--red);margin-top:5px;min-height:0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 120px;gap:16px}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font:14.5px/1 var(--sans);font-weight:600;text-decoration:none;border-radius:11px;padding:14px 22px;border:1px solid transparent;cursor:pointer;transition:transform .12s,background .12s,border-color .12s,filter .12s}
+  .btn-primary{background:var(--ink2);color:var(--paper)}
+  .btn-primary:hover{filter:brightness(1.22)}
+  .btn-primary[disabled]{opacity:.5;cursor:not-allowed;filter:none}
+  .btn-ghost{background:transparent;border-color:var(--line2);color:var(--ink)}
+  .btn-ghost:hover{background:var(--paper2);border-color:var(--ink)}
+
+  /* gate */
+  #gateRow{display:flex;gap:10px;align-items:flex-start}
+  #gateRow .field{flex:1;margin:0}
+  fieldset{border:0}
+  fieldset[disabled]{opacity:.45}
+  .locked #form{filter:blur(2px);pointer-events:none;user-select:none}
+
+  /* chip preview */
+  .preview{display:flex;align-items:center;gap:14px;padding:14px;border:1px dashed var(--line2);border-radius:12px;background:var(--paper2);margin-bottom:6px}
+  .chip{width:48px;height:48px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;letter-spacing:-.4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+  .preview .pv-name{font-size:17px;font-weight:700}
+  .preview .pv-tag{font-size:13px;color:var(--muted)}
+  .accent-row{display:flex;align-items:center;gap:10px}
+  input[type=color]{width:46px;height:38px;border:1px solid var(--line2);border-radius:9px;background:var(--card);padding:3px;cursor:pointer}
+
+  /* tags */
+  .tagbox{display:flex;flex-wrap:wrap;gap:7px;align-items:center;background:var(--paper2);border:1px solid var(--line2);border-radius:10px;padding:8px}
+  .tagbox.bad{border-color:var(--red)}
+  .tagchip{display:inline-flex;align-items:center;gap:6px;font:12.5px/1 var(--sans);font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:6px 10px}
+  .tagchip button{border:0;background:none;color:var(--muted);font-size:14px;line-height:1;cursor:pointer;padding:0}
+  .tagchip button:hover{color:var(--red)}
+  .tagbox input{flex:1;min-width:90px;border:0;background:none;font:14px/1 var(--sans);padding:6px 4px}
+  .tagbox input:focus{outline:none}
+
+  /* file drop */
+  .file{display:block;border:1.5px dashed var(--line2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:var(--paper2);transition:border-color .12s,background .12s}
+  .file:hover{border-color:var(--ink)}
+  .file.has{border-style:solid;border-color:#3aa76d;background:#f3faf5}
+  .file.bad{border-color:var(--red);background:#fdf3f0}
+  .file b{display:block;font-size:14.5px;color:var(--ink)}
+  .file span{font-size:12.5px;color:var(--muted)}
+  .file input{display:none}
+
+  .banner{border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:16px;display:none}
+  .banner.show{display:block}
+  .banner.err{background:#fdf3f0;border:1px solid #e9b4a8;color:#8a2a14}
+  .banner.ok{background:#f3faf5;border:1px solid #b6dcc4;color:#1f6e43}
+
+  .success{text-align:center;padding:14px 0}
+  .success .chip{margin:0 auto 14px}
+  .success h2{font-family:var(--display);margin-bottom:6px}
+  .success p{color:var(--muted);font-size:14.5px;margin-bottom:18px}
+  .success .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  .foot{margin-top:40px;font-size:13px;color:var(--muted)}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:7px}
+  @media (max-width:560px){ .wrap{padding:24px 20px 80px} .row,.row3{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap locked" id="page">
+
+  <div class="backbar">
+    <div class="brand">
+      <span class="mk"><img src="assets/capsule-c.svg" alt=""></span>
+      <b>Capsule Skills</b>
+    </div>
+    <a class="back" href="index.html">&larr; Back to catalog</a>
+  </div>
+
+  <div class="eyebrow" style="margin-top:30px">Contribute</div>
+  <h1>Submit a <em>skill</em>.</h1>
+  <p class="sub">Share a skill with the team. It goes live in the catalog as soon as you submit, so make sure it works. You'll need the access key from Brian or #design.</p>
+
+  <!-- Gate -->
+  <div class="panel" id="gatePanel">
+    <h2>Access key</h2>
+    <p class="ph">Enter the shared key to unlock the form.</p>
+    <div id="gateRow">
+      <div class="field">
+        <input type="text" id="gate" autocomplete="off" placeholder="Access key" aria-label="Access key">
+        <div class="msg" id="gateMsg"></div>
+      </div>
+      <button class="btn btn-primary" id="unlock" type="button" style="padding:11px 20px">Unlock</button>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form id="form" autocomplete="off">
+    <fieldset disabled id="formFields">
+    <div class="banner err" id="banner"></div>
+
+    <div class="panel">
+      <h2>The basics</h2>
+      <p class="ph">How the skill shows up on its catalog card.</p>
+
+      <div class="preview">
+        <span class="chip" id="pvChip">SK</span>
+        <div>
+          <div class="pv-name" id="pvName">Skill name</div>
+          <div class="pv-tag" id="pvTag">Your one-line description.</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field" data-f="name">
+          <label for="f-name">Name</label>
+          <input type="text" id="f-name" maxlength="60" placeholder="ColorProof">
+          <div class="msg"></div>
+        </div>
+        <div class="field" data-f="slug">
+          <label for="f-slug">Slug <span class="hint">— lowercase, used in the URL</span></label>
+          <input type="text" id="f-slug" maxlength="40" placeholder="colorproof">
+          <div class="msg"></div>
+        </div>
+      </div>
+
+      <div class="field" data-f="tagline">
+        <label for="f-tagline">Tagline</label>
+        <input type="text" id="f-tagline" maxlength="140" placeholder="Brand color preflight for Adobe Illustrator.">
+        <div class="msg"></div>
+      </div>
+
+      <div class="row3">
+        <div class="field" data-f="invoke">
+          <label for="f-invoke">Command <span class="hint">— optional</span></label>
+          <input type="text" id="f-invoke" maxlength="40" placeholder="/colorproof">
+          <div class="msg"></div>
+        </div>
+        <div class="field" data-f="accent">
+          <label for="f-accent">Accent</label>
+          <div class="accent-row">
+            <input type="color" id="f-accent" value="#b90021">
+            <input type="text" id="f-accentHex" maxlength="7" value="#b90021" style="width:96px">
+          </div>
+          <div class="msg"></div>
+        </div>
+        <div class="field" data-f="mono">
+          <label for="f-mono">Badge <span class="hint">— 2 chars</span></label>
+          <input type="text" id="f-mono" maxlength="2" placeholder="CP">
+          <div class="msg"></div>
+        </div>
+      </div>
+
+      <div class="field" data-f="tags">
+        <label>Tags <span class="hint">— up to 6</span></label>
+        <div class="tagbox" id="tagbox">
+          <input type="text" id="f-tag" placeholder="Type a tag, press Enter">
+        </div>
+        <div class="msg"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>How it's used</h2>
+      <p class="ph">Optional, but they make the card more helpful.</p>
+      <div class="field" data-f="say">
+        <label for="f-say">“Just say” example</label>
+        <input type="text" id="f-say" maxlength="200" placeholder="Proof this logo package against our brand colors.">
+        <div class="msg"></div>
+      </div>
+      <div class="field" data-f="needs">
+        <label for="f-needs">Needs</label>
+        <input type="text" id="f-needs" maxlength="200" placeholder="Adobe Illustrator installed and open.">
+        <div class="msg"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>The skill file</h2>
+      <p class="ph">A <code>.skill</code> archive (a zip) containing a top-level <code>SKILL.md</code>. Max 2&nbsp;MB.</p>
+      <div class="field" data-f="skill">
+        <label class="file" id="fileLabel" for="f-skill">
+          <b id="fileName">Choose a .skill file</b>
+          <span id="fileMeta">or drag it here</span>
+          <input type="file" id="f-skill" accept=".skill,application/zip">
+        </label>
+        <div class="msg"></div>
+      </div>
+      <div class="field" data-f="email">
+        <label for="f-email">Your email <span class="hint">— optional, so we can reach you</span></label>
+        <input type="email" id="f-email" maxlength="120" placeholder="you@capsule.com">
+        <div class="msg"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="submit" type="submit" style="width:100%">Publish skill</button>
+    </fieldset>
+  </form>
+
+  <!-- Success -->
+  <div class="panel success" id="done" style="display:none">
+    <span class="chip" id="doneChip">SK</span>
+    <h2 id="doneName">Published!</h2>
+    <p>Your skill is live in the catalog.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="index.html" id="doneView">View in catalog &rarr;</a>
+      <button class="btn btn-ghost" type="button" id="another">Submit another</button>
+    </div>
+  </div>
+
+  <p class="foot">Questions? Ask <strong>Brian</strong> or post in <strong>#design</strong> on Slack.</p>
+
+</div>
+
+<script>
+(function () {
+  var MAX_BYTES = 2000000;
+  var SLUG_RE = /^[a-z0-9][a-z0-9-]{0,38}[a-z0-9]$/;
+  var INVOKE_RE = /^\/[a-z0-9][a-z0-9-]{0,38}$/;
+  var ACCENT_RE = /^#[0-9a-fA-F]{6}$/;
+  var MONO_RE = /^[A-Za-z0-9]{2}$/;
+  var TAG_RE = /^[A-Za-z0-9 ]{1,24}$/;
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var page = $('page'), gate = $('gate'), fields = $('formFields');
+  var takenSlugs = {};
+  var tags = [];
+  var fileBuf = null; // validated File object
+
+  // ---- gate ----
+  function unlock() {
+    var v = gate.value.trim();
+    if (!v) { $('gateMsg').textContent = 'Enter the key.'; return; }
+    page.classList.remove('locked');
+    fields.disabled = false;
+    $('gatePanel').style.display = 'none';
+    $('f-name').focus();
+    loadTakenSlugs();
+  }
+  $('unlock').addEventListener('click', unlock);
+  gate.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); unlock(); } });
+
+  // Known slugs = static seeds + live uploads, to warn before submit.
+  function loadTakenSlugs() {
+    Promise.allSettled([
+      fetch('skills.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : []; }),
+      fetch('/api/skills').then(function (r) { return r.ok ? r.json() : []; })
+    ]).then(function (res) {
+      res.forEach(function (x) {
+        if (x.status === 'fulfilled' && Array.isArray(x.value)) {
+          x.value.forEach(function (s) { if (s && s.slug) takenSlugs[String(s.slug).toLowerCase()] = true; });
+        }
+      });
+    });
+  }
+
+  // ---- live preview ----
+  function refreshPreview() {
+    var name = $('f-name').value.trim();
+    var tag = $('f-tagline').value.trim();
+    var mono = $('f-mono').value.trim().toUpperCase();
+    var accent = $('f-accentHex').value.trim();
+    $('pvName').textContent = name || 'Skill name';
+    $('pvTag').textContent = tag || 'Your one-line description.';
+    $('pvChip').textContent = mono || deriveMono(name);
+    if (ACCENT_RE.test(accent)) { $('pvChip').style.background = accent; }
+  }
+  function deriveMono(name) {
+    var w = name.replace(/[^A-Za-z0-9 ]/g, ' ').trim().split(/\s+/).filter(Boolean);
+    var m = w.length >= 2 ? (w[0][0] + w[1][0]) : (w[0] || 'SK').slice(0, 2);
+    return m.toUpperCase();
+  }
+
+  // slug auto-suggest from name
+  var slugEdited = false;
+  $('f-slug').addEventListener('input', function () { slugEdited = true; });
+  $('f-name').addEventListener('input', function () {
+    if (!slugEdited) {
+      $('f-slug').value = $('f-name').value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+    }
+    refreshPreview();
+  });
+  $('f-tagline').addEventListener('input', refreshPreview);
+  $('f-mono').addEventListener('input', refreshPreview);
+
+  // accent: color <-> hex sync
+  $('f-accent').addEventListener('input', function () { $('f-accentHex').value = $('f-accent').value; refreshPreview(); });
+  $('f-accentHex').addEventListener('input', function () {
+    var v = $('f-accentHex').value.trim();
+    if (ACCENT_RE.test(v)) $('f-accent').value = v;
+    refreshPreview();
+  });
+
+  // ---- tags ----
+  var tagInput = $('f-tag'), tagbox = $('tagbox');
+  function renderTags() {
+    Array.prototype.slice.call(tagbox.querySelectorAll('.tagchip')).forEach(function (c) { c.remove(); });
+    tags.forEach(function (t, i) {
+      var c = document.createElement('span'); c.className = 'tagchip';
+      c.textContent = t;
+      var x = document.createElement('button'); x.type = 'button'; x.textContent = '×';
+      x.setAttribute('aria-label', 'Remove ' + t);
+      x.addEventListener('click', function () { tags.splice(i, 1); renderTags(); });
+      c.appendChild(x);
+      tagbox.insertBefore(c, tagInput);
+    });
+  }
+  function addTag() {
+    var v = tagInput.value.trim();
+    if (!v) return;
+    if (tags.length >= 6) { setMsg('tags', 'At most 6 tags.'); return; }
+    if (!TAG_RE.test(v)) { setMsg('tags', 'Letters, numbers, spaces only (≤24).'); return; }
+    if (tags.some(function (t) { return t.toLowerCase() === v.toLowerCase(); })) { tagInput.value = ''; return; }
+    tags.push(v); tagInput.value = ''; setMsg('tags', ''); renderTags();
+  }
+  tagInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(); }
+    else if (e.key === 'Backspace' && !tagInput.value && tags.length) { tags.pop(); renderTags(); }
+  });
+  tagInput.addEventListener('blur', addTag);
+
+  // ---- file ----
+  var fileLabel = $('fileLabel');
+  $('f-skill').addEventListener('change', function (e) { handleFile(e.target.files[0]); });
+  ['dragover', 'dragenter'].forEach(function (ev) { fileLabel.addEventListener(ev, function (e) { e.preventDefault(); }); });
+  fileLabel.addEventListener('drop', function (e) {
+    e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.files[0]) { $('f-skill').files = e.dataTransfer.files; handleFile(e.dataTransfer.files[0]); }
+  });
+  function handleFile(f) {
+    fileBuf = null;
+    setMsg('skill', ''); fileLabel.classList.remove('has', 'bad');
+    if (!f) { resetFileLabel(); return; }
+    if (!/\.skill$/i.test(f.name)) { fileBad('Must be a .skill file.'); return; }
+    if (f.size > MAX_BYTES) { fileBad('Too large (2 MB max).'); return; }
+    if (f.size === 0) { fileBad('File is empty.'); return; }
+    // magic bytes: PK\x03\x04 or PK\x05\x06
+    var fr = new FileReader();
+    fr.onload = function () {
+      var b = new Uint8Array(fr.result);
+      if (b[0] !== 0x50 || b[1] !== 0x4b || !((b[2] === 0x03 && b[3] === 0x04) || (b[2] === 0x05 && b[3] === 0x06))) {
+        fileBad('That is not a valid .skill (zip) file.'); return;
+      }
+      fileBuf = f;
+      fileLabel.classList.add('has');
+      $('fileName').textContent = f.name;
+      $('fileMeta').textContent = (f.size / 1024).toFixed(1) + ' KB · looks good';
+    };
+    fr.readAsArrayBuffer(f.slice(0, 4));
+  }
+  function fileBad(m) { fileLabel.classList.add('bad'); setMsg('skill', m); $('fileName').textContent = 'Choose a .skill file'; $('fileMeta').textContent = m; }
+  function resetFileLabel() { $('fileName').textContent = 'Choose a .skill file'; $('fileMeta').textContent = 'or drag it here'; }
+
+  // ---- field messaging ----
+  function setMsg(f, m) {
+    var wrap = document.querySelector('.field[data-f="' + f + '"]');
+    if (!wrap) return;
+    wrap.classList.toggle('bad', !!m);
+    var el = wrap.querySelector('.msg'); if (el) el.textContent = m || '';
+  }
+  function clearAll() { ['name','slug','tagline','invoke','accent','mono','tags','say','needs','skill','email'].forEach(function (f) { setMsg(f, ''); }); }
+
+  // ---- validate + submit ----
+  function validate() {
+    clearAll();
+    var ok = true, first = null;
+    function bad(f, m) { setMsg(f, m); ok = false; if (!first) first = f; }
+
+    var name = $('f-name').value.trim();
+    if (name.length < 1 || name.length > 60) bad('name', 'Required, ≤60 characters.');
+    var slug = $('f-slug').value.trim().toLowerCase();
+    if (!SLUG_RE.test(slug)) bad('slug', '2–40 lowercase letters, numbers, hyphens.');
+    else if (takenSlugs[slug]) bad('slug', 'That slug is already taken.');
+    var tagline = $('f-tagline').value.trim();
+    if (tagline.length < 1 || tagline.length > 140) bad('tagline', 'Required, ≤140 characters.');
+    var invoke = $('f-invoke').value.trim();
+    if (invoke) { if (invoke[0] !== '/') invoke = '/' + invoke; if (!INVOKE_RE.test(invoke)) bad('invoke', 'Looks like /my-skill.'); }
+    var accent = $('f-accentHex').value.trim();
+    if (!ACCENT_RE.test(accent)) bad('accent', 'Hex like #3b74f0.');
+    var mono = $('f-mono').value.trim().toUpperCase();
+    if (mono && !MONO_RE.test(mono)) bad('mono', 'Exactly 2 letters/digits.');
+    var say = $('f-say').value.trim(); if (say.length > 200) bad('say', '≤200 characters.');
+    var needs = $('f-needs').value.trim(); if (needs.length > 200) bad('needs', '≤200 characters.');
+    var email = $('f-email').value.trim(); if (email && !EMAIL_RE.test(email)) bad('email', 'Enter a valid email or leave blank.');
+    if (!fileBuf) bad('skill', 'Attach a valid .skill file.');
+
+    if (!ok && first) { var w = document.querySelector('.field[data-f="' + first + '"] input'); if (w) w.focus(); }
+    return ok ? { name: name, slug: slug, version: '1.0.0', tagline: tagline, invoke: invoke, accent: accent, mono: mono, say: say, needs: needs, email: email } : null;
+  }
+
+  function banner(kind, msg) {
+    var b = $('banner');
+    b.className = 'banner ' + kind + ' show';
+    b.textContent = msg;
+    b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    $('banner').className = 'banner';
+    var v = validate();
+    if (!v) return;
+
+    var fd = new FormData();
+    fd.append('gate', gate.value.trim());
+    fd.append('name', v.name);
+    fd.append('slug', v.slug);
+    fd.append('version', v.version);
+    fd.append('tagline', v.tagline);
+    if (v.invoke) fd.append('invoke', v.invoke);
+    fd.append('accent', v.accent);
+    if (v.mono) fd.append('mono', v.mono);
+    if (v.say) fd.append('say', v.say);
+    if (v.needs) fd.append('needs', v.needs);
+    if (v.email) fd.append('submitter_email', v.email);
+    tags.forEach(function (t) { fd.append('tags', t); });
+    fd.append('skill', fileBuf, fileBuf.name);
+
+    var btn = $('submit');
+    btn.disabled = true; btn.textContent = 'Publishing…';
+
+    fetch('/api/upload', { method: 'POST', body: fd })
+      .then(function (r) { return r.json().then(function (d) { return { status: r.status, d: d }; }); })
+      .then(function (res) {
+        btn.disabled = false; btn.textContent = 'Publish skill';
+        if (res.status === 201 && res.d && res.d.ok) { showSuccess(res.d.skill); return; }
+        var d = res.d || {};
+        if (d.field) setMsg(d.field === 'submitter_email' ? 'email' : d.field, d.message || 'Invalid.');
+        if (d.field === 'gate') { page.classList.add('locked'); fields.disabled = true; $('gatePanel').style.display = ''; $('gateMsg').textContent = d.message || 'Incorrect key.'; }
+        banner('err', d.message || ('Upload failed (' + res.status + ').'));
+      })
+      .catch(function () {
+        btn.disabled = false; btn.textContent = 'Publish skill';
+        banner('err', 'Network error. Try again.');
+      });
+  });
+
+  function showSuccess(skill) {
+    $('form').style.display = 'none';
+    var done = $('done');
+    done.style.display = '';
+    $('doneChip').textContent = skill.mono || '';
+    $('doneChip').style.background = skill.accent || '#646b78';
+    $('doneName').textContent = skill.name + ' is live';
+    done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  $('another').addEventListener('click', function () { location.reload(); });
+
+  refreshPreview();
+})();
+</script>
+
+</body>
+</html>

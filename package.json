@@ -1,0 +1,15 @@
+{
+  "name": "capsule-skills-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Capsule internal skills catalog + self-serve upload API",
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "busboy": "^1.6.0",
+    "fflate": "^0.8.2"
+  }
+}

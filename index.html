@@ -131,6 +131,25 @@
 
   .err{grid-column:1/-1;color:#9a6a1a;font-size:14px;padding:24px 0}
 
+  /* Uploaded-skill file viewer (escaped only — never renders markdown) */
+  .vw[hidden]{display:none}
+  .vw{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(27,29,34,.42);backdrop-filter:blur(2px)}
+  .vw-panel{background:var(--card);border:1px solid var(--line2);border-radius:16px;box-shadow:0 30px 70px -30px rgba(60,40,20,.5);width:min(920px,100%);max-height:84vh;display:flex;flex-direction:column;overflow:hidden}
+  .vw-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .vw-head .chip{width:34px;height:34px;border-radius:9px;font-size:13px}
+  .vw-head h3{font-size:16px;font-weight:700;letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vw-x{flex-shrink:0;font:18px/1 var(--sans);color:var(--muted);background:none;border:1px solid var(--line2);border-radius:8px;width:32px;height:32px;cursor:pointer}
+  .vw-x:hover{color:var(--ink);border-color:var(--ink)}
+  .vw-body{display:grid;grid-template-columns:210px 1fr;min-height:0;flex:1}
+  .vw-files{border-right:1px solid var(--line);overflow:auto;padding:8px;background:var(--paper2)}
+  .vw-file{display:flex;align-items:center;gap:7px;width:100%;text-align:left;font:12.5px/1.3 var(--sans);color:var(--muted);background:none;border:0;border-radius:7px;padding:8px 9px;cursor:pointer;word-break:break-all}
+  .vw-file:hover{background:rgba(0,0,0,.04);color:var(--ink)}
+  .vw-file.active{background:var(--ink2);color:var(--paper)}
+  .vw-main{overflow:auto;padding:16px 18px}
+  .vw-main pre{font:12.5px/1.7 var(--mono);color:#3f4048;white-space:pre-wrap;word-break:break-word}
+  .vw-empty{color:var(--muted);font-size:14px;padding:18px}
+  @media (max-width:560px){ .vw-body{grid-template-columns:1fr} .vw-files{max-height:120px} }
+
   footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--muted)}
   footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--red);padding-bottom:1px}
   footer a:hover{color:var(--red)}
@@ -182,6 +201,7 @@
       <div class="cta">
         <a class="btn btn-primary" href="#list">Browse the tools <span class="arw">&rarr;</span></a>
         <a class="btn btn-ghost" href="#howto">How to install</a>
+        <a class="btn btn-ghost" href="submit.html">Submit a skill</a>
       </div>
     </div>
     <div class="art">
@@ -230,6 +250,20 @@
 
 </div>
 
+<div class="vw" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Skill files">
+  <div class="vw-panel">
+    <div class="vw-head">
+      <span class="chip" id="vw-chip"></span>
+      <h3 id="vw-title"></h3>
+      <button class="vw-x" id="vw-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="vw-body">
+      <div class="vw-files" id="vw-files"></div>
+      <div class="vw-main" id="vw-main"></div>
+    </div>
+  </div>
+</div>
+
 <script>
   (function () {
     var grid = document.getElementById('grid');
@@ -239,12 +273,14 @@
     function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function fmtDate(d){ try { return new Date(d + 'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
 
-    fetch('skills.json', { cache: 'no-store' })
-      .then(function (r) { if (!r.ok) throw new Error('manifest ' + r.status); return r.json(); })
-      .then(function (skills) {
+    var SKILLS = [];
+
+    function render(skills) {
+        SKILLS = skills;
         count.textContent = skills.length + (skills.length === 1 ? ' tool' : ' tools');
         grid.innerHTML = skills.map(function (s) {
-          var file = esc(s.file), fileName = s.file.split('/').pop(), cmd = s.invoke ? esc(s.invoke) : '';
+          var isUpload = s.source === 'upload';
+          var file = esc(s.file), fileName = isUpload ? (s.slug + '.skill') : s.file.split('/').pop(), cmd = s.invoke ? esc(s.invoke) : '';
           var tags = Array.isArray(s.tags) ? s.tags : [];
           var dataTags = tags.map(function(t){ return t.toLowerCase(); }).join('|');
           var pills = tags.length ? '<div class="tlabels">' + tags.map(function(t){
@@ -268,7 +304,9 @@
             (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '" aria-label="Copy command">Copy</button></div>' : '') +
             '<div class="actions">' +
               '<a class="btn btn-dl" href="' + file + '" download="' + esc(fileName) + '">Download skill</a>' +
-              '<a class="btn btn-about" href="' + esc(s.guide) + '" target="_blank" rel="noopener">About skill</a>' +
+              (isUpload
+                ? '<button class="btn btn-about" type="button" data-files="' + esc(s.slug) + '">About skill</button>'
+                : '<a class="btn btn-about" href="' + esc(s.guide) + '" target="_blank" rel="noopener">About skill</a>') +
             '</div>' +
           '</article>';
         }).join('');
@@ -276,6 +314,8 @@
         grid.addEventListener('click', function (e) {
           if (!e.target.closest) return;
           if (e.target.closest('[data-reset]')) { apply('', true); focusActiveChip(); return; }
+          var fb = e.target.closest('[data-files]');
+          if (fb) { openViewer(fb.getAttribute('data-files')); return; }
           var lbl = e.target.closest('.tlabel');
           if (lbl) {
             var t = lbl.getAttribute('data-tag');
@@ -389,11 +429,73 @@
           var t = tagFromHash();
           if (t.toLowerCase() !== active.toLowerCase()) apply(t, true);
         });
-      })
-      .catch(function (e) {
-        count.textContent = '';
-        grid.innerHTML = '<p class="err">Could not load the skills list (' + esc(e.message) + '). Refresh in a moment.</p>';
+    }
+
+    // ---- Uploaded-skill file viewer (escaped only; never renders markdown) ----
+    var viewer = document.getElementById('viewer');
+    var vwFiles = document.getElementById('vw-files');
+    var vwMain = document.getElementById('vw-main');
+    var vwTitle = document.getElementById('vw-title');
+    var vwChip = document.getElementById('vw-chip');
+    var vwClose = document.getElementById('vw-close');
+    var lastFocus = null;
+    function findSkill(slug) {
+      var k = String(slug).toLowerCase();
+      for (var i = 0; i < SKILLS.length; i++) { if (String(SKILLS[i].slug).toLowerCase() === k) return SKILLS[i]; }
+      return null;
+    }
+    function showFile(content) { vwMain.innerHTML = '<pre><code>' + esc(content) + '</code></pre>'; }
+    function renderViewerFiles(list) {
+      vwFiles.innerHTML = '';
+      if (!list || !list.length) { vwMain.innerHTML = '<p class="vw-empty">No files to show.</p>'; return; }
+      list.forEach(function (f, i) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'vw-file' + (i === 0 ? ' active' : '');
+        b.textContent = f.name;
+        b.addEventListener('click', function () {
+          var kids = vwFiles.children; for (var k = 0; k < kids.length; k++) kids[k].classList.toggle('active', kids[k] === b);
+          showFile(f.content);
+        });
+        vwFiles.appendChild(b);
       });
+      showFile(list[0].content);
+    }
+    function openViewer(slug) {
+      var s = findSkill(slug); if (!s) return;
+      lastFocus = document.activeElement;
+      vwTitle.textContent = s.name;
+      vwChip.style.background = s.accent || '#646b78';
+      vwChip.textContent = s.mono || '';
+      vwFiles.innerHTML = ''; vwMain.innerHTML = '<p class="vw-empty">Loading…</p>';
+      viewer.hidden = false; vwClose.focus();
+      fetch('/api/skills?slug=' + encodeURIComponent(slug) + '&files=1')
+        .then(function (r) { return r.ok ? r.json() : { files: [] }; })
+        .then(function (d) { renderViewerFiles(d && d.files ? d.files : []); })
+        .catch(function () { vwMain.innerHTML = '<p class="vw-empty">Could not load files.</p>'; });
+    }
+    function closeViewer() { viewer.hidden = true; vwFiles.innerHTML = ''; vwMain.innerHTML = ''; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+    vwClose.addEventListener('click', closeViewer);
+    viewer.addEventListener('click', function (e) { if (e.target === viewer) closeViewer(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !viewer.hidden) closeViewer(); });
+
+    // ---- Load + merge: static seeds (skills.json) + DB uploads (/api/skills) ----
+    Promise.allSettled([
+      fetch('skills.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('manifest ' + r.status); return r.json(); }),
+      fetch('/api/skills').then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+    ]).then(function (res) {
+      var seeds = (res[0].status === 'fulfilled' && Array.isArray(res[0].value)) ? res[0].value : [];
+      var uploads = (res[1].status === 'fulfilled' && Array.isArray(res[1].value)) ? res[1].value : [];
+      if (res[0].status !== 'fulfilled' && !uploads.length) {
+        count.textContent = '';
+        grid.innerHTML = '<p class="err">Could not load the skills list. Refresh in a moment.</p>';
+        return;
+      }
+      // Dedup by slug — seeds win and keep skills.json order; uploads follow, newest-first (API order).
+      var bySlug = {}, merged = [];
+      seeds.forEach(function (s) { s.source = 'seed'; var k = String(s.slug || '').toLowerCase(); if (!bySlug[k]) { bySlug[k] = 1; merged.push(s); } });
+      uploads.forEach(function (s) { var k = String(s.slug || '').toLowerCase(); if (!bySlug[k]) { bySlug[k] = 1; merged.push(s); } });
+      render(merged);
+    });
   })();
 </script>
 
