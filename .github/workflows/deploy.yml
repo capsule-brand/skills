@@ -1,0 +1,44 @@
+name: Deploy to Vercel (production)
+
+# Auto-deploy on every push to main, matching the rest of the Capsule fleet.
+# Vercel's native git integration can't be used here (the repo is owned by the
+# Capsule-design GitHub identity while the Vercel project is under the personal
+# account), so we deploy via CLI with a VERCEL_TOKEN repo secret — same pattern
+# as apex-commandcenter.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-prod
+  cancel-in-progress: true
+
+env:
+  # Not secret — these just identify the target project.
+  VERCEL_ORG_ID: team_jGl2wOmEleWCUX2x4vh0ZzaZ
+  VERCEL_PROJECT_ID: prj_OOzInhCuboJoIo9RGVl6LTWA2fx4
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      - name: Pull project settings + env
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Build
+        run: vercel build --prod --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy prebuilt to production
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
