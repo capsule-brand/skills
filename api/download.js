@@ -31,8 +31,10 @@ export default async function handler(req, res) {
     const buf = Buffer.from(await blob.arrayBuffer());
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${slug}.skill"`);
-    // Content-addressed storage path changes on version bump, so long cache is safe.
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    // Short cache so takedowns/deletes propagate to the edge within minutes. The
+    // storage path is content-addressed, so a stale copy is never *wrong* — this
+    // TTL is purely about how fast a removed skill stops being downloadable.
+    res.setHeader('Cache-Control', 'public, max-age=300');
     return res.status(200).send(buf);
   } catch (e) {
     console.error('[api/download]', e && e.message);
