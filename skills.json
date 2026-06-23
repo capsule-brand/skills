@@ -2,8 +2,8 @@
   {
     "name": "eBillity Timesheet",
     "slug": "ebillity-timesheet",
-    "version": "1.0.2",
-    "updated": "2026-06-22",
+    "version": "1.0.3",
+    "updated": "2026-06-23",
     "mono": "ET",
     "accent": "#14b8a6",
     "tagline": "Log and manage your TimeTracker hours by just talking to Claude.",
