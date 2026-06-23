@@ -33,6 +33,10 @@
   .brand b{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:-.01em}
   .top .glink{font-size:13px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line2);padding-bottom:1px}
   .top .glink:hover{color:var(--ink);border-color:var(--red)}
+  .top-r{display:flex;align-items:center;gap:18px}
+  .submit-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:9px;padding:8px 14px;text-decoration:none;white-space:nowrap;transition:background .12s,border-color .12s,color .12s}
+  .submit-btn:hover{background:var(--ink2);border-color:var(--ink2);color:var(--paper)}
+  .submit-btn .plus{font-size:15px;line-height:1;margin-top:-1px}
 
   /* Hero */
   .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:48px 0 8px;border-top:1px solid var(--line)}
@@ -196,6 +200,7 @@
   }
   @media (max-width:560px){
     .wrap{padding:24px 20px 80px}
+    .top .glink{display:none}
   }
   @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
   @media (prefers-reduced-motion:no-preference){
@@ -220,7 +225,10 @@
       <span class="mk"><img src="assets/capsule-c.svg" alt=""></span>
       <b>Capsule Skills</b>
     </div>
-    <a class="glink" href="https://github.com/capsule-brand/skills">capsule-brand/skills</a>
+    <div class="top-r">
+      <a class="glink" href="https://github.com/capsule-brand/skills">capsule-brand/skills</a>
+      <a class="submit-btn" href="submit.html"><span class="plus">+</span> Submit a skill</a>
+    </div>
   </div>
 
   <section class="hero">
@@ -231,7 +239,6 @@
       <div class="cta">
         <a class="btn btn-primary" href="#list">Browse the tools <span class="arw">&rarr;</span></a>
         <a class="btn btn-ghost" href="#howto">How to install</a>
-        <a class="btn btn-ghost" href="submit.html">Submit a skill</a>
       </div>
     </div>
     <div class="art">
