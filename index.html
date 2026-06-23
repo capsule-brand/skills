@@ -125,10 +125,21 @@
   .copy.done{color:#1f8a4c}
   .actions{display:flex;gap:10px;margin-top:14px}
   .actions .btn{flex:1;padding:12px 14px;font-size:13.5px;border-radius:10px}
+  /* Icon action buttons */
+  .iconbtn{position:relative;flex:1;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0;border-radius:10px;border:1px solid transparent;cursor:pointer;background:transparent;transition:transform .12s,background .12s,border-color .12s,filter .12s,color .12s}
+  .iconbtn:active{transform:translateY(1px)}
+  .iconbtn svg{width:19px;height:19px;display:block}
   .btn-dl{background:#646b78;color:#fff}
   .btn-dl:hover{filter:brightness(.93)}
-  .btn-about{background:transparent;border-color:var(--line2);color:var(--ink)}
+  .btn-about{background:transparent;border:1px solid var(--line2);color:var(--ink)}
   .btn-about:hover{background:var(--paper2);border-color:var(--ink)}
+  .btn-del{background:transparent;border:1px solid var(--line2);color:var(--ink);max-width:54px;flex:0 0 auto;padding:0 16px}
+  .btn-del:hover{background:#fbe9e7;border-color:#d9534f;color:#c4302b}
+  /* Tooltip */
+  .iconbtn[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:var(--ink2,#2b2f36);color:#fff;font-size:12px;font-weight:600;line-height:1;white-space:nowrap;padding:7px 9px;border-radius:7px;opacity:0;pointer-events:none;transition:opacity .14s,transform .14s;z-index:5}
+  .iconbtn[data-tip]::before{content:"";position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%) translateY(4px);border:5px solid transparent;border-top-color:var(--ink2,#2b2f36);opacity:0;pointer-events:none;transition:opacity .14s,transform .14s;z-index:5}
+  .iconbtn[data-tip]:hover::after,.iconbtn[data-tip]:focus-visible::after{opacity:1;transform:translateX(-50%) translateY(0)}
+  .iconbtn[data-tip]:hover::before,.iconbtn[data-tip]:focus-visible::before{opacity:1;transform:translateX(-50%) translateY(0)}
 
   .err{grid-column:1/-1;color:#9a6a1a;font-size:14px;padding:24px 0}
 
@@ -151,6 +162,25 @@
   .vw-empty{color:var(--muted);font-size:14px;padding:18px}
   @media (max-width:560px){ .vw-body{grid-template-columns:1fr} .vw-files{max-height:120px} }
 
+  /* Delete confirmation dialog */
+  .dlg[hidden]{display:none}
+  .dlg{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(27,29,34,.42);backdrop-filter:blur(2px)}
+  .dlg-panel{background:var(--card);border:1px solid var(--line2);border-radius:16px;box-shadow:0 30px 70px -30px rgba(60,40,20,.5);width:min(420px,100%);padding:24px}
+  .dlg-panel h3{font-size:17px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+  .dlg-panel p{font-size:14px;line-height:1.55;color:var(--muted)}
+  .dlg-panel p b{color:var(--ink);font-weight:600}
+  .dlg-field{margin-top:16px}
+  .dlg-field[hidden]{display:none}
+  .dlg-field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px}
+  .dlg-input{width:100%;font:14px var(--sans);color:var(--ink);background:var(--paper2);border:1px solid var(--line2);border-radius:9px;padding:11px 12px;outline:none;transition:border-color .12s}
+  .dlg-input:focus{border-color:var(--ink)}
+  .dlg-err{margin-top:10px;font-size:13px;color:#c4302b;min-height:1px}
+  .dlg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+  .dlg-actions .btn{flex:0 0 auto;padding:11px 18px;font-size:13.5px;border-radius:10px}
+  .btn-danger{background:#c4302b;color:#fff;border:1px solid transparent}
+  .btn-danger:hover{filter:brightness(1.08)}
+  .btn-danger:disabled{opacity:.55;cursor:not-allowed;filter:none}
+
   footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--muted)}
   footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--red);padding-bottom:1px}
   footer a:hover{color:var(--red)}
@@ -166,7 +196,6 @@
   }
   @media (max-width:560px){
     .wrap{padding:24px 20px 80px}
-    .actions{flex-direction:column}
   }
   @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
   @media (prefers-reduced-motion:no-preference){
@@ -265,6 +294,22 @@
   </div>
 </div>
 
+<div class="dlg" id="delDlg" hidden role="dialog" aria-modal="true" aria-labelledby="del-title">
+  <div class="dlg-panel">
+    <h3 id="del-title">Delete this skill?</h3>
+    <p id="del-msg"></p>
+    <div class="dlg-field" id="del-pwfield" hidden>
+      <label for="del-pw">Re-enter the access key to confirm</label>
+      <input class="dlg-input" id="del-pw" type="password" autocomplete="off" placeholder="Access key" />
+    </div>
+    <div class="dlg-err" id="del-err" role="alert"></div>
+    <div class="dlg-actions">
+      <button class="btn btn-ghost" id="del-cancel" type="button">Cancel</button>
+      <button class="btn btn-danger" id="del-go" type="button">Continue</button>
+    </div>
+  </div>
+</div>
+
 <script>
   (function () {
     var grid = document.getElementById('grid');
@@ -273,6 +318,13 @@
     var active = '';
     function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function fmtDate(d){ try { return new Date(d + 'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
+
+    var SVG = function(p){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; };
+    var ICONS = {
+      download: SVG('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
+      about: SVG('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),
+      del: SVG('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>')
+    };
 
     var SKILLS = [];
 
@@ -304,36 +356,16 @@
             '</dl>' +
             (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '" aria-label="Copy command">Copy</button></div>' : '') +
             '<div class="actions">' +
-              '<a class="btn btn-dl" href="' + file + '" download="' + esc(fileName) + '">Download skill</a>' +
+              '<a class="iconbtn btn-dl" href="' + file + '" download="' + esc(fileName) + '" data-tip="Download skill" aria-label="Download skill">' + ICONS.download + '</a>' +
               (isUpload
-                ? '<button class="btn btn-about" type="button" data-files="' + esc(s.slug) + '">About skill</button>'
-                : '<a class="btn btn-about" href="' + esc(s.guide) + '" target="_blank" rel="noopener">About skill</a>') +
+                ? '<button class="iconbtn btn-about" type="button" data-files="' + esc(s.slug) + '" data-tip="About skill" aria-label="About skill">' + ICONS.about + '</button>'
+                : '<a class="iconbtn btn-about" href="' + esc(s.guide) + '" target="_blank" rel="noopener" data-tip="About skill" aria-label="About skill">' + ICONS.about + '</a>') +
+              (isUpload
+                ? '<button class="iconbtn btn-del" type="button" data-del="' + esc(s.slug) + '" data-name="' + esc(s.name) + '" data-tip="Delete skill" aria-label="Delete skill">' + ICONS.del + '</button>'
+                : '') +
             '</div>' +
           '</article>';
         }).join('');
-
-        grid.addEventListener('click', function (e) {
-          if (!e.target.closest) return;
-          if (e.target.closest('[data-reset]')) { apply('', true); focusActiveChip(); return; }
-          var fb = e.target.closest('[data-files]');
-          if (fb) { openViewer(fb.getAttribute('data-files')); return; }
-          var lbl = e.target.closest('.tlabel');
-          if (lbl) {
-            var t = lbl.getAttribute('data-tag');
-            apply(active.toLowerCase() === t.toLowerCase() ? '' : t, true);
-            return;
-          }
-          var b = e.target.closest('.copy');
-          if (!b) return;
-          var text = b.getAttribute('data-cmd');
-          var done = function () { b.textContent = 'Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1300); };
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(done).catch(function(){ done(); });
-          } else {
-            var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
-            try { document.execCommand('copy'); } catch(e){} document.body.removeChild(t); done();
-          }
-        });
 
         // ---- Tag filter ----
         var counts = {};
@@ -364,6 +396,7 @@
           return null;
         }
         function focusActiveChip() { var c = chipFor(active); if (c) c.focus(); }
+        window.focusActiveChip = focusActiveChip;
 
         window.apply = function (tag, animate) {
           active = tag || '';
@@ -432,6 +465,32 @@
         });
     }
 
+    // ---- Card actions (bound once; cards are re-rendered into #grid) ----
+    grid.addEventListener('click', function (e) {
+      if (!e.target.closest) return;
+      if (e.target.closest('[data-reset]')) { if (window.apply) window.apply('', true); if (window.focusActiveChip) window.focusActiveChip(); return; }
+      var del = e.target.closest('[data-del]');
+      if (del) { deleteSkill(del.getAttribute('data-del'), del.getAttribute('data-name')); return; }
+      var fb = e.target.closest('[data-files]');
+      if (fb) { openViewer(fb.getAttribute('data-files')); return; }
+      var lbl = e.target.closest('.tlabel');
+      if (lbl) {
+        var t = lbl.getAttribute('data-tag');
+        if (window.apply) window.apply(active.toLowerCase() === t.toLowerCase() ? '' : t, true);
+        return;
+      }
+      var b = e.target.closest('.copy');
+      if (!b) return;
+      var text = b.getAttribute('data-cmd');
+      var done = function () { b.textContent = 'Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1300); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){ done(); });
+      } else {
+        var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); } catch(e){} document.body.removeChild(t); done();
+      }
+    });
+
     // ---- Uploaded-skill file viewer (escaped only; never renders markdown) ----
     var viewer = document.getElementById('viewer');
     var vwFiles = document.getElementById('vw-files');
@@ -478,6 +537,72 @@
     vwClose.addEventListener('click', closeViewer);
     viewer.addEventListener('click', function (e) { if (e.target === viewer) closeViewer(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !viewer.hidden) closeViewer(); });
+
+    // ---- Delete an uploaded skill (confirm, then re-enter the access key) ----
+    var delDlg = document.getElementById('delDlg');
+    var delMsg = document.getElementById('del-msg');
+    var delPwField = document.getElementById('del-pwfield');
+    var delPw = document.getElementById('del-pw');
+    var delErr = document.getElementById('del-err');
+    var delGo = document.getElementById('del-go');
+    var delCancel = document.getElementById('del-cancel');
+    var delState = { slug: '', stage: 0, busy: false, lastFocus: null };
+
+    function deleteSkill(slug, name) {
+      delState.slug = slug; delState.stage = 1; delState.busy = false;
+      delState.lastFocus = document.activeElement;
+      delMsg.innerHTML = 'You’re about to permanently remove <b>' + esc(name || slug) + '</b> from the catalog. This can’t be undone.';
+      delErr.textContent = '';
+      delPw.value = ''; delPwField.hidden = true;
+      delGo.textContent = 'Continue'; delGo.disabled = false;
+      delDlg.hidden = false; delGo.focus();
+    }
+    function closeDelete() {
+      delDlg.hidden = true;
+      if (delState.lastFocus && delState.lastFocus.focus) delState.lastFocus.focus();
+    }
+    function submitDelete() {
+      if (delState.busy) return;
+      var pw = delPw.value;
+      if (!pw) { delErr.textContent = 'Enter the access key to confirm.'; delPw.focus(); return; }
+      delState.busy = true; delGo.disabled = true; delGo.textContent = 'Deleting…'; delErr.textContent = '';
+      fetch('/api/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: delState.slug, gate: pw })
+      }).then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, d: d || {} }; });
+      }).then(function (res) {
+        if (!res.ok || !res.d.ok) {
+          delState.busy = false; delGo.disabled = false; delGo.textContent = 'Delete';
+          delErr.textContent = res.d.message || 'Could not delete the skill.';
+          if (res.d.field === 'gate' || res.d.error === 'bad_gate') { delPw.value = ''; delPw.focus(); }
+          return;
+        }
+        // Reload so the catalog counts / filter chips re-derive cleanly from
+        // the now-shorter list (uploads come from /api/skills, which now omits it).
+        closeDelete();
+        location.reload();
+      }).catch(function () {
+        delState.busy = false; delGo.disabled = false; delGo.textContent = 'Delete';
+        delErr.textContent = 'Network error. Try again.';
+      });
+    }
+    delGo.addEventListener('click', function () {
+      if (delState.stage === 1) {
+        // Confirmed — now require the access key.
+        delState.stage = 2;
+        delPwField.hidden = false;
+        delGo.textContent = 'Delete';
+        delPw.focus();
+        return;
+      }
+      submitDelete();
+    });
+    delPw.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submitDelete(); } });
+    delCancel.addEventListener('click', closeDelete);
+    delDlg.addEventListener('click', function (e) { if (e.target === delDlg) closeDelete(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !delDlg.hidden) closeDelete(); });
 
     // ---- Load + merge: static seeds (skills.json) + DB uploads (/api/skills) ----
     Promise.allSettled([
