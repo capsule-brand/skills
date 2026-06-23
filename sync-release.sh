@@ -121,7 +121,11 @@ PY
     sed -i '' -E "s/v[0-9]+\.[0-9]+\.[0-9]+/v$NEWVER/g" "$SKILLDIR/install-guide.html"
   fi
   # Desktop staging: find the folder holding this slug's .skill, refresh + rename
-  OLD_DESK="$(find "$DESK" -maxdepth 1 -type d 2>/dev/null | while read -r d; do [[ -f "$d/$SLUG.skill" ]] && echo "$d"; done | head -1)"
+  # NB: `| head -1` closes the pipe early; under `set -o pipefail` + `set -e` the
+  # SIGPIPE'd upstream made the whole substitution non-zero and aborted the release
+  # right after the repo files were updated (before Desktop staging + commit/push).
+  # The trailing `|| true` keeps that pipeline from killing the run.
+  OLD_DESK="$(find "$DESK" -maxdepth 1 -type d 2>/dev/null | while read -r d; do [[ -f "$d/$SLUG.skill" ]] && echo "$d"; done | head -1 || true)"
   if [[ -n "$OLD_DESK" ]]; then
     BASE="$(basename "$OLD_DESK" | sed -E 's/ [0-9]+\.[0-9]+\.[0-9]+$//')"
     NEW_DESK="$DESK/$BASE $NEWVER"
