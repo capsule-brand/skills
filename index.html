@@ -38,16 +38,17 @@
   .top-link{font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);background:none;border:0;cursor:pointer;padding:0;border-bottom:1px solid transparent;white-space:nowrap;transition:color .12s,border-color .12s}
   .top-link:hover{color:var(--ink);border-color:var(--red)}
 
-  /* Collapsible onboarding (explainer + install guide) */
-  .onboard{margin-top:28px}
-  .onboard-bar{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 20px;cursor:pointer;font:inherit;color:var(--ink);text-align:left;transition:border-color .12s}
-  .onboard-bar:hover{border-color:var(--ink)}
-  .ob-text{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.01em}
-  .ob-eye{color:var(--red);font-style:italic;margin-right:6px}
-  .ob-chev{flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .18s;margin-right:3px}
+  /* Collapsible onboarding (explainer + install guide) — toggle is a quiet text link */
+  .onboard{margin-top:22px}
+  .onboard-bar{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);transition:color .12s}
+  .onboard-bar:hover{color:var(--ink)}
+  .onboard-bar:hover .ob-text{border-color:var(--red)}
+  .ob-text{border-bottom:1px solid transparent;transition:border-color .12s}
+  .ob-eye{color:var(--red);margin-right:5px}
+  .ob-chev{flex:none;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .18s;opacity:.7}
   .onboard-bar[aria-expanded="true"] .ob-chev{transform:rotate(45deg)}
   .onboard-body[hidden]{display:none}
-  .onboard-body .explain{margin-top:16px}
+  .onboard-body .explain{margin-top:14px}
   .onboard-body .howto{margin-top:18px}
 
   /* Hero */
