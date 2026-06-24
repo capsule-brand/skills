@@ -357,7 +357,7 @@
     .card:nth-child(3){animation-delay:.16s}
     .card:nth-child(n+4){animation-delay:.22s}
     @keyframes rise{to{opacity:1;transform:none}}
-    .card.refilter{animation:settle .34s cubic-bezier(.2,.7,.2,1)}
+    .card.refilter{animation:settle .34s cubic-bezier(.2,.7,.2,1) forwards}
     @keyframes settle{from{opacity:.5;transform:translateY(7px) scale(.992)}to{opacity:1;transform:none}}
   }
 </style>
@@ -808,6 +808,7 @@
 
         var query = '';
         var sortMode = 'new';                                 // 'new' (by updated, desc) | 'az' (by name)
+        var sortDirty = true;                                 // grid order needs (re)applying — true on load, sort change, post-search
         function sortedCards(){
           return cards.slice().sort(function(a,b){
             var sa = findSkill(a.getAttribute('data-slug')) || {};
@@ -858,8 +859,10 @@
           if (scores) {                                         // reorder by score when searching
             matched.sort(function(a,b){ return b.score - a.score; });
             matched.forEach(function(m){ grid.appendChild(m.card); });
-          } else {                                              // no query: order by the chosen sort
+            sortDirty = true;                                   // grid no longer in sort order
+          } else if (sortDirty) {                               // (re)apply the chosen sort only when needed — plain tag filtering leaves order untouched
             sortedCards().forEach(function(c){ grid.appendChild(c); });
+            sortDirty = false;
           }
           chipBtns.forEach(function (b) {
             var on = (b.getAttribute('data-tag') || '').toLowerCase() === key;
@@ -952,7 +955,7 @@
           sortEl.addEventListener('click', function (e) {
             var b = e.target.closest('.filt'); if (!b) return;
             var mode = b.getAttribute('data-sort'); if (mode === sortMode) return;
-            sortMode = mode;
+            sortMode = mode; sortDirty = true;
             var bs = sortEl.querySelectorAll('.filt');
             for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-pressed', bs[i].getAttribute('data-sort') === mode ? 'true' : 'false');
             apply(undefined, true);
