@@ -11,7 +11,7 @@
 <style>
   :root{
     --paper:#f5f1e8; --paper2:#efe8d9; --card:#fffdf8;
-    --ink:#1b1d22; --ink2:#22252c; --muted:#6c6f77; --faint:#9c9789;
+    --ink:#1b1d22; --ink2:#22252c; --muted:#6c6f77; --faint:#7a7568;
     --line:#e5ddcd; --line2:#d8cfbc; --red:#b90021; --redhi:#d11030;
     --display:"Fraunces",Georgia,"Times New Roman",serif;
     --sans:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,sans-serif;
@@ -66,21 +66,111 @@
   .code .k{color:var(--red)}
   .code .d{color:#8a8c93}
   .tag-pill{position:absolute;left:18px;top:-12px;z-index:2;background:var(--card);border:1px solid var(--line2);border-radius:7px;padding:4px 10px;font:11px/1 var(--mono);color:var(--muted);box-shadow:0 2px 6px rgba(60,40,20,.07)}
+  .doc-cap{font-size:12px;color:var(--faint);padding:0 18px 16px;line-height:1.45}
 
-  /* Installing */
+  /* "What's a skill?" explainer strip */
+  .explain{margin-top:64px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;display:grid;grid-template-columns:.8fr 1.2fr;gap:40px;align-items:start}
+  .explain-q .eyebrow{margin-bottom:14px;display:block}
+  .explain-q h2{font-family:var(--display);font-weight:600;font-size:27px;letter-spacing:-.015em;line-height:1.05}
+  .explain-q h2 em{font-style:italic;font-weight:600;color:var(--red)}
+  .explain-a p{color:var(--muted);font-size:15px;line-height:1.6}
+  .explain-a p b{color:var(--ink);font-weight:600}
+  .explain-a p em{font-style:italic;color:var(--red);font-weight:500;font-family:var(--display)}
+  .explain-eg{font-family:var(--display);font-style:italic;color:var(--ink);font-size:16px;margin-top:10px}
+  .explain-pts{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:11px}
+  .explain-pts li{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--muted);line-height:1.45}
+  .explain-pts li b{color:var(--ink);font-weight:600}
+  .ep-ic{flex:none;width:26px;height:26px;border-radius:7px;background:var(--paper2);border:1px solid var(--line);color:var(--red);display:inline-flex;align-items:center;justify-content:center}
+  .ep-ic svg{width:15px;height:15px;display:block}
+
+  /* Inline jargon definitions (generalizes .iconbtn[data-tip] bubble) */
+  .def{position:relative;appearance:none;border:0;background:none;padding:0;font:inherit;color:var(--ink);font-weight:600;cursor:help;border-bottom:1.5px dotted var(--line2);transition:border-color .12s}
+  .def:hover,.def:focus-visible{border-color:var(--red)}
+  .def::after{content:attr(data-def);position:absolute;bottom:calc(100% + 9px);left:0;width:max(220px,100%);max-width:260px;white-space:normal;text-align:left;line-height:1.4;background:var(--ink2);color:#fff;font:500 12.5px/1.4 var(--sans);padding:10px 12px;border-radius:9px;box-shadow:0 12px 30px -12px rgba(60,40,20,.5);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity .14s,transform .14s;z-index:20}
+  .def::before{content:"";position:absolute;bottom:calc(100% + 4px);left:14px;border:5px solid transparent;border-top-color:var(--ink2);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity .14s,transform .14s;z-index:20}
+  .def:hover::after,.def:focus-visible::after,.def:hover::before,.def:focus-visible::before{opacity:1;transform:translateY(0)}
+  .def--left::after{left:auto;right:0}
+  .def--left::before{left:auto;right:14px}
+
+  /* Installing — illustrated panels */
   .howto{margin-top:64px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px}
-  .howto h2{margin-bottom:18px}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-  .step{display:flex;gap:16px;font-size:14px;line-height:1.5;color:var(--muted)}
+  .howto h2{margin-bottom:8px}
+  .howto-lede{color:var(--muted);font-size:15px;line-height:1.55;margin:0 0 18px;max-width:54ch}
+  .steps{display:flex;flex-direction:column;gap:0}
+  .step{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;padding:28px 0;color:var(--muted);font-size:14.5px;line-height:1.55}
+  .step + .step{border-top:1px solid var(--line)}
+  .step-body{display:flex;gap:18px}
   .step .sb{flex:1;min-width:0}
-  .step b{display:block;color:var(--ink);font-weight:600;font-size:14px;margin-bottom:3px}
-  .step .n{flex:none;font-family:var(--display);font-size:64px;font-weight:600;color:var(--red);line-height:.82;margin-top:-4px}
-  .step code{font:12px/1 var(--mono);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#55504a}
+  .step b{display:block;color:var(--ink);font-weight:600;font-size:15px;margin-bottom:5px}
+  .step b.inl{display:inline;font-size:inherit;margin:0}
+  .step .n{flex:none;font-family:var(--display);font-size:56px;font-weight:600;color:var(--red);line-height:.8;margin-top:-2px}
+  .step code{font:12px/1.4 var(--mono);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#55504a}
+  .step:nth-child(even) .step-body{order:2}
+  .step:nth-child(even) .shot{order:1}
+
+  /* THE SWAP SEAM — replace inner mock with <img>; frame stays identical */
+  .shot{position:relative;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:var(--paper2);border:1px solid var(--line2);box-shadow:0 1px 2px rgba(60,40,20,.05),0 22px 44px -30px rgba(60,40,20,.30);display:flex;align-items:center;justify-content:center;padding:22px;margin:0}
+  .shot > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .mk-chip{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+  .mk-chip.sm{width:22px;height:22px;border-radius:6px}
+  .mk-lines{display:flex;flex-direction:column;gap:6px;flex:1}
+  .mk-lines i{height:7px;border-radius:4px;background:var(--line2);display:block}
+  .mk-btn{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--sans);border-radius:8px;padding:9px 12px}
+  .mk-btn--ghost{border:1px solid var(--line2);color:var(--muted);background:var(--card)}
+  .mk-btn--solid{background:var(--ink2);color:var(--paper)}
+  .is-target{position:relative;box-shadow:0 0 0 2px var(--card),0 0 0 4px rgba(185,0,33,.55)}
+  .mk-card{width:78%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 26px -20px rgba(60,40,20,.4)}
+  .mk-row{display:flex;align-items:center;gap:12px}
+  .file-pop{position:absolute;left:14%;bottom:12%;background:var(--card);border:1px solid var(--line2);border-radius:7px;padding:5px 9px;box-shadow:0 6px 16px -8px rgba(60,40,20,.4)}
+  .file-pop code{font:11px/1 var(--mono);color:var(--muted)}
+  .mk-win{width:100%;height:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 26px -20px rgba(60,40,20,.4)}
+  .mk-titlebar{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line)}
+  .mk-dot{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+  .mk-dot:first-child{background:#e7a6a6}
+  .mk-title{margin-left:8px;font:600 11px/1 var(--sans);color:var(--faint)}
+  .mk-split{flex:1;display:grid;grid-template-columns:38% 1fr;min-height:0}
+  .mk-side{display:flex;flex-direction:column;gap:3px;padding:10px 8px;border-right:1px solid var(--line);background:var(--paper2)}
+  .mk-nav{font:600 11px/1 var(--sans);color:var(--muted);padding:7px 9px;border-radius:6px}
+  .mk-nav.is-target{background:var(--card);color:var(--ink);box-shadow:0 0 0 1.5px rgba(185,0,33,.55)}
+  .mk-pane{flex:1;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .mk-pane--full{padding:16px;gap:14px}
+  .mk-field{height:30px;border-radius:7px;border:1px solid var(--line);background:var(--paper);width:100%}
+  .mk-skillrow{display:flex;align-items:center;gap:10px}
+  .mk-skillrow i{height:8px;border-radius:4px;background:var(--line2);display:block}
+  .mk-dropzone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:1.5px dashed var(--line2);border-radius:9px;color:var(--faint);min-height:84px}
+  .mk-chat{width:88%;display:flex;flex-direction:column;gap:14px}
+  .mk-bubble{align-self:flex-end;max-width:80%;background:var(--ink2);color:var(--paper);font:500 12.5px/1.45 var(--sans);padding:10px 13px;border-radius:12px 12px 4px 12px}
+  .mk-inputbar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line2);border-radius:11px;padding:6px 6px 6px 14px;box-shadow:0 6px 18px -12px rgba(60,40,20,.4)}
+  .mk-input{flex:1;font:13px/1 var(--sans);color:var(--faint);display:flex;align-items:center}
+  .caret{width:1.5px;height:15px;background:var(--red);margin-left:2px}
+  .mk-send{width:30px;height:30px;flex:none;border-radius:8px;background:var(--ink2);color:var(--paper);display:flex;align-items:center;justify-content:center}
+  .cursor{position:absolute;width:16px;height:16px;transform:translate(-2px,-2px);filter:drop-shadow(0 1px 2px rgba(60,40,20,.4));z-index:3}
+  .cursor::before{content:"";position:absolute;inset:0;background:var(--ink2);clip-path:polygon(0 0,0 72%,22% 56%,40% 96%,56% 88%,38% 50%,68% 50%)}
 
   /* Tools */
   .list-head{display:flex;align-items:baseline;justify-content:space-between;margin:62px 0 18px}
   .list-head h2{font-family:var(--display);font-weight:600;font-size:27px;letter-spacing:-.015em}
   .list-head .count{color:var(--faint);font-size:12.5px;font-weight:600;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+
+  /* Task-based finder */
+  .finder{margin-bottom:18px}
+  .finder-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:12px 14px;transition:border-color .12s,box-shadow .12s}
+  .finder-box:focus-within{border-color:var(--ink);box-shadow:0 1px 2px rgba(27,29,34,.1)}
+  .finder-ic{flex:none;color:var(--faint);display:inline-flex}
+  .finder-ic svg{width:18px;height:18px;display:block}
+  .finder-box input{flex:1;min-width:0;border:0;background:none;font:15px var(--sans);color:var(--ink);outline:none}
+  .finder-box input::placeholder{color:var(--faint)}
+  .finder-clear{flex:none;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:0;background:none;color:var(--muted);border-radius:7px;cursor:pointer;transition:background .12s,color .12s}
+  .finder-clear:hover{background:var(--paper2);color:var(--ink)}
+  .finder-clear[hidden]{display:none}
+  .finder-clear svg{width:15px;height:15px}
+  .finder-intents{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:10px}
+  .finder-intents[hidden]{display:none}
+  .fi-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+  .fi-chip{font:12.5px/1 var(--sans);font-weight:600;color:var(--muted);background:var(--card);border:1px dashed var(--line2);border-radius:999px;padding:6px 11px;cursor:pointer;transition:border-color .12s,color .12s,background .12s}
+  .fi-chip:hover{border-style:solid;border-color:var(--ink);color:var(--ink)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
 
   /* Tag filter — segmented control */
   .filters{display:inline-flex;flex-wrap:wrap;gap:4px;margin:0 0 24px;align-items:center;background:var(--paper2);border:1px solid var(--line);border-radius:999px;padding:4px;box-shadow:inset 0 1px 2px rgba(27,29,34,.06)}
@@ -112,7 +202,7 @@
   .card-id{min-width:0}
   .card-id h3{font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
   .card-id .meta{display:flex;align-items:center;gap:9px;margin-top:4px}
-  .ver{font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:2px 8px}
+  .ver{font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:2px 8px;opacity:.6}
   .upd{font-size:11.5px;color:var(--faint)}
   .tag{color:var(--muted);font-size:14.5px;line-height:1.55;margin-top:16px}
   .facts{margin-top:15px;display:flex;flex-direction:column;gap:8px}
@@ -120,6 +210,14 @@
   .fact dt{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);padding-top:2px}
   .fact dd{font-size:13px;line-height:1.5;color:var(--muted)}
   .fact dd.say{color:var(--ink);font-family:var(--display);font-style:italic;font-size:14.5px}
+  .saybtn{display:flex;align-items:center;gap:8px;width:100%;text-align:left;appearance:none;border:0;background:none;padding:6px 8px;margin:-6px -8px 0;border-radius:8px;cursor:pointer;transition:background .12s}
+  .saybtn:hover,.saybtn:focus-visible{background:var(--paper2)}
+  .say-q{flex:1;font-family:var(--display);font-style:italic;font-size:14.5px;color:var(--ink);line-height:1.45}
+  .say-copy{flex:none;display:inline-flex;align-items:center;gap:4px;font:600 11px/1 var(--sans);color:var(--muted);transition:opacity .12s,color .12s}
+  @media (hover:hover){ .say-copy{opacity:0} .saybtn:hover .say-copy,.saybtn:focus-visible .say-copy{opacity:1} }
+  .say-copy svg{width:13px;height:13px}
+  .saybtn.done .say-copy{color:#1f8a4c;opacity:1}
+  .say-hint{display:block;margin-top:6px;font:500 11.5px/1 var(--sans);color:var(--faint)}
   .cmd{display:flex;align-items:stretch;border:1px solid var(--line2);border-radius:9px;overflow:hidden;background:var(--paper2);margin-top:18px}
   .cmd code{flex:1;min-width:0;font:12.5px/1 var(--mono);color:#55504a;padding:10px 11px;display:flex;align-items:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .copy{flex-shrink:0;font:11px/1 var(--sans);font-weight:600;color:var(--muted);background:rgba(0,0,0,.03);border:0;border-left:1px solid var(--line2);padding:0 13px;cursor:pointer;transition:color .12s,background .12s}
@@ -162,7 +260,33 @@
   .vw-main{overflow:auto;padding:16px 18px}
   .vw-main pre{font:12.5px/1.7 var(--mono);color:#3f4048;white-space:pre-wrap;word-break:break-word}
   .vw-empty{color:var(--muted);font-size:14px;padding:18px}
-  @media (max-width:560px){ .vw-body{grid-template-columns:1fr} .vw-files{max-height:120px} }
+  /* Friendly skill detail */
+  .vw-headtext{flex:1;min-width:0}
+  .vw-tagline{font-size:13px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vw-tabs{margin:0}
+  .vw-about{padding:22px 24px;overflow:auto}
+  .vw-block{margin-bottom:22px}
+  .vw-h{font:700 10.5px/1 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  .vw-lead{font-family:var(--display);font-size:18px;line-height:1.4;color:var(--ink)}
+  .vw-try{background:var(--paper2);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .vw-or{font-size:13px;color:var(--muted);margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .vw-or code{font:12.5px/1 var(--mono);background:var(--card);border:1px solid var(--line2);border-radius:6px;padding:4px 8px;color:#55504a}
+  .vw-needs{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .vw-needs li{display:flex;gap:10px;font-size:14px;color:var(--ink);line-height:1.45}
+  .vw-needs li::before{content:"";flex:none;width:18px;height:18px;margin-top:1px;border-radius:6px;background:var(--paper2);border:1px solid var(--line)}
+  .vw-foot{display:flex;gap:14px;align-items:center;padding-top:16px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .vw-dl{display:inline-flex;align-items:center;gap:7px;font:600 13px/1 var(--sans);color:var(--ink);text-decoration:none;border:1px solid var(--line2);border-radius:9px;padding:10px 14px;transition:background .12s,border-color .12s,color .12s}
+  .vw-dl:hover{background:#646b78;border-color:#646b78;color:#fff}
+  .vw-dl svg{width:15px;height:15px}
+  .vw-guidelink{font-size:13px;color:var(--ink);border-bottom:1px solid var(--red);padding-bottom:1px;text-decoration:none}
+  .vw-guidelink[hidden]{display:none}
+  .vw-filesview .vw-body-inner{display:grid;grid-template-columns:210px 1fr;min-height:240px}
+  .vw-fileshint{font-size:12.5px;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line);background:var(--paper2)}
+
+  /* Card action buttons now carry text labels (novice fix) */
+  .iconbtn.has-label{gap:8px;font:600 13px/1 var(--sans)}
+  .iconbtn.has-label svg{width:17px;height:17px}
+  @media (max-width:560px){ .vw-filesview .vw-body-inner{grid-template-columns:1fr} .vw-files{max-height:120px} }
 
   /* Delete confirmation dialog */
   .dlg[hidden]{display:none}
@@ -194,14 +318,23 @@
     .hero{grid-template-columns:1fr;gap:34px;padding-top:38px}
     .art{order:2;max-width:460px}
     .grid{grid-template-columns:1fr}
-    .steps{grid-template-columns:1fr;gap:16px}
+    .explain{grid-template-columns:1fr;gap:20px}
+    .step{grid-template-columns:1fr;gap:18px}
+    .step:nth-child(even) .step-body,.step:nth-child(even) .shot{order:0}
+    .shot{max-width:420px}
+  }
+  @media (max-width:560px){
+    .def::after{width:min(260px,78vw)}
   }
   @media (max-width:560px){
     .wrap{padding:24px 20px 80px}
   }
   @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
   @media (prefers-reduced-motion:no-preference){
-    .hero-copy,.art,.howto,.list-head,.card{opacity:0;transform:translateY(12px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+    .hero-copy,.art,.explain,.howto,.list-head,.card{opacity:0;transform:translateY(12px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+    .explain{animation-delay:.04s}
+    .caret{animation:blink 1.05s step-end infinite}
+    @keyframes blink{50%{opacity:0}}
     .art{animation-delay:.08s}
     .howto{animation-delay:.05s}
     .card:nth-child(1){animation-delay:.04s}
@@ -231,10 +364,10 @@
     <div class="hero-copy">
       <div class="eyebrow">Capsule &middot; Internal Tooling</div>
       <h1>Skills that make Claude work the <em>Capsule</em> way.</h1>
-      <p class="sub">Internal tools our team built for Claude. Download one, add it to the Claude app, and Claude handles the busywork the way we'd want it done. Nothing to set up beyond the upload.</p>
+      <p class="sub">A <button class="def" type="button" aria-label="A skill is a small tool you add to the Claude app. Once added, Claude knows how to do one job really well — without you explaining it every time." data-def="A skill is a small tool you add to the Claude app. Once added, Claude knows how to do one job really well — without you explaining it every time.">skill</button> is a small tool you add to Claude. Download one, add it to Claude once, and Claude handles the busywork the way we'd want it done.</p>
       <div class="cta">
         <a class="btn btn-primary" href="#list">Browse the tools <span class="arw">&rarr;</span></a>
-        <a class="btn btn-ghost" href="#howto">How to install</a>
+        <a class="btn btn-ghost" href="#howto">How to add a skill</a>
       </div>
     </div>
     <div class="art">
@@ -254,23 +387,153 @@
 <span class="ln"><span class="k">license:</span> Capsule internal</span>
 <span class="ln"><span class="d">---</span></span>
         </div>
+        <p class="doc-cap">This is what a skill looks like inside. You never have to read or edit it.</p>
       </div>
     </div>
   </section>
 
-  <section class="howto" id="howto">
-    <h2 class="eyebrow">Installing</h2>
-    <div class="steps">
-      <div class="step"><span class="n">1</span><div class="sb"><b>Download</b>Pick a skill below and download its <code>.skill</code> file.</div></div>
-      <div class="step"><span class="n">2</span><div class="sb"><b>Open the Claude app</b>Go to Settings, then Claude Cowork, then Upload skill.</div></div>
-      <div class="step"><span class="n">3</span><div class="sb"><b>Use it</b>Select the file. Then just say what you want, or type its slash command.</div></div>
+  <section class="explain" id="explain">
+    <div class="explain-q">
+      <span class="eyebrow">New here?</span>
+      <h2>What&rsquo;s a &ldquo;skill&rdquo;?</h2>
     </div>
+    <div class="explain-a">
+      <p>A <b>skill</b> is a small tool you add to the Claude app. Once it&rsquo;s added, Claude knows how to do one job really well &mdash; the <em>Capsule</em> way &mdash; without you explaining it every time.</p>
+      <p class="explain-eg">Think of it like teaching Claude a new trick once, then just asking for it whenever you need it.</p>
+      <ul class="explain-pts">
+        <li><span class="ep-ic" data-ic="download"></span> <b>Download</b> a skill below &mdash; it&rsquo;s one small file.</li>
+        <li><span class="ep-ic" data-ic="plus"></span> <b>Add it</b> to Claude one time.</li>
+        <li><span class="ep-ic" data-ic="chat"></span> <b>Just ask</b> in plain English &mdash; Claude takes it from there.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="howto" id="howto">
+    <h2 class="eyebrow">Adding a skill</h2>
+    <p class="howto-lede">Four steps, about two minutes. No setup &mdash; if you can download a file, you can do this.</p>
+    <ol class="steps">
+
+      <li class="step">
+        <div class="step-body">
+          <span class="n">1</span>
+          <div class="sb">
+            <b>Download the skill</b>
+            Pick any skill below and click its <b class="inl">Download</b> button. You&rsquo;ll get a small <code>.skill</code> file &mdash; that&rsquo;s the whole skill in one file. Note where it saves (usually your <b class="inl">Downloads</b> folder).
+          </div>
+        </div>
+        <figure class="shot" aria-label="A skill card with the Download button highlighted">
+          <div class="mk-card" aria-hidden="true">
+            <div class="mk-row">
+              <span class="mk-chip" style="background:#b90021"></span>
+              <span class="mk-lines"><i style="width:54%"></i><i style="width:32%"></i></span>
+            </div>
+            <div class="mk-btn mk-btn--ghost">Read about</div>
+            <div class="mk-btn mk-btn--solid is-target" data-ic="download">Download</div>
+          </div>
+          <span class="cursor" style="left:74%;top:78%"></span>
+          <span class="file-pop"><code>.skill</code></span>
+        </figure>
+      </li>
+
+      <li class="step">
+        <div class="step-body">
+          <span class="n">2</span>
+          <div class="sb">
+            <b>Open Claude &rarr; Settings &rarr; Cowork</b>
+            In the Claude app, open <b class="inl">Settings</b>, then choose
+            <button class="def def--left" type="button" aria-label="Cowork is the part of the Claude app where the skills you add live. You'll find it in Settings. Don't see it? Make sure you're in the Claude desktop app, where Cowork appears." data-def="Cowork is the part of the Claude app where the skills you add live. You&rsquo;ll find it in Settings. Don&rsquo;t see it? Make sure you&rsquo;re in the Claude desktop app, where Cowork appears.">Claude&nbsp;Cowork</button>
+            in the sidebar. This is the page where your skills live.
+          </div>
+        </div>
+        <figure class="shot" aria-label="Claude Settings window with Claude Cowork selected in the sidebar">
+          <div class="mk-win" aria-hidden="true">
+            <div class="mk-titlebar"><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-title">Settings</span></div>
+            <div class="mk-split">
+              <nav class="mk-side">
+                <span class="mk-nav">General</span>
+                <span class="mk-nav">Account</span>
+                <span class="mk-nav is-target">Claude&nbsp;Cowork</span>
+                <span class="mk-nav">Privacy</span>
+              </nav>
+              <div class="mk-pane">
+                <span class="mk-lines"><i style="width:46%"></i></span>
+                <div class="mk-field"></div>
+                <div class="mk-field" style="width:70%"></div>
+              </div>
+            </div>
+          </div>
+          <span class="cursor" style="left:30%;top:60%"></span>
+        </figure>
+      </li>
+
+      <li class="step">
+        <div class="step-body">
+          <span class="n">3</span>
+          <div class="sb">
+            <b>Upload the file</b>
+            Click <b class="inl">Upload skill</b> and choose the <code>.skill</code> file you just downloaded. Claude adds it to your list &mdash; that&rsquo;s it, the skill is ready.
+          </div>
+        </div>
+        <figure class="shot" aria-label="The Claude Cowork panel with an Upload skill button">
+          <div class="mk-win" aria-hidden="true">
+            <div class="mk-titlebar"><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-dot"></span><span class="mk-title">Claude Cowork</span></div>
+            <div class="mk-pane mk-pane--full">
+              <div class="mk-skillrow"><span class="mk-chip sm" style="background:#1b1d22"></span><i style="width:40%"></i></div>
+              <div class="mk-dropzone" data-ic="download">
+                <span class="mk-btn mk-btn--solid is-target">Upload skill</span>
+              </div>
+            </div>
+          </div>
+          <span class="cursor" style="left:60%;top:74%"></span>
+        </figure>
+      </li>
+
+      <li class="step">
+        <div class="step-body">
+          <span class="n">4</span>
+          <div class="sb">
+            <b>Use it &mdash; just ask</b>
+            Start a normal chat and <b class="inl">say what you want</b> in plain words. Each skill below shows an example to try. Prefer a
+            <button class="def def--left" type="button" aria-label="A shortcut you type in Claude's message box, starting with a slash — like /colorproof. Faster than describing what you want." data-def="A shortcut you type in Claude&rsquo;s message box, starting with a slash &mdash; like /colorproof. Faster than describing what you want.">shortcut</button>?
+            Type its <code>/slash-command</code> instead.
+          </div>
+        </div>
+        <figure class="shot" aria-label="A Claude chat box with an example prompt typed in">
+          <div class="mk-chat" aria-hidden="true">
+            <div class="mk-bubble">Help me turn these notes into a tidy summary</div>
+            <div class="mk-inputbar">
+              <span class="mk-input">Write your message<span class="caret"></span></span>
+              <span class="mk-send" data-ic="send" aria-hidden="true"></span>
+            </div>
+          </div>
+        </figure>
+      </li>
+
+    </ol>
   </section>
 
   <section id="list">
     <div class="list-head">
       <h2>The tools</h2>
       <span class="count" id="count">&nbsp;</span>
+    </div>
+    <div class="finder" id="finder" role="search" hidden>
+      <div class="finder-box">
+        <span class="finder-ic" data-ic="search"></span>
+        <input id="finderInput" type="search" autocomplete="off"
+               placeholder="What do you want to do? e.g. &ldquo;log my hours&rdquo;, &ldquo;check brand colors&rdquo;"
+               data-ph-short="What do you want to do?"
+               aria-label="Describe what you want to do" aria-controls="grid">
+        <button class="finder-clear" id="finderClear" type="button" hidden aria-label="Clear search" data-ic="x"></button>
+      </div>
+      <div class="finder-intents" id="finderIntents" role="group" aria-label="Suggested searches">
+        <span class="fi-lbl">Try:</span>
+        <button class="fi-chip" type="button" data-q="log my hours">Log my hours</button>
+        <button class="fi-chip" type="button" data-q="check brand colors">Check brand colors</button>
+        <button class="fi-chip" type="button" data-q="make one file per row">One file per row</button>
+        <button class="fi-chip" type="button" data-q="restyle a page">Restyle a page</button>
+      </div>
+      <span class="sr-only" id="finderLive" aria-live="polite"></span>
     </div>
     <div class="filters" id="filters" role="group" aria-label="Filter skills by tag" hidden></div>
     <main class="grid" id="grid"></main>
@@ -283,17 +546,56 @@
 
 </div>
 
-<div class="vw" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Skill files">
+<span class="sr-only" id="copyLive" aria-live="polite" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0"></span>
+
+<div class="vw" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="vw-title">
   <div class="vw-panel">
     <div class="vw-head">
       <span class="chip" id="vw-chip"></span>
-      <h3 id="vw-title"></h3>
+      <div class="vw-headtext">
+        <h3 id="vw-title"></h3>
+        <p class="vw-tagline" id="vw-tagline"></p>
+      </div>
+      <div class="vw-tabs filters" id="vw-tabs" role="group" aria-label="View" hidden>
+        <button class="filt" type="button" data-vw="about" aria-pressed="true">About</button>
+        <button class="filt" type="button" data-vw="files" aria-pressed="false">Files</button>
+      </div>
       <button class="vw-x" id="vw-close" type="button" aria-label="Close">&times;</button>
     </div>
-    <div class="vw-body">
-      <div class="vw-files" id="vw-files"></div>
-      <div class="vw-main" id="vw-main"></div>
-    </div>
+
+    <section class="vw-about" id="vw-about">
+      <div class="vw-block">
+        <h4 class="vw-h">What it does</h4>
+        <p class="vw-lead" id="vw-does"></p>
+      </div>
+      <div class="vw-block vw-try" id="vw-tryblock">
+        <h4 class="vw-h">Try saying this</h4>
+        <button class="saybtn vw-saybtn" id="vw-say" type="button" data-copy-say="">
+          <span class="say-q"></span>
+          <span class="say-copy" data-ic="copy"> Copy</span>
+        </button>
+        <p class="vw-or" id="vw-or" hidden>&hellip;or type its shortcut
+          <code id="vw-cmd"></code>
+          <button class="copy" id="vw-cmdcopy" type="button" aria-label="Copy shortcut command">Copy</button>
+        </p>
+      </div>
+      <div class="vw-block">
+        <h4 class="vw-h">What you need first</h4>
+        <ul class="vw-needs" id="vw-needs"></ul>
+      </div>
+      <div class="vw-foot">
+        <a class="vw-dl" id="vw-dl" download data-ic="download"> Download skill</a>
+        <a class="vw-guidelink" id="vw-guide" target="_blank" rel="noopener" hidden>Full install guide &nearr;</a>
+      </div>
+    </section>
+
+    <section class="vw-filesview" id="vw-filesview" hidden>
+      <p class="vw-fileshint">This is the raw source of the skill &mdash; for the curious. You don&rsquo;t need to read it to use the skill.</p>
+      <div class="vw-body-inner">
+        <div class="vw-files" id="vw-files"></div>
+        <div class="vw-main" id="vw-main" aria-live="polite"></div>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -321,18 +623,68 @@
     var active = '';
     function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function fmtDate(d){ try { return new Date(d + 'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); } catch(e){ return d; } }
+    function copyText(text, done){
+      function announce(){ var cl = document.getElementById('copyLive'); if (cl) { cl.textContent = ''; cl.textContent = 'Copied to clipboard'; } if (done) done(); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(announce).catch(announce);
+      } else {
+        var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); } catch(e){} document.body.removeChild(t); announce();
+      }
+    }
+    function norm(s){ return String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
 
     var SVG = function(p){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; };
     var ICONS = {
       download: SVG('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
       about: SVG('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'),
-      del: SVG('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>')
+      del: SVG('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>'),
+      copy: SVG('<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'),
+      search: SVG('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'),
+      x: SVG('<path d="M18 6 6 18M6 6l12 12"/>'),
+      chat: SVG('<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'),
+      plus: SVG('<path d="M12 5v14M5 12h14"/>'),
+      check: SVG('<polyline points="20 6 9 17 4 12"/>')
     };
 
     var SKILLS = [];
+    // Fill any element with data-ic="<name>" using the single-sourced ICONS set (no inline SVG in HTML).
+    function hydrateIcons(root){
+      (root || document).querySelectorAll('[data-ic]').forEach(function(el){
+        if (el.getAttribute('data-ic-done')) return;
+        var name = el.getAttribute('data-ic');
+        var svg = (name === 'send')
+          ? SVG('<path d="M5 12h13m0 0-5-5m5 5-5 5"/>')
+          : ICONS[name];
+        if (svg) { el.insertAdjacentHTML('afterbegin', svg); el.setAttribute('data-ic-done','1'); }
+      });
+    }
+    hydrateIcons(document);   // static markup: explainer, install panels, finder
 
+    var INDEX = [];
+    var STOP = {the:1,a:1,an:1,i:1,my:1,to:1,for:1,want:1,wanna:1,do:1,me:1,with:1,and:1,of:1,in:1,on:1,it:1,some:1,please:1,can:1,you:1,help:1,need:1,make:1};
+    var SYNONYMS = {
+      'hours':['timesheet','time','log','track','ebillity'],
+      'time':['timesheet','hours','track'],
+      'color':['colorproof','brand','illustrator','proof'],
+      'colour':['color','colorproof','brand'],
+      'brand':['brand','color','colorproof','panelproof'],
+      'label':['datamerge','merge','template','row'],
+      'row':['datamerge','merge','records','rows'],
+      'spreadsheet':['datamerge','merge','records','rows'],
+      'restyle':['reskin','look','feel','style'],
+      'redesign':['reskin','restyle','style'],
+      'page':['reskin','restyle'],
+      'proof':['colorproof','panelproof','check'],
+      'check':['proof','panelproof','colorproof'],
+      'illustrator':['illustrator','colorproof','datamerge','panelproof']
+    };
     function render(skills) {
         SKILLS = skills;
+        INDEX = skills.map(function(s){
+          return { s:s, name:norm(s.name), slug:norm(s.slug), tagline:norm(s.tagline),
+                   tags:(s.tags||[]).map(norm), say:norm(s.say), needs:norm(s.needs), invoke:norm(s.invoke) };
+        });
         count.textContent = skills.length + (skills.length === 1 ? ' tool' : ' tools');
         grid.innerHTML = skills.map(function (s) {
           var isUpload = s.source === 'upload';
@@ -343,7 +695,7 @@
             return '<button class="tlabel" type="button" data-tag="' + esc(t) + '">' + esc(t) + '</button>';
           }).join('') + '</div>' : '';
           return '' +
-          '<article class="card" data-tags="' + esc(dataTags) + '" style="--a:' + esc(s.accent) + '">' +
+          '<article class="card" data-slug="' + esc(s.slug) + '" data-tags="' + esc(dataTags) + '" style="--a:' + esc(s.accent) + '">' +
             '<div class="card-top">' +
               '<div class="chip" style="background:' + esc(s.accent) + '">' + (s.icon ? '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">' + s.icon + '</svg>' : esc(s.mono)) + '</div>' +
               '<div class="card-id"><h3>' + esc(s.name) + '</h3>' +
@@ -354,17 +706,21 @@
             '<p class="tag">' + esc(s.tagline) + '</p>' +
             pills +
             '<dl class="facts">' +
-              (s.say ? '<div class="fact"><dt>Just say</dt><dd class="say">&ldquo;' + esc(s.say) + '&rdquo;</dd></div>' : '') +
+              (s.say ? '<div class="fact fact-say"><dt>Just say</dt><dd class="say">' +
+                '<button class="saybtn" type="button" data-copy-say="' + esc(s.say) + '">' +
+                  '<span class="say-q">&ldquo;' + esc(s.say) + '&rdquo;</span>' +
+                  '<span class="say-copy">' + ICONS.copy + ' Copy</span>' +
+                '</button>' +
+                '<span class="say-hint">Add the skill first, then paste this into Claude</span>' +
+              '</dd></div>' : '') +
               (s.needs ? '<div class="fact"><dt>Needs</dt><dd>' + esc(s.needs) + '</dd></div>' : '') +
             '</dl>' +
             (cmd ? '<div class="cmd"><code>' + cmd + '</code><button class="copy" type="button" data-cmd="' + cmd + '" aria-label="Copy command">Copy</button></div>' : '') +
             '<div class="actions">' +
-              '<a class="iconbtn btn-dl" href="' + file + '" download="' + esc(fileName) + '" data-tip="Download skill" aria-label="Download skill">' + ICONS.download + '</a>' +
+              '<a class="iconbtn btn-dl has-label" href="' + file + '" download="' + esc(fileName) + '" aria-label="Download ' + esc(s.name) + '">' + ICONS.download + 'Download</a>' +
+              '<button class="iconbtn btn-about has-label" type="button" data-about="' + esc(s.slug) + '" aria-label="Read about ' + esc(s.name) + '">' + ICONS.about + 'Read about</button>' +
               (isUpload
-                ? '<button class="iconbtn btn-about" type="button" data-files="' + esc(s.slug) + '" data-tip="About skill" aria-label="About skill">' + ICONS.about + '</button>'
-                : '<a class="iconbtn btn-about" href="' + esc(s.guide) + '" target="_blank" rel="noopener" data-tip="About skill" aria-label="About skill">' + ICONS.about + '</a>') +
-              (isUpload
-                ? '<button class="iconbtn btn-del" type="button" data-del="' + esc(s.slug) + '" data-name="' + esc(s.name) + '" data-tip="Delete skill" aria-label="Delete skill">' + ICONS.del + '</button>'
+                ? '<button class="iconbtn btn-del" type="button" data-del="' + esc(s.slug) + '" data-name="' + esc(s.name) + '" data-tip="Delete skill" aria-label="Delete ' + esc(s.name) + '">' + ICONS.del + '</button>'
                 : '') +
             '</div>' +
           '</article>';
@@ -401,39 +757,78 @@
         function focusActiveChip() { var c = chipFor(active); if (c) c.focus(); }
         window.focusActiveChip = focusActiveChip;
 
-        window.apply = function (tag, animate) {
-          active = tag || '';
-          var key = active.toLowerCase();
-          var shown = 0;
-          cards.forEach(function (card) {
-            var match = !key || (card.getAttribute('data-tags') || '').split('|').indexOf(key) !== -1;
-            card.hidden = !match;
-            if (match) {
-              shown++;
-              if (animate) { card.classList.remove('refilter'); void card.offsetWidth; card.classList.add('refilter'); }
-            }
-            var pills = card.querySelectorAll('.tlabel');
-            for (var i = 0; i < pills.length; i++) {
-              pills[i].classList.toggle('on', !!key && pills[i].getAttribute('data-tag').toLowerCase() === key);
-            }
+        var query = '';
+        function hit(field, term){
+          if (!field || !term) return 0;
+          if (field.indexOf(term) !== -1) return 1;
+          if (term.length >= 4){ var re = new RegExp('(^| )' + term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')); if (re.test(field)) return 0.5; }
+          return 0;
+        }
+        function scoreQuery(raw){
+          var q = norm(raw); if (!q) return null;
+          var terms = q.split(' ').filter(function(t){ return t && !STOP[t]; });
+          Object.keys(SYNONYMS).forEach(function(k){ if (q.indexOf(k) !== -1) terms = terms.concat(SYNONYMS[k]); });
+          var scores = {};
+          INDEX.forEach(function(ix){
+            var sc = 0;
+            terms.forEach(function(t){
+              sc += hit(ix.name,t)*6 + ix.tags.reduce(function(a,tg){return a+hit(tg,t)*5;},0)
+                  + hit(ix.invoke,t)*4 + hit(ix.slug,t)*4
+                  + hit(ix.tagline,t)*3 + hit(ix.say,t)*3 + hit(ix.needs,t)*1;
+            });
+            scores[String(ix.s.slug).toLowerCase()] = sc;
           });
+          return scores;
+        }
+
+        window.apply = function (tag, animate) {
+          if (typeof tag === 'string') active = tag;            // tag undefined = keep current tag (query-only re-run)
+          var key = (active || '').toLowerCase();
+          var scores = scoreQuery(query);                       // null when no query
+          var shown = 0;
+          var matched = [];
+          cards.forEach(function (card) {
+            var slug = (card.getAttribute('data-slug') || '').toLowerCase();
+            var tagOk = !key || (card.getAttribute('data-tags') || '').split('|').indexOf(key) !== -1;
+            var qScore = scores ? (scores[slug] || 0) : 1;
+            var match = tagOk && qScore > 0;
+            card.hidden = !match;
+            if (match) { shown++; matched.push({ card: card, score: qScore }); if (animate) { card.classList.remove('refilter'); void card.offsetWidth; card.classList.add('refilter'); } }
+            var pills = card.querySelectorAll('.tlabel');
+            for (var i = 0; i < pills.length; i++) pills[i].classList.toggle('on', !!key && pills[i].getAttribute('data-tag').toLowerCase() === key);
+          });
+          if (scores) {                                         // reorder by score when searching
+            matched.sort(function(a,b){ return b.score - a.score; });
+            matched.forEach(function(m){ grid.appendChild(m.card); });
+          } else {                                              // restore curated order when query cleared
+            cards.forEach(function(c){ grid.appendChild(c); });
+          }
           chipBtns.forEach(function (b) {
             var on = (b.getAttribute('data-tag') || '').toLowerCase() === key;
             b.setAttribute('aria-pressed', on ? 'true' : 'false');
             b.tabIndex = on ? 0 : -1;
           });
-          count.textContent = shown + (shown === 1 ? ' tool' : ' tools') + (active ? ' · ' + active : '');
+          var suffix = query ? ' · “' + query + '”' : (active ? ' · ' + active : '');
+          count.textContent = shown + (shown === 1 ? ' tool' : ' tools') + suffix;
+          var live = document.getElementById('finderLive');
+          if (live) live.textContent = shown
+            ? (shown + (shown === 1 ? ' tool matches' : ' tools match'))
+            : (query ? 'No tools match. Clear the search or try a suggestion.' : 'No tools.');
           var ex = grid.querySelector('.empty'); if (ex) ex.remove();
           if (!shown) {
             var p = document.createElement('p'); p.className = 'empty';
-            p.innerHTML = 'Nothing tagged “' + esc(active) + '” yet. <button type="button" data-reset="1">Show all</button>';
+            if (query) p.innerHTML = 'Nothing matches &ldquo;' + esc(query) + '&rdquo; yet. <button type="button" data-reset="1">Clear search</button> or ask in #design.';
+            else p.innerHTML = 'Nothing tagged &ldquo;' + esc(active) + '&rdquo; yet. <button type="button" data-reset="1">Show all</button>';
             grid.appendChild(p);
           }
           try {
-            if (key) history.replaceState(null, '', '#tag=' + encodeURIComponent(active));
-            else history.replaceState(null, '', location.pathname + location.search);
+            var hash = [];
+            if (key) hash.push('tag=' + encodeURIComponent(active));
+            if (query) hash.push('q=' + encodeURIComponent(query));
+            history.replaceState(null, '', hash.length ? '#' + hash.join('&') : location.pathname + location.search);
           } catch (e) {}
         };
+        window.setQuery = function(q, animate){ query = (q || '').trim(); window.apply(undefined, animate); };
 
         // chip clicks + roving keyboard nav (toolbar pattern)
         if (chipBtns.length) {
@@ -455,16 +850,56 @@
           });
         }
 
-        // honor #tag= deep link, and respond to later hash navigation
+        // honor #tag= and #q= deep links, and respond to later hash navigation
         function tagFromHash() {
           var m = /[#&]tag=([^&]+)/.exec(location.hash);
           var t = m ? decodeURIComponent(m[1]) : '';
           return (t && validTags[t.toLowerCase()]) ? t : '';
         }
+        function queryFromHash() {
+          var m = /[#&]q=([^&]+)/.exec(location.hash);
+          try { return m ? decodeURIComponent(m[1]) : ''; } catch(e){ return ''; }
+        }
+
+        // ---- Finder (task discovery) ----
+        var finder = document.getElementById('finder');
+        var fInput = document.getElementById('finderInput');
+        var fClear = document.getElementById('finderClear');
+        var fIntents = document.getElementById('finderIntents');
+        if (finder && skills.length) {
+          finder.hidden = false;
+          if (window.matchMedia && window.matchMedia('(max-width:560px)').matches) {
+            var sh = fInput.getAttribute('data-ph-short'); if (sh) fInput.placeholder = sh;
+          }
+          var fTimer = null;
+          function runFinder(animate){
+            var v = fInput.value;
+            fClear.hidden = !v;
+            fIntents.hidden = !!v.trim();
+            window.setQuery(v, animate);
+          }
+          fInput.addEventListener('input', function(){
+            if (fTimer) cancelAnimationFrame(fTimer);
+            fTimer = requestAnimationFrame(function(){ runFinder(true); });
+          });
+          fInput.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ fInput.value=''; runFinder(true); } });
+          fClear.addEventListener('click', function(){ fInput.value=''; runFinder(true); fInput.focus(); });
+          fIntents.addEventListener('click', function(e){
+            var c = e.target.closest('.fi-chip'); if (!c) return;
+            fInput.value = c.getAttribute('data-q'); runFinder(true); fInput.focus();
+          });
+          var q0 = queryFromHash();
+          if (q0) { fInput.value = q0; fClear.hidden = false; fIntents.hidden = true; }
+          query = q0;
+        }
+
         apply(tagFromHash(), false);
         window.addEventListener('hashchange', function () {
-          var t = tagFromHash();
-          if (t.toLowerCase() !== active.toLowerCase()) apply(t, true);
+          var t = tagFromHash(), q = queryFromHash();
+          if (t.toLowerCase() !== (active||'').toLowerCase() || q !== query) {
+            if (fInput) { fInput.value = q; fClear.hidden = !q; fIntents.hidden = !!q; }
+            query = q; apply(t, true);
+          }
         });
     }
 
@@ -474,34 +909,53 @@
       if (e.target.closest('[data-reset]')) { if (window.apply) window.apply('', true); if (window.focusActiveChip) window.focusActiveChip(); return; }
       var del = e.target.closest('[data-del]');
       if (del) { deleteSkill(del.getAttribute('data-del'), del.getAttribute('data-name')); return; }
-      var fb = e.target.closest('[data-files]');
-      if (fb) { openViewer(fb.getAttribute('data-files')); return; }
+      var ab = e.target.closest('[data-about]');
+      if (ab) { openViewer(ab.getAttribute('data-about')); return; }
       var lbl = e.target.closest('.tlabel');
       if (lbl) {
         var t = lbl.getAttribute('data-tag');
         if (window.apply) window.apply(active.toLowerCase() === t.toLowerCase() ? '' : t, true);
         return;
       }
+      var sb = e.target.closest('.saybtn');
+      if (sb) {
+        var sayText = sb.getAttribute('data-copy-say');
+        copyText(sayText, function () {
+          sb.classList.add('done');
+          var l = sb.querySelector('.say-copy'); var prev = l.innerHTML; l.textContent = 'Copied';
+          try { localStorage.setItem('cap_copied_once','1'); } catch(e){}
+          setTimeout(function(){ sb.classList.remove('done'); l.innerHTML = prev; }, 1300);
+        });
+        return;
+      }
       var b = e.target.closest('.copy');
       if (!b) return;
       var text = b.getAttribute('data-cmd');
-      var done = function () { b.textContent = 'Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1300); };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done).catch(function(){ done(); });
-      } else {
-        var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
-        try { document.execCommand('copy'); } catch(e){} document.body.removeChild(t); done();
-      }
+      copyText(text, function () { b.textContent = 'Copied'; b.classList.add('done'); setTimeout(function(){ b.textContent = 'Copy'; b.classList.remove('done'); }, 1300); });
     });
 
-    // ---- Uploaded-skill file viewer (escaped only; never renders markdown) ----
+    // ---- Skill detail viewer (friendly "About" + escaped raw Files tab) ----
     var viewer = document.getElementById('viewer');
     var vwFiles = document.getElementById('vw-files');
     var vwMain = document.getElementById('vw-main');
     var vwTitle = document.getElementById('vw-title');
+    var vwTagline = document.getElementById('vw-tagline');
     var vwChip = document.getElementById('vw-chip');
     var vwClose = document.getElementById('vw-close');
+    var vwTabs = document.getElementById('vw-tabs');
+    var vwAbout = document.getElementById('vw-about');
+    var vwFilesView = document.getElementById('vw-filesview');
+    var vwDoes = document.getElementById('vw-does');
+    var vwTryBlock = document.getElementById('vw-tryblock');
+    var vwSay = document.getElementById('vw-say');
+    var vwOr = document.getElementById('vw-or');
+    var vwCmd = document.getElementById('vw-cmd');
+    var vwCmdCopy = document.getElementById('vw-cmdcopy');
+    var vwNeeds = document.getElementById('vw-needs');
+    var vwDl = document.getElementById('vw-dl');
+    var vwGuide = document.getElementById('vw-guide');
     var lastFocus = null;
+    var vwCurrent = null;       // { slug, isUpload, filesLoaded }
     function findSkill(slug) {
       var k = String(slug).toLowerCase();
       for (var i = 0; i < SKILLS.length; i++) { if (String(SKILLS[i].slug).toLowerCase() === k) return SKILLS[i]; }
@@ -523,24 +977,79 @@
       });
       showFile(list[0].content);
     }
-    function openViewer(slug) {
-      var s = findSkill(slug); if (!s) return;
-      lastFocus = document.activeElement;
-      vwTitle.textContent = s.name;
-      vwChip.style.background = s.accent || '#646b78';
-      if (s.icon) { vwChip.textContent = ''; vwChip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + s.icon + '</svg>'; }
-      else { vwChip.innerHTML = ''; vwChip.textContent = s.mono || ''; }
+    function loadViewerFiles(slug) {
       vwFiles.innerHTML = ''; vwMain.innerHTML = '<p class="vw-empty">Loading…</p>';
-      viewer.hidden = false; vwClose.focus();
       fetch('/api/skills?slug=' + encodeURIComponent(slug) + '&files=1')
         .then(function (r) { return r.ok ? r.json() : { files: [] }; })
         .then(function (d) { renderViewerFiles(d && d.files ? d.files : []); })
         .catch(function () { vwMain.innerHTML = '<p class="vw-empty">Could not load files.</p>'; });
     }
-    function closeViewer() { viewer.hidden = true; vwFiles.innerHTML = ''; vwMain.innerHTML = ''; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+    function setVwTab(which) {
+      var about = which !== 'files';
+      vwAbout.hidden = !about; vwFilesView.hidden = about;
+      var btns = vwTabs.querySelectorAll('.filt');
+      for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-vw') === which ? 'true' : 'false');
+      if (!about && vwCurrent && !vwCurrent.filesLoaded) { vwCurrent.filesLoaded = true; loadViewerFiles(vwCurrent.slug); }
+    }
+    function openViewer(slug) {
+      var s = findSkill(slug); if (!s) return;
+      var isUpload = s.source === 'upload';
+      vwCurrent = { slug: s.slug, isUpload: isUpload, filesLoaded: false };
+      lastFocus = document.activeElement;
+
+      vwTitle.textContent = s.name;
+      vwTagline.textContent = s.tagline || '';
+      vwChip.style.background = s.accent || '#646b78';
+      if (s.icon) { vwChip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + s.icon + '</svg>'; }
+      else { vwChip.innerHTML = ''; vwChip.textContent = s.mono || ''; }
+
+      // What it does
+      vwDoes.textContent = s.tagline || 'A small tool you add to Claude to handle a specific job.';
+
+      // Try saying this
+      var sayText = s.say || 'Add it to Claude, then ask for what you need in plain English.';
+      vwSay.setAttribute('data-copy-say', sayText);
+      vwSay.querySelector('.say-q').innerHTML = '&ldquo;' + esc(sayText) + '&rdquo;';
+      if (s.invoke) { vwCmd.textContent = s.invoke; vwCmdCopy.setAttribute('data-cmd', s.invoke); vwOr.hidden = false; }
+      else { vwOr.hidden = true; }
+
+      // What you need first
+      var needs = (s.needs || '').replace(/,\s*and\b/gi, ',').split(/,|;| and /i).map(function(x){ return x.trim().replace(/^(?:and|with)\s+/i,''); }).filter(Boolean);
+      if (!needs.length) needs = ['Nothing — just add it to Claude and ask.'];
+      vwNeeds.innerHTML = needs.map(function(n){ return '<li>' + esc(n) + '</li>'; }).join('');
+
+      // Footer
+      var fileName = isUpload ? (s.slug + '.skill') : String(s.file).split('/').pop();
+      vwDl.setAttribute('href', s.file); vwDl.setAttribute('download', fileName);
+      if (s.guide) { vwGuide.setAttribute('href', s.guide); vwGuide.hidden = false; } else { vwGuide.hidden = true; }
+
+      // Tabs: only uploads expose raw Files
+      vwTabs.hidden = !isUpload;
+      vwFiles.innerHTML = ''; vwMain.innerHTML = '';
+      setVwTab('about');
+      hydrateIcons(viewer);
+
+      var pageWrap = document.querySelector('.wrap'); if (pageWrap) pageWrap.inert = true;
+      viewer.hidden = false; vwClose.focus();
+    }
+    function closeViewer() { viewer.hidden = true; vwFiles.innerHTML = ''; vwMain.innerHTML = ''; vwCurrent = null; var pageWrap = document.querySelector('.wrap'); if (pageWrap) pageWrap.inert = false; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
     vwClose.addEventListener('click', closeViewer);
     viewer.addEventListener('click', function (e) { if (e.target === viewer) closeViewer(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !viewer.hidden) closeViewer(); });
+    vwTabs.addEventListener('click', function (e) { var b = e.target.closest('.filt'); if (b) setVwTab(b.getAttribute('data-vw')); });
+    // Copy affordances inside the modal reuse the shared helper.
+    vwSay.addEventListener('click', function () {
+      copyText(vwSay.getAttribute('data-copy-say'), function () {
+        vwSay.classList.add('done'); var l = vwSay.querySelector('.say-copy'); var prev = l.innerHTML; l.textContent = 'Copied';
+        setTimeout(function(){ vwSay.classList.remove('done'); l.innerHTML = prev; }, 1300);
+      });
+    });
+    vwCmdCopy.addEventListener('click', function () {
+      copyText(vwCmdCopy.getAttribute('data-cmd'), function () {
+        vwCmdCopy.textContent = 'Copied'; vwCmdCopy.classList.add('done');
+        setTimeout(function(){ vwCmdCopy.textContent = 'Copy'; vwCmdCopy.classList.remove('done'); }, 1300);
+      });
+    });
 
     // ---- Delete an uploaded skill (confirm, then re-enter the access key) ----
     var delDlg = document.getElementById('delDlg');
@@ -559,10 +1068,11 @@
       delErr.textContent = '';
       delPw.value = ''; delPwField.hidden = true;
       delGo.textContent = 'Continue'; delGo.disabled = false;
-      delDlg.hidden = false; delGo.focus();
+      delDlg.hidden = false; var pw2 = document.querySelector('.wrap'); if (pw2) pw2.inert = true; delGo.focus();
     }
     function closeDelete() {
       delDlg.hidden = true;
+      var pw2 = document.querySelector('.wrap'); if (pw2) pw2.inert = false;
       if (delState.lastFocus && delState.lastFocus.focus) delState.lastFocus.focus();
     }
     function submitDelete() {
