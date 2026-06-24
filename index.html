@@ -179,11 +179,6 @@
   .finder-clear:hover{background:var(--paper2);color:var(--ink)}
   .finder-clear[hidden]{display:none}
   .finder-clear svg{width:15px;height:15px}
-  .finder-intents{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:10px}
-  .finder-intents[hidden]{display:none}
-  .fi-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
-  .fi-chip{font:12.5px/1 var(--sans);font-weight:600;color:var(--muted);background:var(--card);border:1px dashed var(--line2);border-radius:999px;padding:6px 11px;cursor:pointer;transition:border-color .12s,color .12s,background .12s}
-  .fi-chip:hover{border-style:solid;border-color:var(--ink);color:var(--ink)}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 
@@ -553,13 +548,6 @@
                aria-label="Describe what you want to do" aria-controls="grid">
         <button class="finder-clear" id="finderClear" type="button" hidden aria-label="Clear search" data-ic="x"></button>
       </div>
-      <div class="finder-intents" id="finderIntents" role="group" aria-label="Suggested searches">
-        <span class="fi-lbl">Try:</span>
-        <button class="fi-chip" type="button" data-q="log my hours">Log my hours</button>
-        <button class="fi-chip" type="button" data-q="check brand colors">Check brand colors</button>
-        <button class="fi-chip" type="button" data-q="make one file per row">One file per row</button>
-        <button class="fi-chip" type="button" data-q="restyle a page">Restyle a page</button>
-      </div>
       <span class="sr-only" id="finderLive" aria-live="polite"></span>
     </div>
     <div class="filters" id="filters" role="group" aria-label="Filter skills by tag" hidden></div>
@@ -915,7 +903,6 @@
         var finder = document.getElementById('finder');
         var fInput = document.getElementById('finderInput');
         var fClear = document.getElementById('finderClear');
-        var fIntents = document.getElementById('finderIntents');
         if (finder && skills.length) {
           finder.hidden = false;
           if (window.matchMedia && window.matchMedia('(max-width:560px)').matches) {
@@ -925,7 +912,6 @@
           function runFinder(animate){
             var v = fInput.value;
             fClear.hidden = !v;
-            fIntents.hidden = !!v.trim();
             window.setQuery(v, animate);
           }
           fInput.addEventListener('input', function(){
@@ -934,12 +920,8 @@
           });
           fInput.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ fInput.value=''; runFinder(true); } });
           fClear.addEventListener('click', function(){ fInput.value=''; runFinder(true); fInput.focus(); });
-          fIntents.addEventListener('click', function(e){
-            var c = e.target.closest('.fi-chip'); if (!c) return;
-            fInput.value = c.getAttribute('data-q'); runFinder(true); fInput.focus();
-          });
           var q0 = queryFromHash();
-          if (q0) { fInput.value = q0; fClear.hidden = false; fIntents.hidden = true; }
+          if (q0) { fInput.value = q0; fClear.hidden = false; }
           query = q0;
         }
 
@@ -947,7 +929,7 @@
         window.addEventListener('hashchange', function () {
           var t = tagFromHash(), q = queryFromHash();
           if (t.toLowerCase() !== (active||'').toLowerCase() || q !== query) {
-            if (fInput) { fInput.value = q; fClear.hidden = !q; fIntents.hidden = !!q; }
+            if (fInput) { fInput.value = q; fClear.hidden = !q; }
             query = q; apply(t, true);
           }
         });
