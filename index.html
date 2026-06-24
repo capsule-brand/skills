@@ -71,9 +71,10 @@
   .howto{margin-top:64px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px}
   .howto h2{margin-bottom:18px}
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-  .step{position:relative;padding-left:34px;font-size:14px;line-height:1.5;color:var(--muted)}
+  .step{display:flex;gap:16px;font-size:14px;line-height:1.5;color:var(--muted)}
+  .step .sb{flex:1;min-width:0}
   .step b{display:block;color:var(--ink);font-weight:600;font-size:14px;margin-bottom:3px}
-  .step .n{position:absolute;left:0;top:-2px;font-family:var(--display);font-size:22px;font-weight:600;color:var(--red);line-height:1}
+  .step .n{flex:none;font-family:var(--display);font-size:64px;font-weight:600;color:var(--red);line-height:.82;margin-top:-4px}
   .step code{font:12px/1 var(--mono);background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;color:#55504a}
 
   /* Tools */
@@ -260,9 +261,9 @@
   <section class="howto" id="howto">
     <h2 class="eyebrow">Installing</h2>
     <div class="steps">
-      <div class="step"><span class="n">1</span><b>Download</b>Pick a skill below and download its <code>.skill</code> file.</div>
-      <div class="step"><span class="n">2</span><b>Open the Claude app</b>Go to Settings, then Claude Cowork, then Upload skill.</div>
-      <div class="step"><span class="n">3</span><b>Use it</b>Select the file. Then just say what you want, or type its slash command.</div>
+      <div class="step"><span class="n">1</span><div class="sb"><b>Download</b>Pick a skill below and download its <code>.skill</code> file.</div></div>
+      <div class="step"><span class="n">2</span><div class="sb"><b>Open the Claude app</b>Go to Settings, then Claude Cowork, then Upload skill.</div></div>
+      <div class="step"><span class="n">3</span><div class="sb"><b>Use it</b>Select the file. Then just say what you want, or type its slash command.</div></div>
     </div>
   </section>
 
