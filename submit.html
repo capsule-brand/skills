@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="module" src="assets/skill-icons.js"></script>
 <style>
   :root{
     --paper:#f5f1e8; --paper2:#efe8d9; --card:#fffdf8;
@@ -72,6 +73,27 @@
   .preview .pv-tag{font-size:13px;color:var(--muted)}
   .accent-row{display:flex;align-items:center;gap:10px}
   input[type=color]{width:46px;height:38px;border:1px solid var(--line2);border-radius:9px;background:var(--card);padding:3px;cursor:pointer}
+  .chip svg{width:24px;height:24px;display:block}
+
+  /* icon picker */
+  .icon-current{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ic-prev{width:40px;height:40px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;letter-spacing:-.4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+  .ic-prev svg{width:22px;height:22px}
+  .icon-toggle{font:13px/1 var(--sans);font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:9px;padding:10px 13px;cursor:pointer;transition:border-color .12s,background .12s}
+  .icon-toggle:hover{border-color:var(--ink)}
+  .icon-clear{font:12.5px/1 var(--sans);color:var(--muted);background:none;border:0;cursor:pointer;padding:6px;text-decoration:underline;text-underline-offset:2px}
+  .icon-clear:hover{color:var(--red)}
+  .icon-panel{margin-top:10px;border:1px solid var(--line2);border-radius:12px;background:var(--paper2);padding:12px}
+  .icon-panel[hidden]{display:none}
+  .icon-search{width:100%;margin-bottom:10px}
+  .icon-grouplabel{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin:4px 2px 8px}
+  .icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:7px;margin-bottom:6px}
+  .icon-tile{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--line2);border-radius:9px;color:var(--ink);cursor:pointer;transition:border-color .12s,transform .1s,background .12s}
+  .icon-tile:hover{border-color:var(--ink);transform:translateY(-1px)}
+  .icon-tile svg{width:20px;height:20px}
+  .icon-tile.sel{border-color:var(--ink);background:#fff;box-shadow:0 0 0 2px var(--ink2)}
+  .icon-tile.suggested::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--paper2)}
+  .icon-empty{font-size:13px;color:var(--muted);padding:6px 2px}
 
   /* tags */
   .tagbox{display:flex;flex-wrap:wrap;gap:7px;align-items:center;background:var(--paper2);border:1px solid var(--line2);border-radius:10px;padding:8px}
@@ -192,6 +214,26 @@
         </div>
       </div>
 
+      <div class="field" data-f="icon">
+        <label>Icon <span class="hint">— optional; shown on the card. Defaults to the badge initials.</span></label>
+        <div class="icon-current">
+          <span class="ic-prev" id="icPrev">SK</span>
+          <button type="button" class="icon-toggle" id="icToggle" aria-expanded="false">Choose an icon</button>
+          <button type="button" class="icon-clear" id="icClear" hidden>Use initials</button>
+        </div>
+        <div class="icon-panel" id="icPanel" hidden>
+          <input type="text" class="icon-search" id="icSearch" placeholder="Search icons — e.g. clock, color, code…" autocomplete="off" aria-label="Search icons">
+          <div id="icSuggestWrap" hidden>
+            <div class="icon-grouplabel">Suggested for this skill</div>
+            <div class="icon-grid" id="icSuggestGrid"></div>
+          </div>
+          <div class="icon-grouplabel" id="icAllLabel">All icons</div>
+          <div class="icon-grid" id="icGrid"></div>
+          <div class="icon-empty" id="icEmpty" hidden>No icons match that search.</div>
+        </div>
+        <div class="msg"></div>
+      </div>
+
       <div class="field" data-f="tags">
         <label>Tags <span class="hint">— up to 6</span></label>
         <div class="tagbox" id="tagbox">
@@ -297,21 +339,89 @@
   }
 
   // ---- live preview ----
+  function svgWrap(inner) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  }
+  function currentMono() {
+    var mono = $('f-mono').value.trim().toUpperCase();
+    return mono || deriveMono($('f-name').value.trim());
+  }
+  // Paint a chip element with the chosen icon, else the initials.
+  function paintChip(el) {
+    var lib = window.SKILL_ICONS || {};
+    if (iconId && lib[iconId]) el.innerHTML = svgWrap(lib[iconId]);
+    else el.textContent = currentMono();
+  }
   function refreshPreview() {
     var name = $('f-name').value.trim();
     var tag = $('f-tagline').value.trim();
-    var mono = $('f-mono').value.trim().toUpperCase();
     var accent = $('f-accentHex').value.trim();
+    var color = ACCENT_RE.test(accent) ? accent : '#646b78';
     $('pvName').textContent = name || 'Skill name';
     $('pvTag').textContent = tag || 'Your one-line description.';
-    $('pvChip').textContent = mono || deriveMono(name);
-    if (ACCENT_RE.test(accent)) { $('pvChip').style.background = accent; }
+    paintChip($('pvChip')); $('pvChip').style.background = color;
+    paintChip($('icPrev')); $('icPrev').style.background = color;
+    $('icClear').hidden = !iconId;
+    $('icToggle').textContent = iconId ? 'Change icon' : 'Choose an icon';
+    if (!$('icPanel').hidden) buildSuggestGrid(); // keep suggestions live as the name/tags change
   }
   function deriveMono(name) {
     var w = name.replace(/[^A-Za-z0-9 ]/g, ' ').trim().split(/\s+/).filter(Boolean);
     var m = w.length >= 2 ? (w[0][0] + w[1][0]) : (w[0] || 'SK').slice(0, 2);
     return m.toUpperCase();
   }
+
+  // ---- icon picker ----
+  // iconId is the source of truth (an id from window.SKILL_ICONS, or '' for initials).
+  var iconId = '';
+  function svgFor(id) { var lib = window.SKILL_ICONS || {}; return lib[id] ? svgWrap(lib[id]) : ''; }
+  function iconTile(id, suggested) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'icon-tile' + (suggested ? ' suggested' : '') + (iconId && id === iconId ? ' sel' : '');
+    b.setAttribute('data-icon', id); b.title = id; b.setAttribute('aria-label', 'Use ' + id + ' icon');
+    b.innerHTML = svgFor(id);
+    b.addEventListener('click', function () { selectIcon(id); });
+    return b;
+  }
+  function selectIcon(id) { iconId = (id === iconId) ? '' : id; setMsg('icon', ''); syncTiles(); refreshPreview(); }
+  function syncTiles() {
+    Array.prototype.forEach.call(document.querySelectorAll('.icon-tile'), function (t) {
+      t.classList.toggle('sel', !!iconId && t.getAttribute('data-icon') === iconId);
+    });
+  }
+  function computeSuggestions() {
+    var rules = window.ICON_SUGGEST || [], lib = window.SKILL_ICONS || {};
+    var hay = ($('f-name').value + ' ' + $('f-tagline').value + ' ' + tags.join(' ')).toLowerCase();
+    var out = [], seen = {};
+    rules.forEach(function (r) {
+      if (hay.indexOf(r[0]) !== -1 && !seen[r[1]] && lib[r[1]]) { seen[r[1]] = true; out.push(r[1]); }
+    });
+    return out.slice(0, 8);
+  }
+  function buildSuggestGrid() {
+    var sg = computeSuggestions(), wrap = $('icSuggestWrap'), grid = $('icSuggestGrid');
+    grid.innerHTML = '';
+    if (!sg.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    sg.forEach(function (id) { grid.appendChild(iconTile(id, true)); });
+  }
+  function buildAllGrid(filter) {
+    var lib = window.SKILL_ICONS || {};
+    var ids = Object.keys(lib).filter(function (id) { return !filter || id.indexOf(filter) !== -1; });
+    var grid = $('icGrid'); grid.innerHTML = '';
+    ids.forEach(function (id) { grid.appendChild(iconTile(id, false)); });
+    $('icEmpty').hidden = ids.length > 0;
+    $('icAllLabel').textContent = filter ? 'Matching icons' : 'All icons';
+  }
+  function openIconPanel() {
+    $('icPanel').hidden = false; $('icToggle').setAttribute('aria-expanded', 'true');
+    buildSuggestGrid(); buildAllGrid(''); syncTiles(); $('icSearch').focus();
+  }
+  function closeIconPanel() { $('icPanel').hidden = true; $('icToggle').setAttribute('aria-expanded', 'false'); }
+  $('icToggle').addEventListener('click', function () { if ($('icPanel').hidden) openIconPanel(); else closeIconPanel(); });
+  $('icClear').addEventListener('click', function () { iconId = ''; syncTiles(); refreshPreview(); });
+  $('icSearch').addEventListener('input', function () { buildAllGrid($('icSearch').value.trim().toLowerCase()); syncTiles(); });
 
   // slug auto-suggest from name
   var slugEdited = false;
@@ -346,6 +456,7 @@
       c.appendChild(x);
       tagbox.insertBefore(c, tagInput);
     });
+    refreshPreview(); // tags feed the icon suggestions
   }
   function addTag() {
     var v = tagInput.value.trim();
@@ -400,7 +511,7 @@
     wrap.classList.toggle('bad', !!m);
     var el = wrap.querySelector('.msg'); if (el) el.textContent = m || '';
   }
-  function clearAll() { ['name','slug','tagline','invoke','accent','mono','tags','say','needs','skill','email'].forEach(function (f) { setMsg(f, ''); }); }
+  function clearAll() { ['name','slug','tagline','invoke','accent','mono','icon','tags','say','needs','skill','email'].forEach(function (f) { setMsg(f, ''); }); }
 
   // ---- validate + submit ----
   function validate() {
@@ -427,7 +538,7 @@
     if (!fileBuf) bad('skill', 'Attach a valid .skill file.');
 
     if (!ok && first) { var w = document.querySelector('.field[data-f="' + first + '"] input'); if (w) w.focus(); }
-    return ok ? { name: name, slug: slug, version: '1.0.0', tagline: tagline, invoke: invoke, accent: accent, mono: mono, say: say, needs: needs, email: email } : null;
+    return ok ? { name: name, slug: slug, version: '1.0.0', tagline: tagline, invoke: invoke, accent: accent, mono: mono, icon: iconId, say: say, needs: needs, email: email } : null;
   }
 
   function banner(kind, msg) {
@@ -452,6 +563,7 @@
     if (v.invoke) fd.append('invoke', v.invoke);
     fd.append('accent', v.accent);
     if (v.mono) fd.append('mono', v.mono);
+    if (v.icon) fd.append('icon', v.icon);
     if (v.say) fd.append('say', v.say);
     if (v.needs) fd.append('needs', v.needs);
     if (v.email) fd.append('submitter_email', v.email);
@@ -481,7 +593,8 @@
     $('form').style.display = 'none';
     var done = $('done');
     done.style.display = '';
-    $('doneChip').textContent = skill.mono || '';
+    if (skill.icon) $('doneChip').innerHTML = svgWrap(skill.icon);
+    else $('doneChip').textContent = skill.mono || '';
     $('doneChip').style.background = skill.accent || '#646b78';
     $('doneName').textContent = skill.name + ' is live';
     done.scrollIntoView({ behavior: 'smooth', block: 'center' });

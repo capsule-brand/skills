@@ -528,7 +528,8 @@
       lastFocus = document.activeElement;
       vwTitle.textContent = s.name;
       vwChip.style.background = s.accent || '#646b78';
-      vwChip.textContent = s.mono || '';
+      if (s.icon) { vwChip.textContent = ''; vwChip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + s.icon + '</svg>'; }
+      else { vwChip.innerHTML = ''; vwChip.textContent = s.mono || ''; }
       vwFiles.innerHTML = ''; vwMain.innerHTML = '<p class="vw-empty">Loading…</p>';
       viewer.hidden = false; vwClose.focus();
       fetch('/api/skills?slug=' + encodeURIComponent(slug) + '&files=1')

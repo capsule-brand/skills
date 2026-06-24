@@ -104,6 +104,7 @@ export default async function handler(req, res) {
       version: m.version,
       mono: m.mono,
       accent: m.accent,
+      icon: m.icon || null,
       tagline: m.tagline,
       invoke: m.invoke || null,
       needs: m.needs || null,
