@@ -118,6 +118,13 @@
   .file b{display:block;font-size:14.5px;color:var(--ink)}
   .file span{font-size:12.5px;color:var(--muted)}
   .file input{display:none}
+  /* "build one with skill-creator" callout */
+  .makecta{display:flex;gap:11px;align-items:flex-start;margin-top:12px;padding:13px 15px;background:var(--paper2);border:1px solid var(--line);border-radius:11px}
+  .makecta-ic{flex:none;width:26px;height:26px;border-radius:7px;background:var(--card);border:1px solid var(--line2);color:var(--red);display:inline-flex;align-items:center;justify-content:center}
+  .makecta-ic svg{width:14px;height:14px;display:block}
+  .makecta p{font-size:13px;line-height:1.5;color:var(--muted)}
+  .makecta p b{color:var(--ink);font-weight:600}
+  .makecta code{font:11.5px/1 var(--mono);background:var(--card);border:1px solid var(--line2);border-radius:5px;padding:2px 5px;color:#55504a}
 
   .banner{border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:16px;display:none}
   .banner.show{display:block}
@@ -275,6 +282,10 @@
           <input type="file" id="f-skill" accept=".skill,application/zip">
         </label>
         <div class="msg"></div>
+      </div>
+      <div class="makecta">
+        <span class="makecta-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg></span>
+        <p>Don&rsquo;t have a <code>.skill</code> yet? Ask Claude to <b>create a skill</b> &mdash; the built-in <b>skill-creator</b> walks you through it, then upload the file it makes.</p>
       </div>
       <div class="field" data-f="email">
         <label for="f-email">Your email <span class="hint">— optional, so we can reach you</span></label>
