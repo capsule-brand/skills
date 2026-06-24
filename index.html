@@ -163,14 +163,19 @@
   .cursor::before{content:"";position:absolute;inset:0;background:var(--ink2);clip-path:polygon(0 0,0 72%,22% 56%,40% 96%,56% 88%,38% 50%,68% 50%)}
 
   /* Tools */
-  .list-head{display:flex;align-items:baseline;justify-content:space-between;margin:62px 0 18px}
+  .list-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:62px 0 18px}
   .list-head h2{font-family:var(--display);font-weight:600;font-size:27px;letter-spacing:-.015em}
   .list-head .count{color:var(--faint);font-size:12.5px;font-weight:600;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+  .list-head-r{display:flex;align-items:center;gap:14px}
+  /* Sort — reuses the segmented control component */
+  .sortctl{margin:0}
+  .sortctl[hidden]{display:none}
+  .sortctl .filt{padding:7px 13px;font-size:12.5px}
 
   /* Task-based finder */
   .finder{margin-bottom:18px}
-  .finder-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line2);border-radius:12px;padding:12px 14px;transition:border-color .12s,box-shadow .12s}
-  .finder-box:focus-within{border-color:var(--ink);box-shadow:0 1px 2px rgba(27,29,34,.1)}
+  .finder-box{display:flex;align-items:center;gap:10px;background:var(--paper2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:inset 0 1px 2px rgba(27,29,34,.06);transition:border-color .12s,box-shadow .12s}
+  .finder-box:focus-within{border-color:var(--ink);box-shadow:inset 0 1px 2px rgba(27,29,34,.06),0 1px 2px rgba(27,29,34,.1)}
   .finder-ic{flex:none;color:var(--faint);display:inline-flex}
   .finder-ic svg{width:18px;height:18px;display:block}
   .finder-box input{flex:1;min-width:0;border:0;background:none;font:15px var(--sans);color:var(--ink);outline:none}
@@ -537,7 +542,13 @@
   <section id="list">
     <div class="list-head">
       <h2>The tools</h2>
-      <span class="count" id="count">&nbsp;</span>
+      <div class="list-head-r">
+        <span class="count" id="count">&nbsp;</span>
+        <div class="sortctl filters" id="sortctl" role="group" aria-label="Sort tools" hidden>
+          <button class="filt" type="button" data-sort="new" aria-pressed="true">Newest</button>
+          <button class="filt" type="button" data-sort="az" aria-pressed="false">A&ndash;Z</button>
+        </div>
+      </div>
     </div>
     <div class="finder" id="finder" role="search" hidden>
       <div class="finder-box">
@@ -796,6 +807,15 @@
         window.focusActiveChip = focusActiveChip;
 
         var query = '';
+        var sortMode = 'new';                                 // 'new' (by updated, desc) | 'az' (by name)
+        function sortedCards(){
+          return cards.slice().sort(function(a,b){
+            var sa = findSkill(a.getAttribute('data-slug')) || {};
+            var sb = findSkill(b.getAttribute('data-slug')) || {};
+            if (sortMode === 'az') return String(sa.name||'').toLowerCase().localeCompare(String(sb.name||'').toLowerCase());
+            return String(sb.updated||'').localeCompare(String(sa.updated||''));   // newest first
+          });
+        }
         function hit(field, term){
           if (!field || !term) return 0;
           if (field.indexOf(term) !== -1) return 1;
@@ -838,8 +858,8 @@
           if (scores) {                                         // reorder by score when searching
             matched.sort(function(a,b){ return b.score - a.score; });
             matched.forEach(function(m){ grid.appendChild(m.card); });
-          } else {                                              // restore curated order when query cleared
-            cards.forEach(function(c){ grid.appendChild(c); });
+          } else {                                              // no query: order by the chosen sort
+            sortedCards().forEach(function(c){ grid.appendChild(c); });
           }
           chipBtns.forEach(function (b) {
             var on = (b.getAttribute('data-tag') || '').toLowerCase() === key;
@@ -923,6 +943,20 @@
           var q0 = queryFromHash();
           if (q0) { fInput.value = q0; fClear.hidden = false; }
           query = q0;
+        }
+
+        // ---- Sort control (segmented) ----
+        var sortEl = document.getElementById('sortctl');
+        if (sortEl && skills.length > 1) {
+          sortEl.hidden = false;
+          sortEl.addEventListener('click', function (e) {
+            var b = e.target.closest('.filt'); if (!b) return;
+            var mode = b.getAttribute('data-sort'); if (mode === sortMode) return;
+            sortMode = mode;
+            var bs = sortEl.querySelectorAll('.filt');
+            for (var i = 0; i < bs.length; i++) bs[i].setAttribute('aria-pressed', bs[i].getAttribute('data-sort') === mode ? 'true' : 'false');
+            apply(undefined, true);
+          });
         }
 
         apply(tagFromHash(), false);
