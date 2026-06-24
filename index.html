@@ -35,6 +35,20 @@
   .submit-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink);background:transparent;border:1px solid var(--line2);border-radius:9px;padding:8px 14px;text-decoration:none;white-space:nowrap;transition:background .12s,border-color .12s,color .12s}
   .submit-btn:hover{background:var(--ink2);border-color:var(--ink2);color:var(--paper)}
   .submit-btn .plus{font-size:15px;line-height:1;margin-top:-1px}
+  .top-link{font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);background:none;border:0;cursor:pointer;padding:0;border-bottom:1px solid transparent;white-space:nowrap;transition:color .12s,border-color .12s}
+  .top-link:hover{color:var(--ink);border-color:var(--red)}
+
+  /* Collapsible onboarding (explainer + install guide) */
+  .onboard{margin-top:28px}
+  .onboard-bar{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 20px;cursor:pointer;font:inherit;color:var(--ink);text-align:left;transition:border-color .12s}
+  .onboard-bar:hover{border-color:var(--ink)}
+  .ob-text{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.01em}
+  .ob-eye{color:var(--red);font-style:italic;margin-right:6px}
+  .ob-chev{flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .18s;margin-right:3px}
+  .onboard-bar[aria-expanded="true"] .ob-chev{transform:rotate(45deg)}
+  .onboard-body[hidden]{display:none}
+  .onboard-body .explain{margin-top:16px}
+  .onboard-body .howto{margin-top:18px}
 
   /* Hero */
   .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:48px 0 8px;border-top:1px solid var(--line)}
@@ -356,6 +370,7 @@
       <b>Capsule Skills</b>
     </div>
     <div class="top-r">
+      <button class="top-link" id="howtoLink" type="button">How to add a skill</button>
       <a class="submit-btn" href="submit.html"><span class="plus">+</span> Submit a skill</a>
     </div>
   </div>
@@ -391,6 +406,14 @@
       </div>
     </div>
   </section>
+
+  <section class="onboard" id="onboard">
+    <h2 class="sr-only">Getting started</h2>
+    <button class="onboard-bar" id="onboardToggle" type="button" aria-expanded="false" aria-controls="onboardBody">
+      <span class="ob-text"><span class="ob-eye">New here?</span> How to add a skill</span>
+      <span class="ob-chev" aria-hidden="true"></span>
+    </button>
+    <div class="onboard-body" id="onboardBody" hidden>
 
   <section class="explain" id="explain">
     <div class="explain-q">
@@ -510,6 +533,9 @@
       </li>
 
     </ol>
+  </section>
+
+    </div>
   </section>
 
   <section id="list">
@@ -660,6 +686,29 @@
       });
     }
     hydrateIcons(document);   // static markup: explainer, install panels, finder
+
+    // ---- Collapsible onboarding: open on a first-ever visit, collapsed after (per browser) ----
+    (function () {
+      var bar = document.getElementById('onboardToggle');
+      var body = document.getElementById('onboardBody');
+      if (!bar || !body) return;
+      function setOpen(open, scroll) {
+        bar.setAttribute('aria-expanded', open ? 'true' : 'false');
+        body.hidden = !open;
+        if (open && scroll) {
+          var top = document.getElementById('onboard');
+          if (top && top.scrollIntoView) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+      var seen; try { seen = localStorage.getItem('cap_guide_seen'); } catch (e) {}
+      setOpen(!seen, false);                                  // first-ever visit → open; thereafter collapsed
+      try { localStorage.setItem('cap_guide_seen', '1'); } catch (e) {}
+      bar.addEventListener('click', function () { setOpen(bar.getAttribute('aria-expanded') !== 'true', false); });
+      function openAndScroll(e) { if (e) e.preventDefault(); setOpen(true, true); }
+      var hl = document.getElementById('howtoLink'); if (hl) hl.addEventListener('click', openAndScroll);
+      // Hero "How to add a skill" CTA points at #howto, now inside the collapsed body — open + scroll instead of a dead jump.
+      Array.prototype.forEach.call(document.querySelectorAll('a[href="#howto"]'), function (a) { a.addEventListener('click', openAndScroll); });
+    })();
 
     var INDEX = [];
     var STOP = {the:1,a:1,an:1,i:1,my:1,to:1,for:1,want:1,wanna:1,do:1,me:1,with:1,and:1,of:1,in:1,on:1,it:1,some:1,please:1,can:1,you:1,help:1,need:1,make:1};
