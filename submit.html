@@ -103,6 +103,12 @@
   .tagchip button:hover{color:var(--red)}
   .tagbox input{flex:1;min-width:90px;border:0;background:none;font:14px/1 var(--sans);padding:6px 4px}
   .tagbox input:focus{outline:none}
+  .tag-suggest{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:9px}
+  .tag-suggest[hidden]{display:none}
+  .tag-suggest-lbl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--faint)}
+  .tag-suggest-chip{font:12.5px/1 var(--sans);font-weight:600;color:var(--muted);background:var(--card);border:1px dashed var(--line2);border-radius:999px;padding:6px 11px;cursor:pointer;transition:border-color .12s,color .12s,background .12s}
+  .tag-suggest-chip::before{content:"+ ";color:var(--faint)}
+  .tag-suggest-chip:hover{border-style:solid;border-color:var(--ink);color:var(--ink)}
 
   /* file drop */
   .file{display:block;border:1.5px dashed var(--line2);border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:var(--paper2);transition:border-color .12s,background .12s}
@@ -239,6 +245,7 @@
         <div class="tagbox" id="tagbox">
           <input type="text" id="f-tag" placeholder="Type a tag, press Enter">
         </div>
+        <div class="tag-suggest" id="tagSuggest" hidden></div>
         <div class="msg"></div>
       </div>
     </div>
@@ -309,6 +316,7 @@
   var page = $('page'), gate = $('gate'), fields = $('formFields');
   var takenSlugs = {};
   var tags = [];
+  var catalogTags = {}; // lowercase -> { label, count }: existing tags across the live catalog
   var fileBuf = null; // validated File object
 
   // ---- gate ----
@@ -332,9 +340,18 @@
     ]).then(function (res) {
       res.forEach(function (x) {
         if (x.status === 'fulfilled' && Array.isArray(x.value)) {
-          x.value.forEach(function (s) { if (s && s.slug) takenSlugs[String(s.slug).toLowerCase()] = true; });
+          x.value.forEach(function (s) {
+            if (s && s.slug) takenSlugs[String(s.slug).toLowerCase()] = true;
+            if (s && Array.isArray(s.tags)) s.tags.forEach(function (t) {
+              t = String(t || '').trim(); if (!t) return;
+              var k = t.toLowerCase();
+              if (!catalogTags[k]) catalogTags[k] = { label: t, count: 0 };
+              catalogTags[k].count++;
+            });
+          });
         }
       });
+      renderTagSuggest();
     });
   }
 
@@ -444,7 +461,7 @@
   });
 
   // ---- tags ----
-  var tagInput = $('f-tag'), tagbox = $('tagbox');
+  var tagInput = $('f-tag'), tagbox = $('tagbox'), tagSuggest = $('tagSuggest');
   function renderTags() {
     Array.prototype.slice.call(tagbox.querySelectorAll('.tagchip')).forEach(function (c) { c.remove(); });
     tags.forEach(function (t, i) {
@@ -456,21 +473,47 @@
       c.appendChild(x);
       tagbox.insertBefore(c, tagInput);
     });
+    renderTagSuggest();
     refreshPreview(); // tags feed the icon suggestions
   }
-  function addTag() {
-    var v = tagInput.value.trim();
+  // Reuse the catalog's existing spelling for a tag so categories don't fragment
+  // (e.g. "browser" typed by a user collapses into the existing "Browser").
+  function canonicalTag(v) { var hit = catalogTags[v.toLowerCase()]; return hit ? hit.label : v; }
+  function addTag(explicit) {
+    var v = (typeof explicit === 'string' ? explicit : tagInput.value).trim();
     if (!v) return;
     if (tags.length >= 6) { setMsg('tags', 'At most 6 tags.'); return; }
     if (!TAG_RE.test(v)) { setMsg('tags', 'Letters, numbers, spaces only (≤24).'); return; }
+    v = canonicalTag(v);
     if (tags.some(function (t) { return t.toLowerCase() === v.toLowerCase(); })) { tagInput.value = ''; return; }
     tags.push(v); tagInput.value = ''; setMsg('tags', ''); renderTags();
+  }
+  // Show the catalog's existing tags (most-used first) as one-click chips, hiding
+  // any already added. These are the buckets that earn tabs once 2+ skills share them.
+  function renderTagSuggest() {
+    if (!tagSuggest) return;
+    var added = {}; tags.forEach(function (t) { added[t.toLowerCase()] = true; });
+    var avail = Object.keys(catalogTags)
+      .filter(function (k) { return !added[k]; })
+      .sort(function (a, b) { return catalogTags[b].count - catalogTags[a].count || a.localeCompare(b); })
+      .slice(0, 12);
+    tagSuggest.innerHTML = '';
+    if (!avail.length || tags.length >= 6) { tagSuggest.hidden = true; return; }
+    var lbl = document.createElement('span'); lbl.className = 'tag-suggest-lbl'; lbl.textContent = 'Popular';
+    tagSuggest.appendChild(lbl);
+    avail.forEach(function (k) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'tag-suggest-chip';
+      b.textContent = catalogTags[k].label;
+      b.addEventListener('click', function () { addTag(catalogTags[k].label); tagInput.focus(); });
+      tagSuggest.appendChild(b);
+    });
+    tagSuggest.hidden = false;
   }
   tagInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(); }
     else if (e.key === 'Backspace' && !tagInput.value && tags.length) { tags.pop(); renderTags(); }
   });
-  tagInput.addEventListener('blur', addTag);
+  tagInput.addEventListener('blur', function () { addTag(); });
 
   // ---- file ----
   var fileLabel = $('fileLabel');
