@@ -112,5 +112,24 @@
       "Marketing",
       "Writing"
     ]
+  },
+  {
+    "name": "Add Skill",
+    "slug": "add-skill",
+    "version": "1.0.0",
+    "updated": "2026-06-26",
+    "mono": "AS",
+    "accent": "#ea580c",
+    "tagline": "Publish a new skill to the Capsule catalog the right way.",
+    "invoke": "/add-skill",
+    "needs": "The Capsule Skills repo cloned locally with git push access (~/capsule-skills-site on the MacBook, ~/Developer/capsule-skills-site on the Mac Studio), plus the new skill's SKILL.md ready to publish.",
+    "say": "Add a new skill to the Capsule catalog.",
+    "file": "skills/add-skill/add-skill.skill",
+    "guide": "skills/add-skill/install-guide.html",
+    "icon": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z\"/><path d=\"M14 2v5h5\"/><path d=\"M9 15h6\"/><path d=\"M12 18v-6\"/>",
+    "tags": [
+      "Internal",
+      "Tooling"
+    ]
   }
 ]
