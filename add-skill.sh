@@ -18,7 +18,7 @@
 #   --tagline "..."              default: first sentence of the SKILL.md description
 #   --invoke "/slug"             default: /<slug>
 #   --needs "..."                default: generic
-#   --say "..."                  default: generic
+#   --say "a|b|c"                 pipe-separated examples; card shows the 1st, guide lists all
 #   --tags "Marketing,Writing"   default: none
 #   --icon "<path .../>"         default: a generic file glyph (lucide)
 #   --version 1.0.0              default: 1.0.0
@@ -140,7 +140,7 @@ json.dump(files_json, open(os.path.join(out_dir, "files.json"), "w"))
 entry = {
     "name": name, "slug": slug, "version": version, "updated": today,
     "mono": mono, "accent": accent, "tagline": tagline, "invoke": invoke,
-    "needs": needs, "say": say,
+    "needs": needs, "say": say.split("|")[0].strip(),
     "file": f"skills/{slug}/{slug}.skill",
     "guide": f"skills/{slug}/install-guide.html",
     "icon": icon, "tags": tags,
