@@ -93,5 +93,24 @@
       "Browser",
       "Web"
     ]
+  },
+  {
+    "name": "Client Work → LinkedIn",
+    "slug": "client-work-linkedin",
+    "version": "1.0.0",
+    "updated": "2026-06-26",
+    "mono": "LI",
+    "accent": "#0a66c2",
+    "tagline": "Turn a finished client project into a ready-to-post LinkedIn post.",
+    "invoke": "/client-work-linkedin",
+    "needs": "A project to point it at: a code repo, a folder of design files, or its brief in Notion or Google Drive.",
+    "say": "Turn the project we just wrapped into a LinkedIn post.",
+    "file": "skills/client-work-linkedin/client-work-linkedin.skill",
+    "guide": "skills/client-work-linkedin/install-guide.html",
+    "icon": "<path d=\"M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z\"/><rect width=\"4\" height=\"12\" x=\"2\" y=\"9\"/><circle cx=\"4\" cy=\"4\" r=\"2\"/>",
+    "tags": [
+      "Marketing",
+      "Writing"
+    ]
   }
 ]
