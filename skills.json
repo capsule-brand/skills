@@ -131,5 +131,24 @@
       "Internal",
       "Tooling"
     ]
+  },
+  {
+    "name": "Humanize Text",
+    "slug": "humanize-text",
+    "version": "1.0.0",
+    "updated": "2026-06-26",
+    "mono": "HT",
+    "accent": "#db2777",
+    "tagline": "Strip the AI tells out of text while keeping the meaning, tone, and facts.",
+    "invoke": "/humanize-text",
+    "needs": "The text you want cleaned up: paste it in, or point Claude at the file or doc it lives in. Optionally a Capsule brand voice guide for it to match.",
+    "say": "Humanize this so it doesn't read like AI.",
+    "file": "skills/humanize-text/humanize-text.skill",
+    "guide": "skills/humanize-text/install-guide.html",
+    "icon": "<path d=\"M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z\"/><path d=\"M16 8 2 22\"/><path d=\"M17.5 15H9\"/>",
+    "tags": [
+      "Writing",
+      "Editing"
+    ]
   }
 ]
