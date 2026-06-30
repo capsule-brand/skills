@@ -40,8 +40,8 @@
   {
     "name": "Illustrator Data Merge",
     "slug": "illustrator-data-merge",
-    "version": "1.0.0",
-    "updated": "2026-06-15",
+    "version": "1.0.1",
+    "updated": "2026-06-29",
     "mono": "DM",
     "accent": "#3b74f0",
     "tagline": "One template, a list of records, one finished file per record.",
@@ -59,8 +59,8 @@
   {
     "name": "PanelProof",
     "slug": "panelproof",
-    "version": "1.0.0",
-    "updated": "2026-06-15",
+    "version": "1.0.1",
+    "updated": "2026-06-29",
     "mono": "PP",
     "accent": "#3aa76d",
     "tagline": "Read-only content and visual proofer for Illustrator artwork. Pairs with Data Merge.",
