@@ -59,75 +59,78 @@ Roughly 70% neutral ground, 20% supporting, 10% accent. One dominant accent per 
 
 ## Typography
 
-Three families, all licensed. Files ship with this skill's source folder; install via Font Book.
+**Resolve the typeface by where the work is going.** Capsule licenses three faces, but two of them cannot be used in Google Workspace, so there is an approved alternate set. Pick the row that matches the output, then apply the weight mapping below.
 
-| Role | Family | Fallback chain |
+| Context | Display / headings | Editorial serif | Body / UI |
+|---|---|---|---|
+| **Adobe** — Illustrator, InDesign, Photoshop | **Britanica** | **GT Super Display** | **Proxima Nova** |
+| **Keynote / PowerPoint** on a Capsule Mac | **Britanica** | **GT Super Display** | **Proxima Nova** |
+| **Google Slides / Docs** | **Instrument Sans** | **Gilda Display** | **Proxima Nova** |
+| **Web / HTML artifacts** | Britanica if self-hosted, else **Instrument Sans** | **GT Super** (ships .woff2) | Proxima Nova via Typekit, else Instrument Sans |
+| **Unknown / someone else's machine** | Instrument Sans → Helvetica Neue → Arial | Gilda Display → Georgia | Helvetica Neue → Arial |
+
+Corporate faces are the default. Drop to the alternates only when the environment genuinely cannot load them — in practice that means Google Workspace, and any file leaving Capsule where the recipient won't have the licensed fonts installed.
+
+### Why the alternates are what they are
+
+Britanica and GT Super are licensed desktop fonts (Monotype via Fonts.net; Grilli Type) and **cannot be uploaded to Google Fonts**, so Slides cannot render them. Instrument Sans and Gilda Display are Google Fonts — available in Slides natively and free to load on the web.
+
+Instrument Sans was chosen on character rather than metrics, which is the right call for a display face. Its x-height-to-cap ratio is **0.708** against Britanica's **0.700** — near-identical proportion, so it reads with the same texture. It is roughly **10% wider** in absolute set width, so line breaks move when a deck is converted between the two. Re-break headlines by hand; don't shrink the type to compensate.
+
+### Weight mapping — where substitutions usually go wrong
+
+Instrument Sans runs optically heavier than Britanica at the same nominal weight. Step **down** one level when substituting:
+
+| Britanica | → Instrument Sans |
+|---|---|
+| Black / ExtraBold | Bold (700) |
+| **Bold** | **SemiBold (600)** |
+| **Regular** | **Medium (500)** — the workhorse; over half the live template is set in it |
+| Light | Regular (400) |
+
+Setting Instrument Sans Bold where the Adobe file used Britanica Bold is the single most common way a converted deck ends up looking wrong.
+
+### Type scale — measured off the live Google template (720 × 405 pt stage)
+
+| Role | Size | Face |
 |---|---|---|
-| **Display / headings** | Britanica | `Jost, "Helvetica Neue", Helvetica, Arial, sans-serif` |
-| **Editorial serif** | GT Super Display | `Utopia, "Utopia Std", Georgia, serif` |
-| **Body / UI** | Proxima Nova | `"Helvetica Neue", Helvetica, Arial, sans-serif` |
+| Title slide headline | 46pt | SemiBold + Regular at the same size, two-tone |
+| Statement / big idea | 36pt | SemiBold |
+| Section headline | 30–32pt | Medium |
+| Subhead | 28pt | Medium |
+| Callout / list item | 18–20pt | Medium, or Proxima Nova Regular for lists |
+| Body | 14pt | Proxima Nova Regular |
+| Eyebrow / label | 8–9pt | SemiBold, caps, wide tracking |
+| Running footer | 5pt | Medium |
 
-### Britanica
+### Britanica (corporate — Adobe, Keynote, PowerPoint)
 
-The identity's workhorse, and a very large family — five widths (Normal, SemiCondensed, Condensed, SemiExtended, Extended) across nine weights (Thin, Light, Regular, Bold, ExtraBold, Black, Heavy) with italics throughout.
+Five widths — Normal, SemiCondensed, Condensed, SemiExtended, Extended — across nine weights with italics throughout. Black and ExtraBold for headline moments, Bold for standard headings, Regular and Light for subheads and large quiet type. **Britanica Extended Light** is for wide airy display lines at large sizes only; it disappears below ~24pt. Condensed widths are for dense label sets, not body copy.
 
-- **Britanica Black / ExtraBold** — headline moments, title slides
-- **Britanica Bold** — standard headings
-- **Britanica Regular / Light** — subheads, large quiet type
-- **Britanica Extended Light** — wide, airy display lines. Large sizes only; it disappears below ~24pt.
-- **Condensed widths** — dense label sets and tight columns, not body copy
+The house move is **all caps with wide letterspacing** for eyebrows, labels and capability lists — roughly +8 to +15% tracking at small sizes.
 
-The house move is **all caps with wide letterspacing** for eyebrows, labels, and capability lists. Set tracking generously — roughly +8 to +15% at small sizes.
+### GT Super Display (corporate — Adobe, Keynote, PowerPoint)
 
-### GT Super Display
+The editorial voice: statement slides, pull quotes, feature openers. **Only two cuts are licensed — Display Light and Display Light Italic.** No Regular, no Bold, no other optical size. Any layout wanting a heavier serif is outside what Capsule owns; reach for Britanica rather than faking weight. Ships .otf, .ttf, .woff and .woff2, so unlike Britanica it can be a genuine webfont where the licence covers it.
 
-The editorial voice. Statement slides, pull quotes, feature openers, anywhere the work should feel considered rather than punchy.
+### Proxima Nova (corporate — every context)
 
-**Only two cuts are licensed** — Display Light and Display Light Italic. There is no Regular, no Bold, no other optical size. Any layout calling for a heavier serif is outside what Capsule owns; use Britanica instead rather than faking weight. Both cuts ship in .otf, .ttf, .woff and .woff2.
+Working copy: body text, captions, lists, UI. 1.5–1.6 line height. Comes through Adobe Fonts, including the Adobe Fonts add-on for Google Slides, so it is the one face that carries across every context unchanged.
 
-### Proxima Nova
-
-Working copy — body text, captions, UI. 1.5–1.6 line height.
-
-### Web and HTML artifacts
-
-Britanica ships via Fonts.net, Proxima Nova via Adobe Typekit. Neither loads in an artifact, so declare the full chain and let it fall through:
+### CSS chain for artifacts
 
 ```css
---font-display: Britanica, Jost, "Helvetica Neue", Helvetica, Arial, sans-serif;
---font-serif: "GT Super Display", Utopia, "Utopia Std", Georgia, serif;
---font-body: proxima-nova, "Helvetica Neue", Helvetica, Arial, sans-serif;
+--font-display: Britanica, "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+--font-serif: "GT Super Display", "Gilda Display", Georgia, serif;
+--font-body: proxima-nova, "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 ```
 
-**Jost** is the closest free stand-in for Britanica — measured, not guessed (see below). **Playfair Display** or **Source Serif 4** for GT Super. Say which substitute was used rather than silently swapping.
+In this order the browser uses the corporate face when it is installed locally and falls to the approved alternate when it isn't — correct behaviour in both cases. State which face actually rendered rather than silently swapping.
 
-GT Super ships **.woff2**, so it can be embedded as a real webfont where the Grilli Type licence covers it — check the licence before putting it on a public page. Britanica ships **.otf only** and would need conversion for web use.
+### Files leaving Capsule
 
-### Fallback metrics — measured
+For .pptx, .docx and Keynote, set the corporate face and let the system fall back. **Do not embed licensed fonts in files sent outside Capsule** — Monotype and Grilli Type licences don't cover redistribution. If a recipient needs to edit the file, build it in the Google Slides set (Instrument Sans / Gilda Display / Proxima Nova) instead, or send a PDF.
 
-Substitutions were chosen by comparing set width (sum of lowercase advances) and x-height against the real faces. Britanica has an unusually **low x-height for a modern grotesque** — 450/643, a ratio of 0.700 — which is why the obvious large-x-height candidates all run too big and too wide.
-
-| Candidate | Set width Δ | x-height Δ | Verdict |
-|---|---|---|---|
-| **Jost** | **−2.2%** | **+2.2%** | Closest by a wide margin. Use this. |
-| Figtree | +4.7% | +11.1% | Acceptable second |
-| Manrope | +5.5% | +20.0% | x-height far too large |
-| Archivo | +9.2% | +16.9% | Runs ~9% wide — headlines reflow |
-| Inter | +12.5% | +21.3% | Too wide |
-| Poppins | +17.8% | +21.8% | Much too wide |
-
-For GT Super Display Light (x-height 490, cap 700, also 0.700):
-
-| Candidate | Set width Δ | x-height Δ | Verdict |
-|---|---|---|---|
-| **Playfair Display** | +5.4% | +4.9% | Closest on contrast and proportion |
-| Source Serif 4 | +5.6% | −3.1% | Tied on metrics, lower contrast |
-| Lora | +8.5% | +2.0% | Workable |
-| EB Garamond | −9.5% | −18.4% | Far too small |
-
-Reference metrics, per 1000 upm: **Britanica Regular** x-height 450, cap 643, `n` 512. **Britanica Bold** x-height 450, cap 643, `n` 501. **GT Super Display Light** x-height 490, cap 700, `n` 573.
-
-For .pptx and .docx, set the primary face and let the system fall back. Do not embed licensed fonts in files sent outside Capsule.
 
 ---
 
