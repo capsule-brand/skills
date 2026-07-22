@@ -41,21 +41,40 @@ if [[ -z "$SLUG" ]]; then
 fi
 
 SKILLDIR="$SITE_REPO/skills/$SLUG"
-if [[ ! -f "$SKILLDIR/$SLUG.skill" ]]; then
-  echo "✗ No site .skill at $SKILLDIR/$SLUG.skill"; exit 1
+# The package filename is NOT always <slug>.skill (reskin-kit ships reskin.skill,
+# illustrator-data-merge ships datamerge.skill), so read it from skills.json.
+SKILL_PKG="$(python3 -c "
+import json,sys,os
+d=json.load(open('$SITE_REPO/skills.json'))
+f=next((x.get('file','') for x in d if x.get('slug')==sys.argv[1]),'')
+print(os.path.join('$SITE_REPO',f) if f else '')
+" "$SLUG")"
+[[ -n "$SKILL_PKG" ]] || SKILL_PKG="$SKILL_PKG"
+if [[ ! -f "$SKILL_PKG" ]]; then
+  echo "✗ No site .skill at $SKILL_PKG"; exit 1
 fi
 
 PLUGIN_MANIFEST="$MKT_REPO/plugins/$SLUG/.claude-plugin/plugin.json"
 HAS_PLUGIN=0; [[ -f "$PLUGIN_MANIFEST" ]] && HAS_PLUGIN=1
 
-# Canonical SKILL.md: marketplace plugin if present, else the current .skill's inner copy.
-if [[ "$HAS_PLUGIN" == 1 ]]; then
+# Canonical SKILL.md, in priority order:
+#   1. skills/<slug>/src/SKILL.md   — the editable source folder (preferred; see README)
+#   2. the marketplace plugin copy, if this skill has one
+#   3. the current .skill's inner top-level copy
+SRC_TREE=""
+if [[ -f "$SKILLDIR/src/SKILL.md" ]]; then
+  SRC_TREE="$SKILLDIR/src"
+  CANON="$SRC_TREE/SKILL.md"
+elif [[ "$HAS_PLUGIN" == 1 ]]; then
   CANON="$MKT_REPO/plugins/$SLUG/skills/$SLUG/SKILL.md"
 else
   CANON="/tmp/canon_$SLUG.md"
-  unzip -p "$SKILLDIR/$SLUG.skill" "*SKILL.md" > "$CANON" 2>/dev/null || { echo "✗ couldn't read SKILL.md from .skill"; exit 1; }
+  # Take the TOP-LEVEL SKILL.md only — "*SKILL.md" would concatenate nested ones.
+  _entry="$(unzip -Z1 "$SKILL_PKG" 2>/dev/null | awk -F/ 'NF==2 && $2=="SKILL.md"{print;exit}')"
+  [[ -n "$_entry" ]] || { echo "✗ no top-level SKILL.md inside $SLUG.skill"; exit 1; }
+  unzip -p "$SKILL_PKG" "$_entry" > "$CANON" 2>/dev/null || { echo "✗ couldn't read SKILL.md from .skill"; exit 1; }
 fi
-[[ -f "$CANON" ]] || { echo "✗ canonical SKILL.md not found ($CANON)"; exit 1; }
+[[ -s "$CANON" ]] || { echo "✗ canonical SKILL.md not found or empty ($CANON)"; exit 1; }
 
 UPD=""; if [[ "$DO_UPDATE" == 1 ]]; then UPD="--update"; fi
 PFX=""; if [[ "$DRY" == 1 ]]; then PFX="[dry-run] "; fi
@@ -94,18 +113,33 @@ PY
 TODAY="$(date +%Y-%m-%d)"
 echo "${PFX}site version: $CURVER -> $NEWVER"
 
-# Repackage the .skill from canonical SKILL.md.
-# Seed from the already-published .skill first so bundled assets (assets/, scripts/,
-# references/ ...) survive the version bump — only SKILL.md is replaced.
+# Repackage the .skill.
+# Source of truth for the file tree, in order: src/ folder, else the published .skill
+# (seeded first so bundled assets survive — only SKILL.md is replaced from canonical).
 rm -rf /tmp/skrel && mkdir -p /tmp/skrel
-if [[ -f "$SKILLDIR/$SLUG.skill" ]]; then
-  ( cd /tmp/skrel && unzip -qo "$SKILLDIR/$SLUG.skill" ) || true
+ROOT="$SLUG"
+if [[ -n "$SRC_TREE" ]]; then
+  mkdir -p "/tmp/skrel/$ROOT"
+  cp -R "$SRC_TREE"/. "/tmp/skrel/$ROOT"/
+elif [[ -f "$SKILL_PKG" ]]; then
+  # Hard-fail on a corrupt archive: continuing would silently drop every bundled asset.
+  unzip -qo "$SKILL_PKG" -d /tmp/skrel \
+    || { echo "✗ existing $SLUG.skill is unreadable — refusing to repack (would drop bundled assets)"; exit 1; }
+  # The inner root folder is NOT always the slug (e.g. reskin-kit packs as reskin/).
+  ROOT="$(cd /tmp/skrel && for d in */; do echo "${d%/}"; break; done)"
+  [[ -n "$ROOT" ]] || ROOT="$SLUG"
 fi
-mkdir -p "/tmp/skrel/$SLUG"
-cp "$CANON" "/tmp/skrel/$SLUG/SKILL.md"
-( cd /tmp/skrel && rm -f "$SLUG.skill" && zip -r -X -q "$SLUG.skill" "$SLUG" )
-CARRIED=$(cd "/tmp/skrel/$SLUG" && find . -type f ! -name 'SKILL.md' | wc -l | tr -d ' ')
-[[ "$CARRIED" -gt 0 ]] && echo "${PFX}carried $CARRIED bundled asset(s) through the repack"
+mkdir -p "/tmp/skrel/$ROOT"
+BEFORE=$(cd "/tmp/skrel/$ROOT" && find . -type f ! -name 'SKILL.md' | wc -l | tr -d ' ')
+cp "$CANON" "/tmp/skrel/$ROOT/SKILL.md"
+find /tmp/skrel \( -name '._*' -o -name '.DS_Store' \) -delete 2>/dev/null || true
+# -y stores symlinks instead of following them out of the tree
+( cd /tmp/skrel && rm -f "$SLUG.skill" && zip -r -X -y -q "$SLUG.skill" "$ROOT" )
+AFTER=$(unzip -Z1 "/tmp/skrel/$SLUG.skill" | grep -v '/$' | grep -cv '/SKILL.md$' || true)
+if [[ "$AFTER" -lt "$BEFORE" ]]; then
+  echo "✗ asset loss detected: $BEFORE bundled file(s) before, $AFTER after — aborting"; exit 1
+fi
+if [[ "$BEFORE" -gt 0 ]]; then echo "${PFX}carried $BEFORE bundled asset(s) through the repack (root: $ROOT/)"; fi
 SHA=$(shasum -a 256 "/tmp/skrel/$SLUG.skill" | awk '{print $1}')
 PKG=$(wc -c < "/tmp/skrel/$SLUG.skill"); INNER=$(wc -c < "$CANON")
 
@@ -113,8 +147,8 @@ if [[ "$DRY" == 1 ]]; then
   echo "${PFX}would repackage $SLUG.skill ($PKG bytes, sha ${SHA:0:8}…${SHA: -4}; inner $INNER bytes)"
   echo "${PFX}would update files.json, skills.json ($SLUG -> $NEWVER/$TODAY), install guide, Desktop folder, then commit+push"
 else
-  cp "/tmp/skrel/$SLUG.skill" "$SKILLDIR/$SLUG.skill"
-  python3 - "/tmp/skrel/$SLUG" "$SKILLDIR/files.json" <<'PY'
+  cp "/tmp/skrel/$SLUG.skill" "$SKILL_PKG"
+  python3 - "/tmp/skrel/$ROOT" "$SKILLDIR/files.json" <<'PY'
 import json,os,sys
 root,out=sys.argv[1:3]
 LANG={'.md':'md','.py':'python','.js':'javascript','.sh':'bash','.json':'json',
@@ -153,7 +187,7 @@ PY
   if [[ -n "$OLD_DESK" ]]; then
     BASE="$(basename "$OLD_DESK" | sed -E 's/ [0-9]+\.[0-9]+\.[0-9]+$//')"
     NEW_DESK="$DESK/$BASE $NEWVER"
-    cp "$SKILLDIR/$SLUG.skill" "$OLD_DESK/$SLUG.skill"
+    cp "$SKILL_PKG" "$OLD_DESK/$SLUG.skill"
     [[ -f "$SKILLDIR/install-guide.html" ]] && cp "$SKILLDIR/install-guide.html" "$OLD_DESK/$SLUG-install-guide.html"
     [[ "$OLD_DESK" != "$NEW_DESK" ]] && mv "$OLD_DESK" "$NEW_DESK"
     echo "✔ Desktop staging → $(basename "$NEW_DESK")"

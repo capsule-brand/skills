@@ -119,12 +119,13 @@ export NAME MONO ACCENT TAGLINE INVOKE NEEDS SAY TAGS ICON
 rm -rf /tmp/skrel && mkdir -p "/tmp/skrel/$SLUG"
 if [[ -n "$SRC_DIR" ]]; then
   # bundle the whole skill folder (assets/, scripts/, references/ ...)
-  ( cd "$SRC_DIR" && tar cf - --exclude '.DS_Store' --exclude '.git' . ) \
+  ( cd "$SRC_DIR" && tar cf - --exclude '.DS_Store' --exclude '._*' --exclude '.git' . ) \
     | ( cd "/tmp/skrel/$SLUG" && tar xf - )
 else
   cp "$SRC_MD" "/tmp/skrel/$SLUG/SKILL.md"
 fi
-( cd /tmp/skrel && rm -f "$SLUG.skill" && zip -r -X -q "$SLUG.skill" "$SLUG" )
+find /tmp/skrel \( -name '._*' -o -name '.DS_Store' \) -delete 2>/dev/null || true
+( cd /tmp/skrel && rm -f "$SLUG.skill" && zip -r -X -y -q "$SLUG.skill" "$SLUG" )
 PKGCOUNT=$(cd "/tmp/skrel/$SLUG" && find . -type f | wc -l | tr -d ' ')
 echo "packaged $PKGCOUNT file(s) into $SLUG.skill$([[ -n "$SRC_DIR" ]] && echo " (from folder $SRC_DIR)")"
 PKG=$(wc -c < "/tmp/skrel/$SLUG.skill" | tr -d ' ')
