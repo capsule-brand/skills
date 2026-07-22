@@ -68,6 +68,29 @@ The finished client deck contains `#444949`, `#474a4a` and `#454a4a` — luminan
 
 Ink and Forest are only 1.3:1 apart — never use them as a foreground/background pair. Same for Mist and Pale.
 
+### Run the check, don't just read it
+
+Having these numbers in a document is not the same as applying them. **Before any generated artifact is called finished — HTML, .pptx, .docx, slides — check every text/ground pair programmatically against this table.**
+
+This exists because it has already failed in practice. A section divider shipped with Ink type on a Forest ground at **1.26:1** — invisible — from a single CSS selector typo (`.divider h2` where the class sat on the `h2` itself, so the rule never matched and the heading inherited body colour). Schema validation passed. Geometry validation passed. Font names were correct. Nothing catches a contrast failure except checking contrast.
+
+Two checks worth running on generated output:
+
+1. **Contrast pass** — resolve each declared text colour against its actual ground and flag anything under 4.5:1 for body or 3:1 for large text.
+2. **Selector-mismatch pass** — for CSS, flag any `.class tag` rule where an element carries *both* the class and that tag. That descendant-vs-self confusion is silent and produces exactly this failure.
+
+```python
+def luminance(hex_color):
+    h = hex_color.lstrip('#')
+    r, g, b = [int(h[i:i+2], 16) / 255 for i in (0, 2, 4)]
+    f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+
+def contrast(fg, bg):
+    l1, l2 = sorted([luminance(fg), luminance(bg)], reverse=True)
+    return (l1 + 0.05) / (l2 + 0.05)
+```
+
 ### Proportion
 
 Roughly 70% neutral ground, 20% supporting, 10% accent. One dominant accent per deck. Red does the structural work (eyebrows, the mark, rules); Acid is reserved for genuine emphasis. Using both loudly in one composition flattens the system.
@@ -280,15 +303,20 @@ Every interior slide carries these. They are quiet and should stay quiet.
 
 **Icon grid** — Pale ground with a duotoned photo panel at left. Two columns of Forest monoline icons paired with Britanica Light labels in Forest.
 
-**Detail / scope slide** — Pale or Mist ground. Gray all-caps navigational eyebrow top left (`EXPLORE`, `STRATEGY`, `IMPLEMENTATION`). Large Britanica Bold title in Slate. Body organized under **red all-caps subheads** (`APPROACH AT A GLANCE`, `DELIVERABLES`, `INVESTMENT`, `NOTES`). Notes in italic.
+**Detail / scope slide** — Pale or Mist ground. Stone all-caps navigational eyebrow top left (`EXPLORE`, `STRATEGY`, `IMPLEMENTATION`). Large Britanica Bold title in Slate. Body organized under **red all-caps subheads** (`APPROACH AT A GLANCE`, `DELIVERABLES`, `INVESTMENT`, `NOTES`). Notes in italic.
 
 **Case study** — Pale sidebar column at left (~26% width) holding `CLIENT:`, `CHALLENGE`, `DETAILS`. Client logo top right. Imagery fills the remainder. Link at the bottom of the sidebar in **Aqua**, bold italic underlined (`BROWSE THE CASE STUDY`).
 
 **Closing** — Forest with texture. `Thank` in GT Super Display Light, Sage — `you` in GT Super Display **Italic, Acid**. This is the one place Acid appears at scale, and it lands because nothing else in the deck competes. Contacts below in Britanica, white, with email links in Acid. 25th anniversary badge and C mark stacked bottom right.
 
-### Two eyebrow colors
+### Two eyebrow colors, two jobs
 
-The system uses eyebrows for two different jobs and colors them differently. **Red** eyebrows label content (`WE ARE`, `IN-HOUSE CAPABILITIES`, `DELIVERABLES`). **Gray/Slate** eyebrows label position in the deck (`EXPLORE`, `RELEVANT WORK`, `PROJECT ROADMAP AT A GLANCE`). Don't mix them.
+The system uses eyebrows for two different purposes and colors them differently. Confirmed consistent across the capabilities template and the Blackwood discovery brief.
+
+- **Stone `#899493`** labels **position** — where you are in the document. `THE SITUATION`, `THE DIRECTION`, `EXPLORE`, `RELEVANT WORK`, `PROJECT ROADMAP AT A GLANCE`. Top left, 8pt, caps. The running footer is Stone too.
+- **Red `#C4242B`** labels **content** — what this block is. `KEY SUCCESSES`, `KEY CHALLENGES`, `WHY IT WORKS`, `DELIVERABLES`, `INVESTMENT`, `WE ARE`, `IN-HOUSE CAPABILITIES`. 8–9pt, SemiBold, caps.
+
+Don't mix them. A navigational label in red reads as a content heading and breaks the scan.
 
 ### Emphasis within body copy
 
