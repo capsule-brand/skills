@@ -13,7 +13,7 @@ The visual and verbal identity for Capsule, a special projects agency in Northea
 
 ## Colors
 
-Eleven colors. Deep neutrals against a sage/aqua family, with an acid chartreuse and a hot red doing the work. A warm sand sits apart from everything else and carries the statement moments.
+Eleven colors plus Stone. Deep neutrals against a sage/aqua family, with an acid chartreuse and a hot red doing the work. A warm sand sits apart from everything else and carries the statement moments.
 
 Print work uses the **Pantone** value. Process work uses the **CMYK** build. Screen uses **HEX**. Do not convert between them yourself — the values below are the approved conversions.
 
@@ -22,6 +22,7 @@ Print work uses the **Pantone** value. Process work uses the **CMYK** build. Scr
 | **Ink** | PMS 419 C | `#232121` | 75 / 65 / 66 / 90 | Primary dark, body copy, dark grounds |
 | **Forest** | PMS 3305 C | `#16392D` | 93 / 13 / 61 / 62 | Deep accent ground, section breaks |
 | **Slate** | PMS 425 C | `#444949` | 69 / 58 / 58 / 40 | Secondary text, captions, metadata |
+| **Stone** | *(none assigned)* | `#899493` | — | Eyebrows, labels, quiet headlines on dark |
 | **Sage** | PMS 429 C | `#BAC8C7` | 35 / 23 / 19 / 2 | Rules, dividers, secondary text on dark |
 | **Sand** | PMS 7527 C | `#EAE7D5` | 7 / 5 / 16 / 0 | Warm ground for statement and quote slides |
 | **Mist** | *(none assigned)* | `#F2F5F5` | 4 / 2 / 2 / 0 | Default light background |
@@ -32,6 +33,22 @@ Print work uses the **Pantone** value. Process work uses the **CMYK** build. Scr
 | **Aqua** | PMS 3105 C | `#7AC8CA` | 49 / 0 / 15 / 0 | Supporting accent, chart series |
 
 Mist has no Pantone equivalent on the board — it's screen-and-process only. For print, substitute Pale (PMS 9102 C) or run it as a 4-color build.
+
+### Stone `#899493`
+
+Not on the original brand board, but confirmed in live use across two decks — the capabilities template and the finished Blackwood discovery brief. It fills a real gap: in luminance it sits almost exactly between Sage (0.559) and Slate (0.065) at 0.286, and nothing else in the palette occupies that mid-tone.
+
+**Use it for eyebrows, labels, running footers, and quiet headlines on dark grounds.** Not for body copy.
+
+That restriction is a contrast one, not a taste one. Stone reaches AA on Ink (5.13:1) but is **large-text-only on Forest (4.06:1) and white (3.12:1), and fails outright on Mist (2.85:1) and Pale (2.66:1)** — the two default light grounds. Both live decks use it at eyebrow and label size, which is consistent with that.
+
+No Pantone or CMYK build has been assigned. For print work, get one specified rather than converting the HEX yourself.
+
+### One grey, not three
+
+The finished client deck contains `#444949`, `#474a4a` and `#454a4a` — luminance differences of 0.002, invisible on screen, and a sign Slate is being re-picked by eye rather than pulled from a swatch.
+
+**`#444949` is Slate. Always use that one.** PMS 425 C is the reason: it's the only one of the three with a Pantone match, so the others can't be reproduced in print without drifting. Normalize `#474a4a` and `#454a4a` on sight, the same way legacy reds get normalized to `#C4242B`.
 
 ### Hover / darker variants (screen only)
 
@@ -102,6 +119,30 @@ Setting Instrument Sans Bold where the Adobe file used Britanica Bold is the sin
 | Body | 14pt | Proxima Nova Regular |
 | Eyebrow / label | 8–9pt | SemiBold, caps, wide tracking |
 | Running footer | 5pt | Medium |
+
+### The mix depends on the document, not the brand
+
+Both faces are always correct — what changes is the proportion. Measured across two live decks:
+
+| | Capabilities / pitch deck | Discovery brief, report, working doc |
+|---|---|---|
+| Instrument Sans | **~85%** | ~33% |
+| Proxima Nova | ~13% | **~67%** |
+
+A pitch deck is display-led: big Instrument Sans statements carrying a few words a slide. A brief is body-led: Proxima Nova at 10pt doing the actual work, with Instrument Sans reduced to headings, eyebrows and the footer. Getting this backwards is what makes a report feel like a billboard, or a pitch feel like a memo.
+
+**Report / brief type scale** (as built in the Blackwood brief):
+
+| Role | Size | Face |
+|---|---|---|
+| Section heading | 14–18pt | Instrument Sans SemiBold / Medium |
+| Callout, intro | 18pt | Proxima Nova Regular |
+| Body | **10pt** | Proxima Nova Regular |
+| Secondary body, notes | 8–9pt | Proxima Nova Regular / Italic |
+| Eyebrow, label | 8pt | Instrument Sans Medium, caps |
+| Running footer | 5pt | Instrument Sans Medium |
+
+The 5pt Instrument Sans Medium footer is identical in both decks — it's a fixed house element, not a per-deck choice.
 
 ### Britanica (corporate — Adobe, Keynote, PowerPoint)
 
