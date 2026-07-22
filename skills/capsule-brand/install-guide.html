@@ -160,15 +160,29 @@
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <div class="step-title">Give Claude what it needs</div>
-        <p>Nothing to point at — the palette, type, logos and deck rules are in the skill. Logo SVGs ride along in assets/logos/. Textures and font files live in Dropbox: Design Resources/ >> Logo Collection <</Capsule/Claude - Design System/</p>
+        <div class="step-title">Install the three brand fonts</div>
+        <p><strong>Do this once. It matters more than anything else on this page.</strong> Without the real fonts, everything Claude makes falls back to substitutes and quietly looks 5&ndash;10% off &mdash; headlines reflow, line breaks move, and nobody can tell you why.</p>
+        <p>In Dropbox, open:</p>
+        <p><code>Design Resources/ &gt;&gt; Logo Collection &lt;&lt;/Capsule/Claude - Design System/Fonts/</code></p>
+        <div class="tip">That folder name really does start with <strong>a space before the <code>&gt;&gt;</code></strong>. If you paste the path and it 404s, that's why.</div>
+        <p>Select everything inside <code>Britanica/</code> and <code>GT Super/GT Super/</code>, then double-click &rarr; <strong>Install</strong> in Font Book. Proxima Nova comes through Adobe Fonts &mdash; turn it on in Creative Cloud &rarr; Fonts if you don't already have it.</p>
+        <p>Same folder holds <code>Textures/</code> &mdash; 13 background files, ~49&nbsp;MB. They're too big to ship inside the skill, so point Claude at that folder when you need one.</p>
       </div>
     </div>
 
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-body">
-        <div class="step-title">Use it — just ask</div>
+        <div class="step-title">Give Claude what it needs</div>
+        <p>For most jobs, nothing. The palette (with Pantone and CMYK builds), the type rules, the deck structure and the voice guidance are all inside the skill, and the six logo SVGs ride along in <code>assets/logos/</code>.</p>
+        <p>Point it at a folder only when the job needs a texture, a font file, or the 25th anniversary badge &mdash; all of which live in the Dropbox path above.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Use it &mdash; just ask</div>
         <p>Start a normal chat and say what you want in plain words. Each example in the card above is something you can try verbatim.</p>
         <div class="tip"><strong>You're done.</strong> From here, just describe the job and the skill takes it from there.</div>
       </div>
@@ -179,6 +193,34 @@
   <div class="trouble-section">
     <h2>Troubleshooting</h2>
     <div class="trouble-list">
+
+      <div class="trouble-item">
+        <div class="trouble-q">The type looks generic / everything came out in Helvetica</div>
+        <div class="trouble-a">
+          The brand fonts aren't installed. Go back to step 3. This is the most common problem by a wide margin, and it's silent &mdash; nothing errors, the work just quietly stops looking like Capsule.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">I can't find that Dropbox folder</div>
+        <div class="trouble-a">
+          Two likely reasons. First, the folder name begins with <strong>a space</strong> before the <code>&gt;&gt;</code> &mdash; a pasted path without it will fail. Second, you may not have <em>Design Resources</em> synced; check Dropbox &rarr; selective sync, and ask Brian if it isn't shared with you at all.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">The red in the logo doesn't match the red in my shapes</div>
+        <div class="trouble-a">
+          Known issue, not your mistake. The supplied logo files carry two older reds &mdash; <code>#b90021</code> in the wordmark and <code>#d61f26</code> in the C mark &mdash; while the brand standard is <strong>PMS 186 C / #C4242B</strong>. Set the SVG fill to <code>#C4242B</code> when the mark sits next to other red elements. Claude will flag this if you ask it to check.
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-q">I'm making something for a client, not for Capsule</div>
+        <div class="trouble-a">
+          Then the client's brand governs the work and this skill should stay out of it &mdash; use it only for the wrapper (cover, credentials, contact). Say so up front and Claude will keep them separate.
+        </div>
+      </div>
 
       <div class="trouble-item">
         <div class="trouble-q">Claude didn't seem to use the skill</div>
