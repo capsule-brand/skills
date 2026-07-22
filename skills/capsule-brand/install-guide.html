@@ -160,27 +160,16 @@
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <div class="step-title">Install the three brand fonts</div>
-        <p><strong>Do this once. It matters more than anything else on this page.</strong> Without the real fonts, everything Claude makes falls back to substitutes and quietly looks 5&ndash;10% off &mdash; headlines reflow, line breaks move, and nobody can tell you why.</p>
-        <p>In Dropbox, open:</p>
-        <p><code>Design Resources/ &gt;&gt; Logo Collection &lt;&lt;/Capsule/Claude - Design System/Fonts/</code></p>
-        <div class="tip">That folder name really does start with <strong>a space before the <code>&gt;&gt;</code></strong>. If you paste the path and it 404s, that's why.</div>
-        <p>Select everything inside <code>Britanica/</code> and <code>GT Super/GT Super/</code>, then double-click &rarr; <strong>Install</strong> in Font Book. Proxima Nova comes through Adobe Fonts &mdash; turn it on in Creative Cloud &rarr; Fonts if you don't already have it.</p>
-        <p>Same folder holds <code>Textures/</code> &mdash; 13 background files, ~49&nbsp;MB. They're too big to ship inside the skill, so point Claude at that folder when you need one.</p>
+        <div class="step-title">Give Claude what it needs</div>
+        <p>For most jobs, nothing. The palette (with Pantone and CMYK builds), the type rules, the deck structure and the voice guidance are all inside the skill, and the six logo SVGs ride along in <code>assets/logos/</code>. You already have Britanica, GT Super and Proxima Nova installed, so type renders correctly out of the box.</p>
+        <p>Point it at a folder only when the job needs a <strong>texture</strong> or the <strong>25th anniversary badge</strong>. Those live in Dropbox at:</p>
+        <p><code>Design Resources/ &gt;&gt; Logo Collection &lt;&lt;/Capsule/Claude - Design System/</code></p>
+        <div class="tip">That folder name really does start with <strong>a space before the <code>&gt;&gt;</code></strong>. If you paste the path and it fails, that's why.</div>
       </div>
     </div>
 
     <div class="step">
       <div class="step-num">4</div>
-      <div class="step-body">
-        <div class="step-title">Give Claude what it needs</div>
-        <p>For most jobs, nothing. The palette (with Pantone and CMYK builds), the type rules, the deck structure and the voice guidance are all inside the skill, and the six logo SVGs ride along in <code>assets/logos/</code>.</p>
-        <p>Point it at a folder only when the job needs a texture, a font file, or the 25th anniversary badge &mdash; all of which live in the Dropbox path above.</p>
-      </div>
-    </div>
-
-    <div class="step">
-      <div class="step-num">5</div>
       <div class="step-body">
         <div class="step-title">Use it &mdash; just ask</div>
         <p>Start a normal chat and say what you want in plain words. Each example in the card above is something you can try verbatim.</p>
@@ -197,14 +186,14 @@
       <div class="trouble-item">
         <div class="trouble-q">The type looks generic / everything came out in Helvetica</div>
         <div class="trouble-a">
-          The brand fonts aren't installed. Go back to step 3. This is the most common problem by a wide margin, and it's silent &mdash; nothing errors, the work just quietly stops looking like Capsule.
+          Almost always means Britanica or GT Super isn't active on your machine &mdash; check Font Book. Everyone here should have them already, but if you're new or on a fresh laptop, the files are in Dropbox under <code>Claude - Design System/Fonts/</code>. Nothing errors when they're missing; the work just quietly stops looking like ours.
         </div>
       </div>
 
       <div class="trouble-item">
         <div class="trouble-q">I can't find that Dropbox folder</div>
         <div class="trouble-a">
-          Two likely reasons. First, the folder name begins with <strong>a space</strong> before the <code>&gt;&gt;</code> &mdash; a pasted path without it will fail. Second, you may not have <em>Design Resources</em> synced; check Dropbox &rarr; selective sync, and ask Brian if it isn't shared with you at all.
+          The folder name begins with <strong>a space</strong> before the <code>&gt;&gt;</code> &mdash; a pasted path without it will fail. If <em>Design Resources</em> isn't syncing at all, check Dropbox selective sync, and ask Brian if it isn't shared with you.
         </div>
       </div>
 
