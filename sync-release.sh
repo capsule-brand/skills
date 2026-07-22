@@ -94,10 +94,18 @@ PY
 TODAY="$(date +%Y-%m-%d)"
 echo "${PFX}site version: $CURVER -> $NEWVER"
 
-# Repackage the .skill from canonical SKILL.md
-rm -rf /tmp/skrel && mkdir -p "/tmp/skrel/$SLUG"
+# Repackage the .skill from canonical SKILL.md.
+# Seed from the already-published .skill first so bundled assets (assets/, scripts/,
+# references/ ...) survive the version bump — only SKILL.md is replaced.
+rm -rf /tmp/skrel && mkdir -p /tmp/skrel
+if [[ -f "$SKILLDIR/$SLUG.skill" ]]; then
+  ( cd /tmp/skrel && unzip -qo "$SKILLDIR/$SLUG.skill" ) || true
+fi
+mkdir -p "/tmp/skrel/$SLUG"
 cp "$CANON" "/tmp/skrel/$SLUG/SKILL.md"
 ( cd /tmp/skrel && rm -f "$SLUG.skill" && zip -r -X -q "$SLUG.skill" "$SLUG" )
+CARRIED=$(cd "/tmp/skrel/$SLUG" && find . -type f ! -name 'SKILL.md' | wc -l | tr -d ' ')
+[[ "$CARRIED" -gt 0 ]] && echo "${PFX}carried $CARRIED bundled asset(s) through the repack"
 SHA=$(shasum -a 256 "/tmp/skrel/$SLUG.skill" | awk '{print $1}')
 PKG=$(wc -c < "/tmp/skrel/$SLUG.skill"); INNER=$(wc -c < "$CANON")
 
@@ -106,9 +114,25 @@ if [[ "$DRY" == 1 ]]; then
   echo "${PFX}would update files.json, skills.json ($SLUG -> $NEWVER/$TODAY), install guide, Desktop folder, then commit+push"
 else
   cp "/tmp/skrel/$SLUG.skill" "$SKILLDIR/$SLUG.skill"
-  python3 - "$CANON" "$SKILLDIR/files.json" <<'PY'
-import json,sys
-json.dump([{"name":"SKILL.md","lang":"md","content":open(sys.argv[1]).read()}], open(sys.argv[2],"w"))
+  python3 - "/tmp/skrel/$SLUG" "$SKILLDIR/files.json" <<'PY'
+import json,os,sys
+root,out=sys.argv[1:3]
+LANG={'.md':'md','.py':'python','.js':'javascript','.sh':'bash','.json':'json',
+      '.svg':'svg','.html':'html','.css':'css','.txt':'text','.yml':'yaml','.yaml':'yaml'}
+BIN={'.png','.jpg','.jpeg','.gif','.pdf','.zip','.otf','.ttf','.woff','.woff2','.ico'}
+files=[]
+for dp,_,fns in os.walk(root):
+    for fn in sorted(fns):
+        if fn=='.DS_Store': continue
+        full=os.path.join(dp,fn); rel=os.path.relpath(full,root)
+        ext=os.path.splitext(fn)[1].lower()
+        if ext in BIN: continue          # don't inline binaries into the viewer
+        try: content=open(full,encoding='utf-8').read()
+        except UnicodeDecodeError: continue
+        files.append({"name":rel,"lang":LANG.get(ext,'text'),"content":content})
+files.sort(key=lambda f:(f['name']!='SKILL.md', f['name']))
+json.dump(files,open(out,'w'))
+print(f"    files.json lists {len(files)} file(s)")
 PY
   python3 - "$SITE_REPO/skills.json" "$SLUG" "$NEWVER" "$TODAY" <<'PY'
 import json,sys

@@ -9,7 +9,10 @@
 # A .skill is just a zip of a folder containing SKILL.md.
 #
 # Usage:
-#   ./add-skill.sh <slug> <path-to-SKILL.md> [options]
+#   ./add-skill.sh <slug> <path-to-SKILL.md | path-to-skill-folder> [options]
+#
+#   Pass a FOLDER to bundle assets (assets/, scripts/, references/ ...) into the .skill.
+#   Pass a bare SKILL.md to package just that file — you'll be warned if siblings exist.
 #
 # Options (all have sensible defaults; override the ones you care about):
 #   --name "Display Name"        default: Title-cased slug
@@ -62,15 +65,39 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$SLUG" || -z "$SRC_MD" ]]; then
-  echo "Usage: ./add-skill.sh <slug> <path-to-SKILL.md> [options]"
+  echo "Usage: ./add-skill.sh <slug> <path-to-SKILL.md | path-to-skill-folder> [options]"
+  echo "  Pass a FOLDER to bundle assets (scripts/, assets/, references/ ...) into the .skill."
+  echo "  Pass a bare SKILL.md to package just that file."
   echo "(see the header of this script for options)"
   exit 1
 fi
 if [[ ! "$SLUG" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
   echo "✗ slug must be lowercase kebab-case (got: $SLUG)"; exit 1
 fi
+
+# Accept either a SKILL.md path or a folder containing one.
+# SRC_DIR is set only when we should bundle a whole directory.
+SRC_DIR=""
+if [[ -d "$SRC_MD" ]]; then
+  SRC_DIR="$(cd "$SRC_MD" && pwd)"
+  SRC_MD="$SRC_DIR/SKILL.md"
+  if [[ ! -f "$SRC_MD" ]]; then
+    echo "✗ no SKILL.md inside folder: $SRC_DIR"; exit 1
+  fi
+fi
 if [[ ! -f "$SRC_MD" ]]; then
   echo "✗ SKILL.md not found at: $SRC_MD"; exit 1
+fi
+
+# Given a bare SKILL.md that has siblings, warn — those would be silently dropped.
+if [[ -z "$SRC_DIR" ]]; then
+  _par="$(cd "$(dirname "$SRC_MD")" && pwd)"
+  _sib=$(find "$_par" -mindepth 1 -maxdepth 1 ! -name 'SKILL.md' ! -name '.*' 2>/dev/null | wc -l | tr -d ' ')
+  if [[ "$_sib" -gt 0 ]]; then
+    echo "⚠ $_sib item(s) sit next to that SKILL.md and will NOT be packaged."
+    echo "  If the skill needs them, re-run with the folder instead:"
+    echo "      ./add-skill.sh $SLUG \"$_par\""
+  fi
 fi
 
 # Refuse to clobber an existing skill — that's sync-release.sh's job.
@@ -90,8 +117,16 @@ export NAME MONO ACCENT TAGLINE INVOKE NEEDS SAY TAGS ICON
 
 # ---- 1. package the .skill (zip of <slug>/SKILL.md) ----
 rm -rf /tmp/skrel && mkdir -p "/tmp/skrel/$SLUG"
-cp "$SRC_MD" "/tmp/skrel/$SLUG/SKILL.md"
+if [[ -n "$SRC_DIR" ]]; then
+  # bundle the whole skill folder (assets/, scripts/, references/ ...)
+  ( cd "$SRC_DIR" && tar cf - --exclude '.DS_Store' --exclude '.git' . ) \
+    | ( cd "/tmp/skrel/$SLUG" && tar xf - )
+else
+  cp "$SRC_MD" "/tmp/skrel/$SLUG/SKILL.md"
+fi
 ( cd /tmp/skrel && rm -f "$SLUG.skill" && zip -r -X -q "$SLUG.skill" "$SLUG" )
+PKGCOUNT=$(cd "/tmp/skrel/$SLUG" && find . -type f | wc -l | tr -d ' ')
+echo "packaged $PKGCOUNT file(s) into $SLUG.skill$([[ -n "$SRC_DIR" ]] && echo " (from folder $SRC_DIR)")"
 PKG=$(wc -c < "/tmp/skrel/$SLUG.skill" | tr -d ' ')
 INNER=$(wc -c < "/tmp/skrel/$SLUG/SKILL.md" | tr -d ' ')
 
@@ -133,6 +168,8 @@ if not tagline:
         tagline = name
 
 # ---- files.json ----
+# Baseline: SKILL.md only. If the skill was packaged from a folder, the shell
+# step after this python block rewrites files.json to include the bundled files.
 files_json = [{"name": "SKILL.md", "lang": "md", "content": raw}]
 json.dump(files_json, open(os.path.join(out_dir, "files.json"), "w"))
 
@@ -174,6 +211,30 @@ else:
     open(p, "a").write("\n")
     print("appended skills.json entry for", slug)
 PY
+
+# ---- 2b. if packaged from a folder, list every bundled file in files.json ----
+if [[ -n "$SRC_DIR" ]]; then
+  python3 - "/tmp/skrel/$SLUG" "$OUT_DIR/files.json" <<'PY'
+import json,os,sys
+root,out=sys.argv[1:3]
+LANG={'.md':'md','.py':'python','.js':'javascript','.sh':'bash','.json':'json',
+      '.svg':'svg','.html':'html','.css':'css','.txt':'text','.yml':'yaml','.yaml':'yaml'}
+BIN={'.png','.jpg','.jpeg','.gif','.pdf','.zip','.otf','.ttf','.woff','.woff2','.ico'}
+files=[]
+for dp,_,fns in os.walk(root):
+    for fn in sorted(fns):
+        if fn=='.DS_Store': continue
+        full=os.path.join(dp,fn); rel=os.path.relpath(full,root)
+        ext=os.path.splitext(fn)[1].lower()
+        if ext in BIN: continue
+        try: content=open(full,encoding='utf-8').read()
+        except UnicodeDecodeError: continue
+        files.append({"name":rel,"lang":LANG.get(ext,'text'),"content":content})
+files.sort(key=lambda f:(f['name']!='SKILL.md', f['name']))
+json.dump(files,open(out,'w'))
+print(f"files.json lists {len(files)} file(s)")
+PY
+fi
 
 echo ""
 echo "${PFX}Skill:        $SLUG  (v$VERSION, $TODAY)"
