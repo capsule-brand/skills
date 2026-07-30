@@ -107,19 +107,22 @@
     <div>
       <div class="eyebrow">Install guide</div>
       <h1>Capsule Estimator</h1>
-      <p>>-</p>
+      <p>Data-backed proposal estimates from Capsule's own signed history.</p>
     </div>
     <span class="version-badge">v1.0.0</span>
   </header>
 
   <div class="intro">
-    <strong>What this does.</strong> >- Add it to Claude once, then just describe what you want in plain words and Claude handles it the Capsule way. This is a one-time setup.
+    <strong>What this does.</strong> Turns a proposal scope into a grounded, range-based estimate — cost and hours — built from Capsule's own signed history, with the comparable past jobs cited and the win-rate guardrails ($50K line, 3-discipline rule) applied. Add it once, then just describe the job. This is a one-time setup.
   </div>
 
   <div class="say">
     <h3>How you actually use it (just describe the job)</h3>
     <ul>
-      <li>Use the skill on this.</li>
+      <li>"Scope a packaging proposal for a new client — single premium SKU, production-ready files."</li>
+      <li>"What does a logo / identity system usually cost and take?"</li>
+      <li>"Build a cost estimate for a full brand build: strategy, identity, and a website."</li>
+      <li>"How many hours is a website discovery phase?"</li>
     </ul>
   </div>
 
@@ -156,8 +159,9 @@
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <div class="step-title">Give Claude what it needs</div>
-        <p>Whatever the skill works on — point Claude at a folder, connect the right app, or paste the details into the chat.</p>
+        <div class="step-title">Connect Notion (required)</div>
+        <p>This skill reads Capsule's live data to build every estimate, so the <strong>Notion connector</strong> must be connected in your Claude settings, with access to three sources: the <strong>Proposals Index</strong>, the <strong>Pricing Reference</strong>, and the <strong>Discipline Benchmark</strong>. Without Notion connected there are no numbers to pull.</p>
+        <div class="note"><strong>You don't paste any data yourself.</strong> Just describe the job — the skill queries the Proposals Index and benchmarks directly and cites the comparable past jobs it used.</div>
       </div>
     </div>
 

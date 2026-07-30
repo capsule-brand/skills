@@ -175,15 +175,18 @@
     "slug": "capsule-estimator",
     "version": "1.0.0",
     "updated": "2026-07-30",
-    "mono": "CA",
-    "accent": "#646b78",
-    "tagline": ">-",
+    "mono": "CE",
+    "accent": "#16392D",
+    "tagline": "Data-backed proposal estimates from Capsule's own signed history.",
     "invoke": "/capsule-estimator",
-    "needs": "Whatever the skill works on — point Claude at a folder, connect the right app, or paste the details into the chat.",
-    "say": "Use the skill on this.",
+    "needs": "The Notion connector, with access to the Proposals Index, Pricing Reference, and Discipline Benchmark. It reads your live data to build the estimate; without it there are no numbers to pull.",
+    "say": "Scope a packaging proposal for a new client",
     "file": "skills/capsule-estimator/capsule-estimator.skill",
     "guide": "skills/capsule-estimator/install-guide.html",
     "icon": "<path d=\"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z\"/><path d=\"M14 2v6h6\"/>",
-    "tags": []
+    "tags": [
+      "Sales",
+      "Estimating"
+    ]
   }
 ]
