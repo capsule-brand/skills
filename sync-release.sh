@@ -30,7 +30,7 @@ for a in "$@"; do
 done
 
 SITE_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MKT_REPO="$HOME/.claude/plugins/marketplaces/capsule-plugins"
+MKT_REPO="$HOME/CapsulePlugins"   # the working/dev repo where edits live (NOT the ~/.claude marketplace clone; release.sh runs `claude plugin marketplace update` to refresh that clone after pushing)
 DESK="$HOME/Desktop/Skills"
 
 if [[ -z "$SLUG" ]]; then
