@@ -184,7 +184,9 @@ PY
   # right after the repo files were updated (before Desktop staging + commit/push).
   # The trailing `|| true` keeps that pipeline from killing the run.
   OLD_DESK="$(find "$DESK" -maxdepth 1 -type d 2>/dev/null | while read -r d; do [[ -f "$d/$SLUG.skill" ]] && echo "$d"; done | head -1 || true)"
-  if [[ -n "$OLD_DESK" ]]; then
+  # Skip staging when the .skill sits directly in $DESK (no per-skill subfolder) —
+  # otherwise BASE=basename($DESK) and the mv tries to move $DESK into itself.
+  if [[ -n "$OLD_DESK" && "$OLD_DESK" != "$DESK" ]]; then
     BASE="$(basename "$OLD_DESK" | sed -E 's/ [0-9]+\.[0-9]+\.[0-9]+$//')"
     NEW_DESK="$DESK/$BASE $NEWVER"
     cp "$SKILL_PKG" "$OLD_DESK/$SLUG.skill"
