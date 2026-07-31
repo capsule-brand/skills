@@ -173,7 +173,7 @@
   {
     "name": "Capsule Estimator",
     "slug": "capsule-estimator",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "updated": "2026-07-31",
     "mono": "CE",
     "accent": "#16392D",
