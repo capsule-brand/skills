@@ -173,8 +173,8 @@
   {
     "name": "Capsule Estimator",
     "slug": "capsule-estimator",
-    "version": "1.0.0",
-    "updated": "2026-07-30",
+    "version": "1.1.0",
+    "updated": "2026-07-31",
     "mono": "CE",
     "accent": "#16392D",
     "tagline": "Data-backed proposal estimates from Capsule's own signed history.",
